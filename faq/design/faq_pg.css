@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* CSS Document */
+
+.main_content
+{
+	padding: 65px 20px 30px;
+}
+
+.main_title
+{
+	text-align:center;
+	margin: 10px 0 20px 0;
+	color: rgba(38, 116, 183, 1);
+}
+
+#accordion li
+{
+	margin: 0 0 0 19px;
+}
+
+ol
+{
+	line-height: 0.5em;
+}
+
+.panel
+{
+	margin-bottom:8px !important;
+}

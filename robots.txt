@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /juegos/comprar/
+
+Sitemap: http://steambuy.com.ar/sitemap.xml

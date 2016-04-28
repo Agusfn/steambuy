@@ -1,0 +1,371 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+.main_content
+{
+	padding-left:25px;
+	padding-right:25px;
+	padding-bottom:50px;
+}
+
+.notfound
+{
+	font-size:22px;
+	text-align:center;
+	color:#333;
+	margin: 35px 0;
+}
+
+
+.product_info_top
+{
+	height:187px;
+}
+
+
+.pit_left
+{
+	float:left;
+	width:523px;
+}
+
+.product_name
+{
+	height:57px;
+	font-size:22px;
+	margin:20px 18px 0 18px;
+	color:#444;
+	overflow:hidden;
+	/*text-shadow: 1px 2px 3px rgb(200,200,200);*/
+	line-height: 1.3em;
+}
+
+.purchase_info
+{
+	height:60px;
+	background-color:#EDEDED;
+	margin-top:21px;
+	-webkit-box-shadow: 0px 1px 2px 0px rgba(50, 50, 50, 0.4);
+	-moz-box-shadow:    0px 1px 2px 0px rgba(50, 50, 50, 0.4);
+	box-shadow:         0px 1px 2px 0px rgba(50, 50, 50, 0.4);
+}
+
+.out_of_stock
+{
+	text-align: center;
+	color: #555;
+	padding-top: 18px;	
+}
+
+.btn_purchase
+{
+	float:left;
+	font-size:16px;
+	margin: 12px 0 0 59px;
+}
+
+
+.price_normal
+{
+	float:right;
+	font-size: 17px;
+	margin: 18px 32px 0px;
+}
+
+.price_normal span
+{
+	font-size: 14px;
+	color: #444;
+}
+
+.pricebox_discount
+{
+	float:right;
+	margin: 0 30px 0 0;
+}
+
+.pd_percent
+{
+	font-size: 21px;
+	padding: 20px 12px;
+	background-color: rgba(52, 97, 156, 1);
+	color: #EEE;
+	margin-top: -7px;
+	float: left;
+	-webkit-box-shadow: -2px 0px 2px 0px rgba(24, 24, 24, 0.4);
+	-moz-box-shadow:    -2px 0px 2px 0px rgba(24, 24, 24, 0.4);
+	box-shadow:         -2px 0px 2px 0px rgba(24, 24, 24, 0.4);
+}
+
+.pd_percent:before
+{
+	width: 0px;
+	border-left: 5px solid transparent;
+	border-bottom: 6px solid rgba(60, 80, 116, 1);
+	position: absolute;
+	height: 0px;
+	content: "";
+	margin: -20px 0 0 -17px;
+			
+}
+
+.pd_prices
+{
+	float: left;
+	padding: 9px;
+	margin: -1px 0px 0px;
+	text-align: center;
+	border:1px solid rgba(216, 216, 216, 1);
+	border-left:none;
+	background-color: rgba(248, 248, 248, 1);
+}
+
+.pd_listprice
+{
+	margin-bottom: 3px;
+	font-size: 13px;
+	color: #666;
+	text-decoration: line-through;
+}
+
+.pd_listprice span { font-size:11px; }
+
+.pd_finalprice
+{
+	border-top: 1px solid #D5D5D5;
+}
+
+.pd_finalprice span { font-size:12px; }
+
+.discount_info
+{
+	text-align: center;
+	padding: 4px 0;
+	font-weight: bold;
+	border-radius: 0 0 3px 3px;
+	-webkit-box-shadow: 0px 1px 2px 0px rgba(50, 50, 50, 0.36);
+	-moz-box-shadow:    0px 1px 2px 0px rgba(50, 50, 50, 0.36);
+	box-shadow:         0px 1px 2px 0px rgba(50, 50, 50, 0.36);
+}
+
+.ltd_stock 
+{
+	position: absolute;
+	margin: -24px 0px 0px 426px;
+	color: #ECECEC;
+	font-size: 11px;
+}
+
+.di_amazon > .ltd_stock
+{
+	color: #555;
+}
+
+.di_steambuy
+{
+	background-color: #35578A;
+	color: #E6E6E6;
+}
+.di_steam
+{
+	background-color: rgba(50, 50, 50, 1);
+    color: rgba(231, 231, 231, 1);
+}
+
+.di_amazon
+{
+	background-color: #FEF9D1;
+	color: #3B3A3A;
+}
+
+
+.di_humblebundle
+{
+	background-color: #282C34;
+	color: #C00;
+}
+
+.di_bundlestars
+{
+	background-color: #2A2A2A;
+	color: #8EE142;
+}
+
+
+.product_picture
+{
+	float: right;
+	width: 400px;
+	height:187px;
+}
+
+
+.product_info_middle
+{
+	margin:30px 0 20px 0;
+	height:380px;
+}
+
+.product_info_middle .panel
+{
+	border:none;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.18);
+}
+
+.pim_left
+{
+	float:left;
+	width:620px;
+}
+
+.panel_img
+{
+	width: 620px;
+	margin:0;
+}
+
+.panel_img > .panel-body
+{
+	padding:0;
+}
+
+#product_picture_carousel
+{
+	border-radius:0 0 4px 4px;
+	overflow:hidden;
+	width: 618px;
+	height: 348px;
+}
+
+#product_picture_carousel img
+{
+	width: 618px;
+	height: 348px;
+}
+
+.pim_right
+{
+	float:right;
+	width:300px;
+}
+
+.product_feature_list
+{
+	list-style:none;
+}
+
+.product_feature_list li
+{
+	height:28px;
+	margin-bottom:3px;
+}
+
+.pfl_icon
+{
+	float: left;
+	background-color: #EEEEEE;
+	margin-right: 3px;
+	height: 28px;
+	padding: 0px 7px 0px;
+}
+
+.pfl_iconimg
+{
+	width:22px;
+	height:22px;
+	margin-top:3px;
+}
+
+.pfl_icon + .pfl_text
+{
+	float: left;
+	width: 245px;
+	text-align:left;
+}
+
+.pfl_text
+{
+	background-color: #EAEAEA;
+	width: 100%;
+	height:28px;
+	padding: 3px 7px;	
+	text-align:center;
+}
+
+.panel_tags
+{
+	margin-top:30px;
+}
+
+.panel_tags .panel-body
+{
+	max-height: 132px;
+	overflow: hidden;
+}
+
+.product_tag
+{
+	float: left;
+    background-color: rgba(72, 123, 192, 1);
+    margin: 0 6px 3px 0;
+    color: rgba(240, 240, 240, 1);
+    border-radius: 2px;
+    padding: 1px 4px;
+}
+
+.product_tag:hover
+{
+	background-color:rgba(53, 94, 150, 1);
+}
+
+
+.description_text_wrap
+{
+	margin: -250px 3px 0px;
+	min-height: 210px;
+}
+
+.product_description
+{
+	text-align:justify;
+}
+
+.product_description ul
+{
+	margin: 5px 0 0 15px;
+}
+
+.game_area_description h2.bb_tag {
+    margin-top: 18px;
+    margin-bottom: 0px;
+    background-image: none;
+    font-size: 15px;
+    color: #3A7FA7;
+	font-weight: bold;
+}
+
+.game_area_description ul {
+    margin-left: 16px;
+    list-style-type: square;
+}
+
+ul br
+{
+	display: block;
+	line-height:0;
+  	margin: 0;
+	content: " ";
+}
+
+.separator
+{
+	height: 1px;
+    border-bottom: 1px solid #CCC;
+    margin: 35px;
+}
+
+.fbcomments
+{
+	text-align:center;
+}

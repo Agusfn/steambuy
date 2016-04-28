@@ -1,0 +1,173 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+.main_content
+{
+
+	padding: 65px 10px 10px;
+	
+	
+	
+}
+
+#order_count
+{
+	margin-bottom: 12px;
+	font-weight: bold;
+}
+
+.order_links_table .fa-database
+{
+	font-size:17px;
+}
+
+.orderlist_navbar
+{
+	height:48px;
+	border-bottom: 1px solid #CCC;
+	margin-bottom: 10px;
+}
+
+.orderlist_optionsbar
+{
+	height:60px;
+}
+
+.searchinfo_bar
+{
+	margin: 7px 0 0 11px;
+	float:left;	
+}
+
+.steam_fetch_loading
+{
+    float: right;
+    font-size: 11px;
+    margin: 10px 10px 0;	
+}
+
+#today_payments
+{
+	font-size:13px;
+}
+
+#today_payments_box
+{
+    position: absolute;
+    background-color: #FFF;
+    padding: 20px 50px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 3px 0px #555;
+    margin: -15px 0 0 115px;
+	display:none;
+}
+
+#today_payments_box table
+{
+	table-layout:fixed; 	
+}
+
+#today_payments_box table tr { height:1em;  }
+
+
+#today_payments_box table td
+{
+	padding:1px 4px;
+	overflow:hidden;
+	white-space:nowrap;
+}
+
+.ordertypes_bar
+{
+	float:left;
+	text-align:center;
+	margin-left: 67px;
+}
+
+
+.searchorder_bar
+{
+	float:right;
+	margin-right: 10px;
+}
+
+#searchorder_input
+{
+	width: 200px;
+	display: inline-block;
+}
+
+#searchorder_button
+{
+	margin-bottom: 4px;
+}
+
+.selected_orders_count
+{
+	float:right;
+	margin: 5px 32px 0px 0px;
+	display:none;
+}
+
+.orders_table
+{
+	width:977px;
+	margin-top:20px;
+}
+
+.orders_table td
+{
+	padding:3px 5px !important;
+}
+
+.data_table 
+{ 
+	table-layout:fixed; 
+	font-size:14px;
+
+}
+
+.data_table > thead > tr > th
+{
+	line-height:1.2;
+}
+
+.of_hidden
+{
+	overflow:hidden; 
+	white-space: nowrap;
+}
+
+.data_table td { overflow: hidden; }
+
+.data_table th { overflow: hidden; }
+
+.green_row > td
+{
+	background-color: rgba(211, 246, 209, 1) !important;
+}
+
+.expire_button
+{
+	cursor:pointer;
+}
+
+
+.steam_price
+{
+	font-size:10px;
+}
+
+.order_select
+{
+	cursor:pointer;
+}
+
+.pagination_bar
+{
+	padding: 10px 0px;
+	text-align: center;
+	background-color: #EAEAEA;
+	margin-bottom:10px;
+}

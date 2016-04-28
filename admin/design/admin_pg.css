@@ -1,0 +1,104 @@
+@charset "utf-8";
+/* CSS Document */
+
+.main_content
+{
+	padding: 45px 10px 10px;
+}
+
+.table
+{
+	margin-bottom:0;
+}
+
+.main_table
+{
+	width:100%;
+	table-layout:fixed; 
+}
+
+.table_scroll_container
+{
+	border-bottom: 1px solid #BBB;
+	overflow-y:scroll;
+	height:400px;
+	width:648px;
+}
+
+.green_row > td
+{
+	background-color: rgba(211, 246, 209, 1) !important;
+}
+
+.data_table 
+{ 
+	table-layout:fixed; 
+	font-size:14px;
+
+}
+
+.data_table > thead > tr > th
+{
+	line-height:1.2;
+}
+
+.of_hidden
+{
+	overflow:hidden; 
+	white-space: nowrap;
+}
+
+.data_table td { overflow: hidden; }
+
+.data_table th { overflow: hidden; }
+
+.box_subtitle
+{
+	padding: 13px 0px 13px 6px;
+	font-weight: bold;
+	color: rgba(24, 149, 11, 1);
+}
+
+
+#input_fixedquote
+{
+	width: 70px;
+	display: inline-block;
+}
+
+
+#calculator_input
+{
+	width:100px;
+	display:inline-block;
+	margin:0 7px 0 10px;
+}
+
+
+/* Banlist */
+
+
+
+#banform_ip
+{
+	display: inline;
+	width: 160px;
+}
+
+#banform_reason
+{
+	display: inline;
+	width: 160px;
+}
+
+#banform_addban
+{
+	margin: 0px 0px 3px 20px;
+}
+
+.banlist_remove
+{
+	font-size: 16px;
+	padding: 2px;
+	cursor:pointer;
+}

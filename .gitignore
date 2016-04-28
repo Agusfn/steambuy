@@ -1,0 +1,10 @@
+*.log
+_notes/
+/sitemap.xml
+/data/
+/global_scripts/AfipWs/resources/TA/
+/global_scripts/php/facturado.txt
+/global_scripts/php/giftid_assoc_list.txt
+/global_scripts/php/cuentadigital_error_log.txt
+/global_scripts/php/afipWs_fails.txt
+/global_scripts/config.php

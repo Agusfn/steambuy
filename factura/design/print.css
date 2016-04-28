@@ -1,0 +1,17 @@
+@charset "utf-8";
+
+.print
+{
+	display:none;	
+}
+
+.wrapper
+{
+	/*border: 0;*/
+	background-color: #FFF;
+}
+
+.invoice_head, .invoice_buyer_info, .invoice_totals
+{
+	border-color:#555;
+}

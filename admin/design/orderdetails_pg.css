@@ -1,0 +1,79 @@
+@charset "utf-8";
+
+/* Inputs de modals de modificaciones de pedidos */
+
+
+
+.new_name_field
+{
+	margin-top:10px;
+}
+
+.new_name_field input
+{
+	display: inline-block;
+	width: 300px;
+	margin-left: 15px;
+}
+
+.new_price_field
+{
+	margin-top:10px;
+}
+
+.new_price_field input
+{
+	display: inline-block;
+	width: 100px;
+	margin-left: 15px;
+}
+
+#expire_order_modal .radio
+{
+	margin-bottom:15px;
+}
+
+.inform_status_box
+{
+	float:right;
+	margin-right:60px;	
+	display:none;
+}
+
+#offer_end_time {
+	margin-bottom:15px;	
+	display:none;
+}
+
+#reject_inform_reason {
+	display:none;
+}
+
+
+/****/
+
+.orderoptions_navbar
+{
+	padding: 7px 0px;
+	background-color: rgba(228, 228, 228, 1);
+}
+
+#opt_toggle_notify
+{
+	float:right;
+	margin-right:15px;
+}
+
+
+.product_name
+{
+	width: 297px;
+	display: inline-block;
+	margin-left: 8px;
+}
+
+#reject_inform
+{
+	color:#C00;
+	cursor:pointer;
+}

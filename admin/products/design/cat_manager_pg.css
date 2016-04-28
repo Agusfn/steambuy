@@ -1,0 +1,223 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+.main_content
+{
+	padding: 59px 15px 10px;
+}
+
+
+/** Cuadro de edicion/adición de productos **/
+
+
+#modal_productdata > .modal-dialog
+{
+	width:700px;
+}
+
+.wait
+{
+	cursor:wait !important;
+}
+
+.mpd_line
+{
+	height: 52px;
+	margin-top:25px;
+}
+
+#mpd_productid
+{
+	float: left;
+	font-size: 18px;
+	margin: 14px 0 0 35px;
+}
+
+#mpd_delete_product
+{
+	float: right;
+	margin-top:7px;
+	display:none;
+}
+
+#steam_link, #steamdb_link {
+	font-size:13px;	
+}
+
+#mpd_get_product_data
+{
+	padding: 5px 14px;
+}
+
+
+#mpd_has_limitedunits, #mpd_limitedunits, #mpd_has_customprice, #mpd_customprice_currency, #mpd_ext_limitedoffer
+{
+	width:100px;
+}
+
+#mpd_listprice, #mpd_finalprice
+{
+	display:inline-block;
+	width:80px;
+}
+
+#mpd_steam_discount_price
+{
+	font-size: 12px;
+	padding: 3px 6px;
+	height: 27px;
+	width: 60px;
+}
+
+#mpd_pics
+{
+	font-size:11px;
+}
+
+#mpd_tags
+{
+	font-size:14px;
+}
+
+#product_img_mainpic
+{
+	width: 225px;
+	margin-top: 15px;
+}
+
+#mpd_description
+{
+	width:410px;
+	height:152px;
+	min-height:60px;
+	resize:vertical;
+	font-size:13px;
+}
+
+.mpd_bottom
+{
+	min-height: 175px;
+	margin-top:25px;
+}
+
+/******/
+
+.product_container
+{
+	width: 963px;
+	margin:15px auto;	
+}
+
+
+#sortable
+{
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0;
+}
+
+.pc_product
+{
+	width:103px;
+	height:103px;
+	background-color:#E9E9E9;
+	float: left;
+	margin: 2px;
+	padding:2px;
+	cursor:pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.pc_product:hover
+{
+	box-shadow: 0px 0px 2px 0px rgba(126, 126, 126, 1);
+}
+
+
+.pcp_top
+{
+	height:36px;
+}
+
+.pcp_sellingsite
+{
+	width: 18px;
+	height: 18px;
+	margin: 1px 0px 0px 1px;
+}
+
+.pcp_img
+{
+	float: right;
+	width: 77px;
+	height:36px;
+}
+
+
+.pcp_middle
+{
+	font-size: 12px;
+	margin-top: 1px;
+	line-height: 1em;
+	height: 36px;	
+	overflow:hidden;
+}
+
+.pcp_bottom
+{
+	margin-top:1px;
+}
+
+.pcp_stock
+{
+	float:left;
+	line-height: 1em;
+	font-size: 11px;
+	width: 36px;
+	text-align:center;
+	color: rgba(47, 101, 171, 1);
+	margin-top:2px;
+}
+
+.pcp_price
+{
+	float: right;
+	line-height: 1em;
+	width: 60px;
+	height:27px;
+	text-align: center;
+	margin-top: -2px;
+	font-size:12px;
+	
+}
+
+
+#btn_loadinfo
+{
+	float:left;
+	margin: 24px 0px 0px 11px;
+	background-image:url(refresh.png);
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+
+/*****/
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { float: left; clear:left; padding: 0 0 0 5px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 45%; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; padding: 0 5px 0 0; }
+.ui-timepicker-rtl dl dt{ float: right; clear: right; }
+.ui-timepicker-rtl dl dd { margin: 0 45% 10px 10px; }

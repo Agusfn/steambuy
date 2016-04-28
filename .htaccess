@@ -1,0 +1,31 @@
+# Use PHP5 Single php.ini as default
+AddHandler application/x-httpd-php5s .php
+# For security reasons, Option followsymlinks cannot be overridden.
+#Options +FollowSymLinks
+Options +SymLinksIfOwnerMatch
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)([^/])$        /$1$2/ [L,R=301]
+
+RewriteRule ^juegos/([0-9-_]+)/?$ juegos/juego.php?id=$1 [L]
+
+
+
+Options -Indexes
+ErrorDocument 404 /404.html
+ErrorDocument 403 /403.html
+
+SetEnvIfNoCase Referer "^http://www.steambuy.com.ar/" locally_linked=1
+SetEnvIfNoCase Referer "^http://www.steambuy.com.ar$" locally_linked=1
+SetEnvIfNoCase Referer "^http://steambuy.com.ar/" locally_linked=1
+SetEnvIfNoCase Referer "^http://steambuy.com.ar$" locally_linked=1
+SetEnvIfNoCase Referer "^http://localhost/steambuy/" locally_linked=1
+SetEnvIfNoCase Referer "^http://localhost/steambuy$" locally_linked=1
+SetEnvIfNoCase Referer "^http://localhost/steambuy_av/" locally_linked=1
+SetEnvIfNoCase Referer "^http://localhost/steambuy_av$" locally_linked=1
+SetEnvIfNoCase Referer "^$" locally_linked=1
+<FilesMatch "\.(gif|png|jpe?g)$">
+  Order Allow,Deny
+  Allow from env=locally_linked
+</FilesMatch>

@@ -1,0 +1,118 @@
+@charset "utf-8";
+/* CSS Document */
+
+body
+{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:15px;
+}
+
+
+.alert
+{
+	color:#A00000;
+	background-color:#FFE1E1;
+	padding:17px;
+	border-color:#400000;
+	border-radius:6px;
+	margin:0 auto;
+	width:500px;
+}
+
+.print
+{
+	text-align:center;
+	margin:10px 0
+}
+
+.wrapper
+{
+	width:192mm;
+	border: 1px solid #BBB;
+	background-color: #F9F9F9;
+	margin:10px auto;
+}
+
+.invoice_head
+{
+	height: 190px;
+	border-bottom: 1px solid #AAA;	
+}
+
+.invoice_head_left
+{
+	float:left;
+}
+
+
+.logo
+{
+	width:320px;
+	margin:10px 0 0 10px;
+}
+
+.invoice_head_right
+{
+	float:right;
+	width:94mm;
+}
+
+
+.invoice_type
+{
+	margin: 30px 0px 0 80px;
+	font-size: 26px;
+	color: #333;	
+}
+
+
+.invoice_buyer_info
+{
+	padding:13px 25px;
+	border-bottom: 1px solid #AAA;	
+}
+
+
+.invoice_body
+{
+	padding: 10px 0;
+	min-height:300px;	
+}
+
+.invoice_body table
+{
+	width:185mm;
+	margin-left:4mm;	
+	border-collapse: separate;
+	border-spacing: 0.4em;
+}
+
+
+.invoice_body table thead
+{
+	background-color:#DDD;
+}
+
+
+.invoice_totals
+{
+	height:75px;
+	padding: 20px 30px;
+	border-top: 1px solid #AAA;
+	border-bottom: 1px solid #AAA;	
+}
+
+
+.barcode_area
+{
+	float:left;
+}
+
+
+
+.barcode_area > div
+{
+	text-align:center;
+	font-size:13px;	
+}
+

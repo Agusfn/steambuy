@@ -140,7 +140,7 @@ $(document).ready(function() {
 					var the_price = 0;
 					if(br_usd_price < mx_usd_price) the_price = br_usd_price; else the_price = mx_usd_price;
 					
-					var selling_price = (the_price / 2) * 2.88;
+					var selling_price = the_price * 1.35;
 					if(selling_price < $("#mpd_finalprice").val()) {
 						$("#mpd_finalprice").val(selling_price.toFixed(2));
 						$("#mpd_has_customprice")[0].selectedIndex = 1;

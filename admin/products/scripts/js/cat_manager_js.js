@@ -136,11 +136,14 @@ $(document).ready(function() {
 					
 					var br_usd_price = pinfo["brl_price"]["finalprice"]/brl_quote;
 					var mx_usd_price = pinfo["mxn_price"]["finalprice"]/mxn_quote;
+
+					var cheap_price = 0;
+					var selling_price = 0;
+					if(br_usd_price < mx_usd_price) cheap_price = br_usd_price; else cheap_price = mx_usd_price;
 					
-					var the_price = 0;
-					if(br_usd_price < mx_usd_price) the_price = br_usd_price; else the_price = mx_usd_price;
-					
-					var selling_price = the_price * 1.35;
+					if(cheap_price < 32) selling_price = cheap_price * 1.25;
+					else if(cheap_price >= 32) selling_price = cheap_price * 1.3;
+
 					if(selling_price < $("#mpd_finalprice").val()) {
 						$("#mpd_finalprice").val(selling_price.toFixed(2));
 						$("#mpd_has_customprice")[0].selectedIndex = 1;

@@ -338,46 +338,46 @@ function calcGamePrice($paymentMethod, $gamePrice, $quote)
 	} else if($gamePrice >= 1.5 && $gamePrice < 2.5) { 
 	
 		$firstprice = calcGamePrice2($paymentMethod, 1.5, $quote, 0.12);
-        $secondprice = calcGamePrice2($paymentMethod, 2.5, $quote, 0.25);
+        $secondprice = calcGamePrice2($paymentMethod, 2.5, $quote, 0.24);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 100;
         $total = (($gamePrice - 1.5) * 100) * $pesosPerCent + $firstprice;
 
 	} else if($gamePrice >= 2.5 && $gamePrice < 5) { 
 	
-		$firstprice = calcGamePrice2($paymentMethod, 2.5, $quote, 0.25);
-        $secondprice = calcGamePrice2($paymentMethod, 5, $quote, 0.24);
+		$firstprice = calcGamePrice2($paymentMethod, 2.5, $quote, 0.24);
+        $secondprice = calcGamePrice2($paymentMethod, 5, $quote, 0.23);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 250;
         $total = (($gamePrice - 2.5) * 100) * $pesosPerCent + $firstprice;	
 	
 	} else if($gamePrice >= 5 && $gamePrice < 7.5) { 
 
-		$firstprice = calcGamePrice2($paymentMethod, 5, $quote, 0.24);
-        $secondprice = calcGamePrice2($paymentMethod, 7.5, $quote, 0.23);
+		$firstprice = calcGamePrice2($paymentMethod, 5, $quote, 0.23);
+        $secondprice = calcGamePrice2($paymentMethod, 7.5, $quote, 0.22);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 250;
         $total = (($gamePrice - 5) * 100) * $pesosPerCent + $firstprice;		
 	
 	} else if($gamePrice >= 7.5 && $gamePrice < 10) { 
 	
-		$firstprice = calcGamePrice2($paymentMethod, 7.5, $quote, 0.23);
-        $secondprice = calcGamePrice2($paymentMethod, 10, $quote, 0.22);
+		$firstprice = calcGamePrice2($paymentMethod, 7.5, $quote, 0.22);
+        $secondprice = calcGamePrice2($paymentMethod, 10, $quote, 0.21);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 250;
         $total = (($gamePrice - 7.5) * 100) * $pesosPerCent + $firstprice;	
 	
 	} else if($gamePrice >= 10 && $gamePrice < 15) {
 		
-		$firstprice = calcGamePrice2($paymentMethod, 10, $quote, 0.22);
-        $secondprice = calcGamePrice2($paymentMethod, 15, $quote, 0.21);
+		$firstprice = calcGamePrice2($paymentMethod, 10, $quote, 0.21);
+        $secondprice = calcGamePrice2($paymentMethod, 15, $quote, 0.20);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 500;
         $total = (($gamePrice - 10) * 100) * $pesosPerCent + $firstprice;	
 		 
 	} else if($gamePrice >= 15 && $gamePrice < 20) {
 		
-		$firstprice = calcGamePrice2($paymentMethod, 15, $quote, 0.21);
+		$firstprice = calcGamePrice2($paymentMethod, 15, $quote, 0.20);
         $secondprice = calcGamePrice2($paymentMethod, 20, $quote, 0.19);
         $difference = $secondprice - $firstprice;
         $pesosPerCent = $difference / 500;
@@ -464,13 +464,13 @@ function calcGamePrice2($paymentMethod, $gamePrice, $quote, $profitpercentage)
 		
 		$productCost = $gamePrice * $quote; // El costo del juego final en pesos
 		$profit = $productCost * $profitpercentage; // La ganancia: un porcentaje sobre el costo final en pesos
-		$total = -1.05086 * ((-1 * ($profit + $productCost)) - 1.5125) + 2; // Precio final a vender; se le suman los costos de cuentadigital
+		$total = -1.05086 * ((-1 * ($profit + $productCost)) - 1.5125) + 1; // Precio final a vender; se le suman los costos de cuentadigital
 		return $total;
 		
 	} else if($paymentMethod == 2) {
 		$productCost = $gamePrice * $quote;
 		$profit = $productCost * $profitpercentage;
-		$total = -1.015 * (-1 * ($profit + $productCost)) + 2;
+		$total = -1.015 * (-1 * ($profit + $productCost)) + 1;
 		return $total;
 	}
 }

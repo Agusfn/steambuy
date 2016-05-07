@@ -257,8 +257,8 @@ function applyProductsOrder()
 			$("#btn_reorder").addClass("wait");
 		},
 		success:  function (response) {
-			if(response == 1) location.reload(); 
-			else alert(response);	
+			if(response == 1) location.reload();
+			else alert(response);
 		}
 	});
 }
@@ -465,10 +465,13 @@ function saveProductInfo()
 										
 		success:  function (response) {
 			$("#modal_productdata").removeClass("wait");
-			if(response == 1) applyProductsOrder();
-			else {
-				$("#mpd_btn_save").attr("disabled",false);
-				$("#modal_productdata").data('bs.modal').isShown = true;
+			$("#modal_productdata").data('bs.modal').isShown = true;
+			$("#mpd_btn_save").attr("disabled",false);
+			if(response == 1) { 
+				$('#modal_productdata').modal('hide');
+				$("#p"+current_id+" .pcp_middle").html($("#mpd_productname").val()+" <span style='color:#900;font-size:11px'>(Editado)</span>");
+			} else {
+				alert(response);
 			}
 		}
 	});

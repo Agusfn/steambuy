@@ -151,7 +151,8 @@ $(document).ready(function(e) {
 				gf_error_text += "<li>Ingresa una URL válida</li>";
 			} else {
 				if(gf_product_sellingsite == 0) {
-					if(gf_product_siteurl.indexOf("store.steampowered.com") == -1) gf_error_text += "<li>La URL ingresada no parece ser de la tienda de Steam</li>";
+					var pattern = /^(https?:\/\/)?store\.steampowered\.com\/(app|sub)\/[0-9]{1,10}(\/.*)?$/i;
+					if(!pattern.test(gf_product_siteurl)) gf_error_text += "<li>La URL de Steam ingresada es inválida. Ejemplo de URL: http://store.steampowered.com/app/730/ </li>";
 				} else if(gf_product_sellingsite == 1) {
 					if(gf_product_siteurl.indexOf("amazon.com") == -1) gf_error_text += "<li>La URL ingresada no parece ser de Amazon.com</li>";
 				}	

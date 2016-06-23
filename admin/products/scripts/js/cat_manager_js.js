@@ -147,6 +147,8 @@ $(document).ready(function() {
 					if(selling_price < $("#mpd_finalprice").val()) {
 						$("#mpd_finalprice").val(selling_price.toFixed(2));
 						$("#mpd_has_customprice")[0].selectedIndex = 1;
+						$("#mpd_customprice_currency")[0].selectedIndex = 0;
+						$("#mpd_customprice_currency").prop("disabled", false).trigger("change");
 					} else alert("El precio sugerido via brl/mxn es mayor al precio actual ("+selling_price.toFixed(2)+")");
 					
 					

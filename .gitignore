@@ -8,3 +8,5 @@ _notes/
 /global_scripts/php/cuentadigital_error_log.txt
 /global_scripts/php/afipWs_fails.txt
 /global_scripts/config.php
+/dev/trapitos_enviar.php
+/dev/trapitos_obtener.php

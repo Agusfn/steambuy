@@ -96,8 +96,8 @@ if(isset($_POST["type"])) {
 		// ****** Crear orden *******
 		$order = new order($con);
 		
-		if($order->createGameOrder($payment_method, mysqli_real_escape_string($con, $gameName), "", $gameSellingSite, 
-		mysqli_real_escape_string($con, $gameSiteUrl), $gameDiscount, $gameUsdPrice, $gameArsPrice, mysqli_real_escape_string($con, $clientName), 
+		if($order->createGameOrder($payment_method, mysqli_real_escape_string($con, $gameName), "", mysqli_real_escape_string($con, $gameSellingSite), 
+		mysqli_real_escape_string($con, $gameSiteUrl), mysqli_real_escape_string($con, $gameDiscount), $gameUsdPrice, $gameArsPrice, mysqli_real_escape_string($con, $clientName), 
 		mysqli_real_escape_string($con, $clientEmail), mysqli_real_escape_string($con, $_POST["client_ip"]))) 
 		{
 				

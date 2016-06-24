@@ -265,9 +265,9 @@
 .catalog_title
 {
 	color: #EDEDED;
-	padding: 3px 0px;
-	font-size: 14px;
-	margin-left: 20px;
+	padding: 5px 0px;
+	font-size: 16px;
+	text-align: center;
 }
 
 .event_catalog_product

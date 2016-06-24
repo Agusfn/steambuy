@@ -214,6 +214,7 @@ if($count[0] > 0) {
                               <ul class="dropdown-menu">
                                 <li><a href="javascript:void(0);" id="orderoptions_getlinks">Ver links de productos</a></li>
                                 <li><a href="javascript:void(0);" id="orderoptions_viewemails">Ver e-mail compradores</a></li>
+                                <li><a href="javascript:void(0);" id="orderoptions_cancelorders">Cancelar</a></li>
                                 <li><a href="javascript:void(0);" id="orderoptions_expireorders">Expirar</a></li>
                                 <li><a href="javascript:void(0);" id="orderoptions_concreteorders">Marcar como concretado</a></li>
                               </ul>

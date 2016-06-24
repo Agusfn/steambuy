@@ -62,7 +62,7 @@ $steam_sales_featured_items = 15;
 		<script type="text/javascript" src="global_scripts/js/jquery-1.8.3.min.js"></script>     
         <script type="text/javascript" src="global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>      
 		<script type="text/javascript" src="global_scripts/js/global_scripts.js"></script>
-        <script type="text/javascript" src="scripts/js/main_page.js?2"></script>
+        <script type="text/javascript" src="scripts/js/main_page_2.js"></script>
 
     </head>
     
@@ -237,7 +237,7 @@ $steam_sales_featured_items = 15;
 					?>
                     <div class="event_section">
                         <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
-                        <div class="event_catalog" <?php echo "style='height:".(25+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
+                        <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
                             
                             <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
                             <?php
@@ -552,7 +552,7 @@ $steam_sales_featured_items = 15;
                         </div>
                     </div>
 
-					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
+					<div style="height:800px"><a class="twitter-timeline" height="800" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
     				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
                 </div>
             

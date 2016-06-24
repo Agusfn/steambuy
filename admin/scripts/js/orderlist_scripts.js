@@ -166,7 +166,40 @@ $(document).ready(function(e) {
 		alert(emailList);
     });
 	
-	
+	$("#orderoptions_cancelorders").click(function(e) {
+        var selected_orders = getSelectedOrders();
+		if(selected_orders.length == 0) {
+			alert("Selecciona algún pedido");
+			return;
+		} 
+		var orderids = JSON.stringify(selected_orders);
+		var razon = prompt("Ingrese el motivo:");
+		$.ajax({
+			data:{"action":"cancel", "reason":razon, "orders":orderids, "key":"v4d87s3nb12k8f2c7f21b4u1rff8s1yh3"},
+			url:"scripts/php/ajax_orderlist_options.php",
+			type:"post",
+			beforeSend: function() {
+				$(".main_content").css("cursor","wait");
+			},
+			success:function(response) {
+				$(".main_content").css("cursor","default");
+				$("input:checkbox").prop("checked",false);
+				console.log(response);
+				var result = JSON.parse(response);
+				if(result["error"] == 0) {
+					selected_orders.forEach(function(entry) {
+						var table_row = $("#"+entry).closest("tr");
+						table_row.animate({
+							opacity: 'toggle'
+						}, 700, 'linear');							
+					});
+				} else if(result["error"] == 1) {
+					alert(result["error_text"]);	
+				}
+			}
+		});	
+			
+    });
 	
 	$("#orderoptions_expireorders").click(function(e) {
         var selected_orders = getSelectedOrders();

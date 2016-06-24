@@ -31,8 +31,33 @@ foreach($orders as $orderid) {
 		$result["error_text"] = "No se encontró pedido activo ".$orderid;
 		break;
 	}
+	
+	if($_POST["action"] == "cancel" && isset($_POST["reason"])) {
+		
+		$subject = "Tu pedido por el juego ".$orderInfo["product_name"]." ha sido cancelado";
+		$body = "Estimado/a ".$orderInfo["buyer_name"].", el pedido ID <strong>".$orderInfo["order_id"]."</strong> que realizaste por el juego <strong>".$orderInfo["product_name"]."</strong> 
+		ha sido cancelado debido a: ".$_POST["reason"]."<br/><br/>
+		Si ya abonaste el pedido, <a href='mailto:contacto@steambuy.com.ar'>contáctanos</a> para solicitar un cambio de producto o un reembolso.<br/><br/>
+		Un saludo,<br/>
+		El equipo de SteamBuy";
+		
+		$mail = sendEmail($orderInfo["buyer_email"], $orderInfo["buyer_name"], $subject, $body);
+			
+		if($mail["error"]) {
+			$result["error"] = 1;
+			$result["error_text"] = "No se pudo enviar e-mail del pedido ".$orderid.". Error: ".$mail["error_text"];
+			break;		
+		} else {
+			if(cancelOrder($orderid)) {
+				$orders_successful += 1;
+			} else {
+				$result["error"] = 1;
+				$result["error_text"] = "No se pudo cancelar pedido ".$orderid.". (Mail enviado)";
+				break;		
+			}
+		}
 
-	if($_POST["action"] == "expire") {
+	} else if($_POST["action"] == "expire") {
 		
 		$subject = "Tu pedido por el juego ".$orderInfo["product_name"]." ha expirado";
 		$body = "Estimado/a ".$orderInfo["buyer_name"].", el pedido ID <strong>".$orderInfo["order_id"]."</strong> que realizaste por el juego <strong>".$orderInfo["product_name"]."</strong> 

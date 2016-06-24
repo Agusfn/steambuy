@@ -141,8 +141,8 @@ $(document).ready(function() {
 					var selling_price = 0;
 					if(br_usd_price < mx_usd_price) cheap_price = br_usd_price; else cheap_price = mx_usd_price;
 					
-					if(cheap_price < 32) selling_price = cheap_price * 1.25;
-					else if(cheap_price >= 32) selling_price = cheap_price * 1.3;
+					if(cheap_price < 32) selling_price = cheap_price * 1.33;
+					else if(cheap_price >= 32) selling_price = cheap_price * 1.38;
 
 					if(selling_price < $("#mpd_finalprice").val()) {
 						$("#mpd_finalprice").val(selling_price.toFixed(2));

@@ -39,9 +39,23 @@ $(document).ready(function(e) {
 		}
 	}
 	
-	/*if($(".left_column").height() > 1431) {
-		$(".main_content").height($(".left_column").height() + 30);
-	}*/
+	// Ajustar height de main_content
+	
+	var event_height = 0;
+	if($(".event_section").length) {
+		event_height = $(".event_section").outerHeight(true);
+	}
+	var leftcol_height = $(".left_column").outerHeight(true);
+	var rightcol_height = $(".right_column").outerHeight(true);
+	var new_height = 0;
+	
+	if(leftcol_height > rightcol_height) {
+		new_height = leftcol_height + event_height + 80;
+	} else {
+		new_height = rightcol_height + event_height + 80;
+	}
+	$(".main_content").css("height", new_height);
+	
 	
 	
 	// Catálogo slider

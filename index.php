@@ -17,7 +17,10 @@ if(isAdminLoggedIn())
 	$admin = true;
 }
 
-$event = false;
+
+// si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
+$steam_sales_event = true;
+$steam_sales_featured_items = 15;
 
 ?>
 <!DOCTYPE html>
@@ -230,23 +233,16 @@ $event = false;
         	
             <div class="main_content">
             	<?php
-				if($event) {
+				if($steam_sales_event) {
 					?>
-                    <div class="alert alert-danger" style="margin-bottom:15px;">
-                    <?php
-					$now = time();
-					if($now > strtotime("2016-01-02") && $now < strtotime("2016-01-04 13:00:00")) {
-						echo "<strong>Las ofertas de verano en SteamBuy finalizarán el 04/01/2016 a las 13:00 hs.</strong><br/>";
-					}
-					?>
-                    Debido a la alta cantidad de pedidos por las ofertas de verano, actualmente estamos con una demora en el envio de los mismos, extendiendo los tiempos de envío a entre 12 y 72 horas luego de abonados, sepan disculpar las molestias.</div>
                     <div class="event_section">
-                        <div class="event_title">OFERTAS DE VERANO DE STEAM<div class="event_duration">desde el 22 de diciembre hasta el 4 de enero</div></div>
-                        <div class="event_catalog">
+                        <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
+                        <div class="event_catalog" <?php echo "style='height:".(25+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
                             
                             <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
                             <?php
-							$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND `product_external_limited_offer`=1 AND `product_update_error`=0 ORDER BY `product_rating` DESC LIMIT 9";
+							$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0)) AND 
+							product_update_error = 0 ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
 							$query = mysqli_query($con, $sql);
 							
 							$results = array(); 
@@ -280,89 +276,50 @@ $event = false;
                 <div class="left_column">
   
                     <div class="panel panel-default panel_catalog" style="margin-top:5px;">
-                    	<?php
-						/*
-						VOLVER A COLOCAR LUEGO DE OFERTAS DE VERANO
-						
-						$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-							AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT 9,".(4*$filas_a);
-						
-						
-						<div class="panel-heading">Juegos más relevantes<a href="juegos/"><div class="panel_sidelink">Ver todos los juegos</div></a></div>
 
-						*/
-						?>
-                        <div class="panel-heading">Juegos y ofertas más relevantes<a href="juegos/"><div class="panel_sidelink">Ver todos los juegos</div></a></div>
+                        <div class="panel-heading"><?php echo ($steam_sales_event ? "Ofertas más relevantes" : "Juegos más relevantes") ?><a href="juegos/"><div class="panel_sidelink">Ver todos los juegos</div></a></div>
                         <div class="panel-body">
 							<?php
 							$filas_a = 4;
-							
+
 							$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-							AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".(4*$filas_a);
+							AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").(4*$filas_a);
 							$res = mysqli_query($con, $sql);
                             $i = 0;
                             while($pData = mysqli_fetch_assoc($res)) 
                             {
 								$displayedProducts[] = $pData["product_id"];
 								$i++;
-								?>
-								<a href="juegos/<?php echo $pData["product_id"]; ?>/">
-									<div class="catalog_product" <?php 
-									if(is_int($i/4) || $i > (4*$filas_a - 4)) {
-										echo "style='"; 
-										if(is_int($i/4)) echo "border-right:none;";
-										if($i > (4*$filas_a - 4)) echo "border-bottom:none;";
-										echo "'";	
-									}
-									?>>
-										<?php
-                                        if($pData["product_platform"] == 1) {
-                                            echo "<img src='global_design/img/icons/steam_20x20.png' class='cp_game_platform' alt='steam' />";	
-                                            } else if($pData["product_platform"] == 2) {
-                                            echo "<img src='global_design/img/icons/origin_20x20.png' class='cp_game_platform' alt='origin' />";	
-                                        }
-                                        if($pData["product_sellingsite"] == 3) {
-                                            echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-humblebundle'><div class='wo_img'>Humble Bundle</div></div></div>";
-                                        } else if($pData["product_sellingsite"] == 4) {
-                                            echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-bundlestars'><div class='wo_img'>Bundlestars</div></div></div>";
-                                        } else if($pData["product_has_customprice"] == 1) {
-                                            echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steambuy'><div class='wo_img'>OFERTA</div></div></div>";
-                                        } else if($pData["product_external_limited_offer"] == 1){
-                                            if($pData["product_sellingsite"] == 1) {
-                                                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steam'><img src='global_design/img/icons/steam_transparent_22x22.png' width='19' alt='oferta steam' /><div class='w_img'>OFERTA</div></div></div>";
-                                            } else if($pData["product_sellingsite"] == 2) {
-                                                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-amazon'><img src='global_design/img/icons/amazon_transparent_22x22.png' width='19' alt='oferta amazon' /><div class='w_img'>OFERTA</div></div></div>";
-                                            }
-                                        }
-                                            ?>
-                                        <div class="cp_img_blackscreen"></div>
-                                        <img src="data/img/game_imgs/small/<?php echo $pData["product_mainpicture"]; ?>" class="cp_game_img" alt="<?php echo $pData["product_name"]; ?>" />
-                                        <div class="cp_game_name"><?php echo $pData["product_name"]; ?></div>
-                                        <?php
-                                        if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") {
-                                            echo "<div class='cp_game_price'>&#36;".$pData["product_finalprice"]."</div>";
-                                        } else if(($pData["product_external_limited_offer"] == 0 && $pData["product_has_customprice"] == 0) || $pData["product_sellingsite"] == 4) {
-                                            echo "<div class='cp_game_price'>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";
-                                        } else if($pData["product_has_customprice"] == 1 || $pData["product_external_limited_offer"] == 1) {
-                                            echo "<div class='cp_game_price cp_discount'><span>&#36;".quickCalcGame(1,$pData["product_listprice"])."</span><br/>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";	
-                                        }
-                                        ?>
-									</div>
-								</a>
-								<?php
+								display_mainpage_catalog_product($pData, $i, $filas_a);
                             }
-                            ?> 
+                            ?>
                         </div>
                     </div>
                     <div class="panel panel-default panel_catalog">
-                        <div class="panel-heading">Ofertas propias aleatorias<a href="juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas</div></a></div>
+                    	<?php
+						if($steam_sales_event) {
+							?>
+                            <div class="panel-heading">Ofertas de Steam aleatorias<a href="juegos/?amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas las ofertas</div></a></div>	
+                            <?php
+						} else { ?>
+                            <div class="panel-heading">Ofertas propias aleatorias<a href="juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas</div></a></div>	
+						<?php
+						}
+						?>
+                        
                         <div class="panel-body">
 							<?php
 							
 							$filas_c = 4;
 							
-							$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+							if($steam_sales_event) {
+								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+							 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT 40";
+							} else {
+								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
 							 AND product_update_error = 0 AND product_has_customprice = 1 ORDER BY RAND() LIMIT 40";
+							}
+							
 							$res3 = mysqli_query($con, $sql);
                             $i = 0;
                             while($pData = mysqli_fetch_assoc($res3)) 
@@ -371,134 +328,135 @@ $event = false;
 								{
 									$displayedProducts[] = $pData["product_id"];
 									$i++;
-									?>
-									<a href="juegos/<?php echo $pData["product_id"]; ?>/">
-										<div class="catalog_product" <?php 
-										if(is_int($i/4) || $i > (4 * $filas_c - 4)) {
-											echo "style='"; 
-											if(is_int($i/4)) echo "border-right:none;";
-											if($i > (4 * $filas_c - 4)) echo "border-bottom:none;";
-											echo "'";	
-										}
-										?>>
-											<?php
-											if($pData["product_platform"] == 1) {
-												echo "<img src='global_design/img/icons/steam_20x20.png' class='cp_game_platform' alt='steam' />";	
-											} else if($pData["product_platform"] == 2) {
-												echo "<img src='global_design/img/icons/origin_20x20.png' class='cp_game_platform' alt='origin' />";	
-											}
-											if($pData["product_sellingsite"] == 3) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-humblebundle'><div class='wo_img'>Humble Bundle</div></div></div>";
-											} else if($pData["product_sellingsite"] == 4) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-bundlestars'><div class='wo_img'>Bundlestars</div></div></div>";
-											} else if($pData["product_has_customprice"] == 1) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steambuy'><div class='wo_img'>OFERTA</div></div></div>";
-											} else if($pData["product_external_limited_offer"] == 1){
-												if($pData["product_sellingsite"] == 1) {
-													echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steam'><img src='global_design/img/icons/steam_transparent_22x22.png' width='19' alt='oferta steam' /><div class='w_img'>OFERTA</div></div></div>";
-												} else if($pData["product_sellingsite"] == 2) {
-													echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-amazon'><img src='global_design/img/icons/amazon_transparent_22x22.png' width='19' alt='oferta amazon' /><div class='w_img'>OFERTA</div></div></div>";
-												}
-											}
-											?>
-											<div class="cp_img_blackscreen"></div>
-											<img src="data/img/game_imgs/small/<?php echo $pData["product_mainpicture"]; ?>" class="cp_game_img" alt="<?php echo $pData["product_name"]; ?>" />
-											<div class="cp_game_name"><?php echo $pData["product_name"]; ?></div>
-											<?php
-											if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") {
-												echo "<div class='cp_game_price'>&#36;".$pData["product_finalprice"]."</div>";
-											} else if(($pData["product_external_limited_offer"] == 0 && $pData["product_has_customprice"] == 0) || $pData["product_sellingsite"] == 4) {
-												echo "<div class='cp_game_price'>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";
-											} else if($pData["product_has_customprice"] == 1 || $pData["product_external_limited_offer"] == 1) {
-												echo "<div class='cp_game_price cp_discount'><span>&#36;".quickCalcGame(1,$pData["product_listprice"])."</span><br/>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";	
-											}
-											?>
-										</div>
-									</a>
-									<?php
+									display_mainpage_catalog_product($pData, $i, $filas_c);
 								}
                             }
                             ?> 
                         </div>
                     </div>
-
-					<div class="panel panel-default panel_catalog">
-                    	<div class="panel-heading">Ofertas externas</div> 
-                        <?php 
-						/*	COLOCAR LUEGO DE LAS OFERTAS DE VERANO DE STEAM
-						
-							//<div class="panel-heading">Ofertas de Steam aleatorias<a href="juegos/?stb=0&amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas</div></a></div>
-							 $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-							 AND product_sellingsite = 1 AND product_platform = 1 AND product_update_error = 0 AND product_external_limited_offer = 1 AND NOT product_has_customprice = 1 ORDER BY RAND() LIMIT 40";
-							 */
-						 ?>
-                        <div class="panel-body">
-							<?php
-							  
-                            $filas_b = 3;
-							$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-							 AND product_update_error = 0 AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
-							 ORDER BY product_rating DESC LIMIT 35";
-							
-							$res2 = mysqli_query($con, $sql);
-							$i = 0;
-                            while($pData = mysqli_fetch_assoc($res2)) 
-                            {
-								if(!in_array($pData["product_id"],$displayedProducts) && $i<($filas_b*4)) 
-								{
-									$displayedProducts[] = $pData["product_id"];
-									$i++;
-									?>
-									<a href="juegos/<?php echo $pData["product_id"]; ?>/">
-										<div class="catalog_product" <?php 
-										if(is_int($i/4) || $i > ($filas_b * 4 - 4)) {
-											echo "style='"; 
-											if(is_int($i/4)) echo "border-right:none;";
-											if($i > ($filas_b * 4 - 4)) echo "border-bottom:none;";
-											echo "'";	
-										}
-										?>>
-											<?php
-											if($pData["product_platform"] == 1) {
-												echo "<img src='global_design/img/icons/steam_20x20.png' class='cp_game_platform' alt='steam' />";	
-											} else if($pData["product_platform"] == 2) {
-												echo "<img src='global_design/img/icons/origin_20x20.png' class='cp_game_platform' alt='origin' />";	
-											}
-											if($pData["product_sellingsite"] == 3) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-humblebundle'><div class='wo_img'>Humble Bundle</div></div></div>";
-											} else if($pData["product_sellingsite"] == 4) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-bundlestars'><div class='wo_img'>Bundlestars</div></div></div>";
-											} else if($pData["product_has_customprice"] == 1) {
-												echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steambuy'><div class='wo_img'>OFERTA</div></div></div>";
-											} else if($pData["product_external_limited_offer"] == 1){
-												if($pData["product_sellingsite"] == 1) {
-													echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steam'><img src='global_design/img/icons/steam_transparent_22x22.png' width='19' alt='oferta steam' /><div class='w_img'>OFERTA</div></div></div>";
-												} else if($pData["product_sellingsite"] == 2) {
-													echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-amazon'><img src='global_design/img/icons/amazon_transparent_22x22.png' width='19' alt='oferta amazon' /><div class='w_img'>OFERTA</div></div></div>";
-												}
-											}
-											?>
-											<div class="cp_img_blackscreen"></div>
-											<img src="data/img/game_imgs/small/<?php echo $pData["product_mainpicture"]; ?>" class="cp_game_img" alt="<?php echo $pData["product_name"]; ?>" />
-											<div class="cp_game_name"><?php echo $pData["product_name"]; ?></div>
-											<?php
-											if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") {
-												echo "<div class='cp_game_price'>&#36;".$pData["product_finalprice"]."</div>";
-											} else if(($pData["product_external_limited_offer"] == 0 && $pData["product_has_customprice"] == 0) || $pData["product_sellingsite"] == 4) {
-												echo "<div class='cp_game_price'>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";
-											} else if($pData["product_has_customprice"] == 1 || $pData["product_external_limited_offer"] == 1) {
-												echo "<div class='cp_game_price cp_discount'><span>&#36;".quickCalcGame(1,$pData["product_listprice"])."</span><br/>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";	
-											}
-											?>
-											
-										</div>
-									</a>
-									<?php
-								}
-                            }
-                            ?> 
+					
+                    <?php
+					if(!$steam_sales_event) { 
+					?>
+                        <div class="panel panel-default panel_catalog">
+                            <div class="panel-heading">Ofertas externas</div> 
+    
+                            <div class="panel-body">
+                                <?php
+                                  
+                                $filas_b = 3;
+                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+                                 AND product_update_error = 0 AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
+                                 ORDER BY product_rating DESC LIMIT 35";
+                                
+                                $res2 = mysqli_query($con, $sql);
+                                $i = 0;
+                                while($pData = mysqli_fetch_assoc($res2)) 
+                                {
+                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<($filas_b*4)) 
+                                    {
+                                        $displayedProducts[] = $pData["product_id"];
+                                        $i++;
+                                        display_mainpage_catalog_product($pData, $i, $filas_b);									
+                                    }
+                                }
+                                ?> 
+                            </div>
                         </div>
-                    </div>
+                    <?php
+					} else { 
+					?>
+                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
+                            <div class="panel-heading">Juegos de Acción populares</div> 
+                            <div class="panel-body">
+                                <?php 
+                                // 2 filas, 8 prod
+                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+                                 AND product_update_error = 0 AND product_tags LIKE '%accion%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                
+                                $res2 = mysqli_query($con, $sql);
+                                $i = 0;
+                                while($pData = mysqli_fetch_assoc($res2)) 
+                                {
+                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
+                                    {
+                                        $displayedProducts[] = $pData["product_id"];
+                                        $i++;
+                                        display_mainpage_catalog_product($pData, $i, 2);									
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
+                            <div class="panel-heading">Juegos de Aventura populares</div> 
+                            <div class="panel-body">
+                                <?php 
+                                // 2 filas, 8 prod
+                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+                                 AND product_update_error = 0 AND product_tags LIKE '%aventura%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                
+                                $res2 = mysqli_query($con, $sql);
+                                $i = 0;
+                                while($pData = mysqli_fetch_assoc($res2)) 
+                                {
+                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
+                                    {
+                                        $displayedProducts[] = $pData["product_id"];
+                                        $i++;
+                                        display_mainpage_catalog_product($pData, $i, 2);									
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
+                            <div class="panel-heading">Juegos de Rol populares</div> 
+                            <div class="panel-body">
+                                <?php 
+                                // 2 filas, 8 prod
+                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+                                 AND product_update_error = 0 AND product_tags LIKE '%rol%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                
+                                $res2 = mysqli_query($con, $sql);
+                                $i = 0;
+                                while($pData = mysqli_fetch_assoc($res2)) 
+                                {
+                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
+                                    {
+                                        $displayedProducts[] = $pData["product_id"];
+                                        $i++;
+                                        display_mainpage_catalog_product($pData, $i, 2);									
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
+                            <div class="panel-heading">Juegos de Estrategia populares</div> 
+                            <div class="panel-body">
+                                <?php 
+                                // 2 filas, 8 prod
+                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
+                                 AND product_update_error = 0 AND product_tags LIKE '%estrategia%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                
+                                $res2 = mysqli_query($con, $sql);
+                                $i = 0;
+                                while($pData = mysqli_fetch_assoc($res2)) 
+                                {
+                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
+                                    {
+                                        $displayedProducts[] = $pData["product_id"];
+                                        $i++;
+                                        display_mainpage_catalog_product($pData, $i, 2);									
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    <?php
+					}
+					?>
 
                                         
                 </div>
@@ -534,10 +492,16 @@ $event = false;
                         <div class="panel-heading">Más juegos relevantes</div>
                         <div class="panel-body" id="indiecatalog_slider">
                         	<?php
-							/*$res = mysqli_query($con, "SELECT * FROM products WHERE product_enabled = 1 AND (product_sellingsite = 1 AND product_external_limited_offer = 1) AND (product_has_limited_units = 0 OR 
-							(product_has_limited_units = 1 AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY RAND() LIMIT 15");*/
-							$res = mysqli_query($con, "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-							AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".(9+($filas_a*4)).",15"); // SACAR EL 9 LUEGO DE OFERTAS VERANO
+							// Muestra la continuación de los juegos más relevantes
+							if($steam_sales_event) {
+								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
+								AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_featured_items+($filas_a*4)).",15";
+							} else {
+								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
+								AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($filas_a*4).",15";
+							}					
+							
+							$res = mysqli_query($con, $sql);
 							if(mysqli_num_rows($res) > 5) {
 								?>
                                 <div id="ics_topscroll"><span class="glyphicon glyphicon-chevron-up ics_slide_icon"></span></div>
@@ -588,8 +552,8 @@ $event = false;
                         </div>
                     </div>
 
-					<a class="twitter-timeline" height="400"  href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
-    				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
+    				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
                 </div>
             
             
@@ -602,3 +566,58 @@ $event = false;
     
     
 </html>
+
+
+<?php
+
+function display_mainpage_catalog_product($pData, $i, $cant_filas) {
+
+	?>
+	<a href="juegos/<?php echo $pData["product_id"]; ?>/">
+		<div class="catalog_product" <?php 
+		if(is_int($i/4) || $i > ($cant_filas * 4 - 4)) {
+			echo "style='"; 
+			if(is_int($i/4)) echo "border-right:none;";
+			if($i > ($cant_filas * 4 - 4)) echo "border-bottom:none;";
+			echo "'";	
+		}
+		?>>
+			<?php
+            if($pData["product_platform"] == 1) {
+                echo "<img src='global_design/img/icons/steam_20x20.png' class='cp_game_platform' alt='steam' />";	
+            } else if($pData["product_platform"] == 2) {
+                echo "<img src='global_design/img/icons/origin_20x20.png' class='cp_game_platform' alt='origin' />";	
+            }
+            if($pData["product_sellingsite"] == 3) {
+                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-humblebundle'><div class='wo_img'>Humble Bundle</div></div></div>";
+            } else if($pData["product_sellingsite"] == 4) {
+                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-bundlestars'><div class='wo_img'>Bundlestars</div></div></div>";
+            } else if($pData["product_has_customprice"] == 1) {
+                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steambuy'><div class='wo_img'>OFERTA</div></div></div>";
+            } else if($pData["product_external_limited_offer"] == 1){
+                if($pData["product_sellingsite"] == 1) {
+                    echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steam'><img src='global_design/img/icons/steam_transparent_22x22.png' width='19' alt='oferta steam' /><div class='w_img'>OFERTA</div></div></div>";
+                } else if($pData["product_sellingsite"] == 2) {
+                    echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-amazon'><img src='global_design/img/icons/amazon_transparent_22x22.png' width='19' alt='oferta amazon' /><div class='w_img'>OFERTA</div></div></div>";
+                }
+            }
+            ?>
+            <div class="cp_img_blackscreen"></div>
+            <img src="data/img/game_imgs/small/<?php echo $pData["product_mainpicture"]; ?>" class="cp_game_img" alt="<?php echo $pData["product_name"]; ?>" />
+            <div class="cp_game_name"><?php echo $pData["product_name"]; ?></div>
+            <?php
+            if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") {
+                echo "<div class='cp_game_price'>&#36;".$pData["product_finalprice"]."</div>";
+            } else if(($pData["product_external_limited_offer"] == 0 && $pData["product_has_customprice"] == 0) || $pData["product_sellingsite"] == 4) {
+                echo "<div class='cp_game_price'>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";
+            } else if($pData["product_has_customprice"] == 1 || $pData["product_external_limited_offer"] == 1) {
+                echo "<div class='cp_game_price cp_discount'><span>&#36;".quickCalcGame(1,$pData["product_listprice"])."</span><br/>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";	
+            }
+            ?>
+		</div>
+	</a>
+    <?php
+	
+}
+
+?>

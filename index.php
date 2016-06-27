@@ -367,7 +367,7 @@ $steam_sales_featured_items = 15;
 					} else { 
 					?>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Acción populares</div> 
+                            <div class="panel-heading">Juegos de Acción populares<a href="juegos/?q=accion"><div class="panel_sidelink">Ver juegos de Acción</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
@@ -389,7 +389,7 @@ $steam_sales_featured_items = 15;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Aventura populares</div> 
+                            <div class="panel-heading">Juegos de Aventura populares<a href="juegos/?q=aventura"><div class="panel_sidelink">Ver juegos de Aventura</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
@@ -411,7 +411,7 @@ $steam_sales_featured_items = 15;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Rol populares</div> 
+                            <div class="panel-heading">Juegos de Rol populares<a href="juegos/?q=rol"><div class="panel_sidelink">Ver juegos de Rol</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
@@ -433,7 +433,7 @@ $steam_sales_featured_items = 15;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Estrategia populares</div> 
+                            <div class="panel-heading">Juegos de Estrategia populares<a href="juegos/?q=estrategia"><div class="panel_sidelink">Ver juegos de Estrategia</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod

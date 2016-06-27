@@ -168,8 +168,9 @@ $(document).ready(function(e) {
 					var pattern = /^(https?:\/\/)?store\.steampowered\.com\/(app|sub)\/[0-9]{1,10}(\/.*)?$/i;
 					if(!pattern.test(gf_product_siteurl)) {
 						gf_error_text += "<li>La URL de Steam ingresada es inválida. Ejemplo de URL: http://store.steampowered.com/app/730/ </li>";
-						if(gf_product_siteurl.indexOf("/bundle/") !== 0) gf_error_text += "<strong>Los /bundles/ nuevos de Steam NO pueden ser vendidos debido a que no pueden ser enviados en formato Steam Gift</strong>";
+						if(gf_product_siteurl.indexOf("/bundle/") !== -1) gf_error_text += "<strong>Los /bundles/ nuevos de Steam NO pueden ser vendidos debido a que no pueden ser enviados en formato Steam Gift</strong>";
 					}
+					if(gf_product_siteurl.indexOf("/app/730/") !== -1) gf_error_text += "<li>El CS:GO no está a la venta durante las ofertas de invierno. <a href='https://www.facebook.com/steambuy/posts/649935118501000' target='_blank'>Más info</a>.</li>";
 				} else if(gf_product_sellingsite == 1) {
 					if(gf_product_siteurl.indexOf("amazon.com") == -1) gf_error_text += "<li>La URL ingresada no parece ser de Amazon.com</li>";
 				}	

@@ -20,7 +20,7 @@ if(isAdminLoggedIn())
 
 // si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
 $steam_sales_event = true;
-$steam_sales_featured_items = 15;
+$steam_sales_featured_items = 11;
 
 ?>
 <!DOCTYPE html>

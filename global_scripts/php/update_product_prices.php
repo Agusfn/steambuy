@@ -8,20 +8,20 @@ date_default_timezone_set("America/Argentina/Buenos_Aires");
 define("ROOT_LEVEL", "../../");
 define("DEBUG", FALSE); 
 
+//define("OVERRIDE_STEAM_SALES_END", TRUE);
+//define("STEAM_SALES_MANUAL_END_DATE", strtotime("2016-07-04 11:00:00")); //(hora arg)
+//define("STEAM_SALES_ACTUAL_END_DATE", strtotime("2016-07-04 14:30:00")); // 30 min+ por las dudas 
+
 require_once("mysql_connection.php");
 require_once("steam_product_fetch.php");
-
-$now = time();
-$anticipated_2015deals_end = false;
-if($now > strtotime("2016-01-04 13:00:00") && $now < strtotime("2016-01-04 15:20:00")) {
-	$anticipated_2015deals_end = true;	
-}
 
 
 $sql = "SELECT * FROM `products` WHERE `product_enabled` = 1 AND `product_sellingsite` = 1 ORDER BY `product_rating` DESC"/*.(DEBUG ? " LIMIT 20" : "")*/;
 $res = mysqli_query($con, $sql);
 
 if(DEBUG) echo "Iniciando...<br/>";
+
+//$now = time();
 
 while($pData = mysqli_fetch_array($res)) 
 {
@@ -32,16 +32,8 @@ while($pData = mysqli_fetch_array($res))
 	if($product->loadError == 0) {
 		$prices = $product->getPriceInfo(true);
 		if($prices["error"] == 0) {
-			
-			if($anticipated_2015deals_end) {
-				if($prices["product_discount"] == 1) {	
-					$prices["product_discount"] = 0;
-					$prices["product_finalprice"] = $prices["product_firstprice"];
-				}
-			}
-			
-			
-			if($prices["product_discount"] == 0) {	
+
+			if(/*(OVERRIDE_STEAM_SALES_END && ($now > STEAM_SALES_MANUAL_END_DATE && $now < STEAM_SALES_ACTUAL_END_DATE)) ||*/ $prices["product_discount"] == 0) {	
 
 				// Si no tiene oferta externa limitada, se actualiza el precio		
 				if($pData["product_has_customprice"] == 0 || ($pData["product_has_customprice"] == 1 && $pData["product_external_limited_offer"] == 1)) { 
@@ -50,6 +42,9 @@ while($pData = mysqli_fetch_array($res))
 					WHERE `product_id` = ".$pData["product_id"];
 				}
 			} else if($prices["product_discount"] == 1) {
+				/*if(OVERRIDE_STEAM_SALES_END && $now < STEAM_SALES_MANUAL_END_DATE) {
+					mysqli_query($con, "UPDATE `products` SET `product_external_offer_endtime` = '".date("Y-m-d H:i:s", STEAM_SALES_MANUAL_END_DATE)."' WHERE `product_id` = ".$pData["product_id"]);
+				} else*/ 
 				if($prices["product_discount_endtime"] != "n/a") {
 					mysqli_query($con, "UPDATE `products` SET `product_external_offer_endtime` = '".$prices["product_discount_endtime"]."' WHERE `product_id` = ".$pData["product_id"]);
 				}

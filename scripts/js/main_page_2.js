@@ -165,12 +165,18 @@ $(document).ready(function(e) {
 				gf_error_text += "<li>Ingresa una URL válida</li>";
 			} else {
 				if(gf_product_sellingsite == 0) {
-					var pattern = /^(https?:\/\/)?store\.steampowered\.com\/(app|sub)\/[0-9]{1,10}(\/.*)?$/i;
-					if(!pattern.test(gf_product_siteurl)) {
+					var pattern = /^(https?:\/\/)?store\.steampowered\.com\/(app|sub)\/([0-9]{1,10})(\/.*)?$/i;
+					if(!pattern.test(gf_product_siteurl)) { // Si no es de steam
 						gf_error_text += "<li>La URL de Steam ingresada es inválida. Ejemplo de URL: http://store.steampowered.com/app/730/ </li>";
 						if(gf_product_siteurl.indexOf("/bundle/") !== -1) gf_error_text += "<strong>Los /bundles/ nuevos de Steam NO pueden ser vendidos debido a que no pueden ser enviados en formato Steam Gift</strong>";
+					} else {
+						var matches = pattern.exec(gf_product_siteurl);
+						//console.log(matches);
+						if(matches[2] == "app" && matches[3] == "730") gf_error_text += "<li>El CS:GO no está a la venta de forma indefinida. <a href='https://www.facebook.com/steambuy/posts/657170941110751' target='_blank'>Más info</a>.</li>";				
+						if(matches[2] == "sub" && matches[3] == "28987") gf_error_text += "<li>No es posible vender el GTA Complete debido a que no es posible comprarlo en formato 'steam gift'.</li>";				
+					
 					}
-					if(gf_product_siteurl.indexOf("/app/730/") !== -1) gf_error_text += "<li>El CS:GO no está a la venta durante las ofertas de invierno. <a href='https://www.facebook.com/steambuy/posts/649935118501000' target='_blank'>Más info</a>.</li>";
+
 				} else if(gf_product_sellingsite == 1) {
 					if(gf_product_siteurl.indexOf("amazon.com") == -1) gf_error_text += "<li>La URL ingresada no parece ser de Amazon.com</li>";
 				}	

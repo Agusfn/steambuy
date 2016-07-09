@@ -19,8 +19,8 @@ if(isAdminLoggedIn())
 
 
 // si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
-$steam_sales_event = true;
-$steam_sales_featured_items = 11;
+$steam_sales_event = false;
+$steam_sales_featured_items = 13;
 
 ?>
 <!DOCTYPE html>
@@ -552,7 +552,7 @@ $steam_sales_featured_items = 11;
                         </div>
                     </div>
 
-					<div style="height:800px"><a class="twitter-timeline" height="800" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
+					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
     				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
                 </div>
             

@@ -8,7 +8,7 @@ header("Content-Type: text/html; charset=UTF-8");
 require_once("../../global_scripts/php/client_page_preload.php");
 require_once("../../global_scripts/php/admlogin_functions.php");
 require_once("../../global_scripts/php/main_purchase_functions.php");
-require_once("../../global_scripts/PHPMailer/PHPMailerAutoload.php");
+require_once("../../global_scripts/email/mailer.php");
 $config = include("../../global_scripts/config.php");
 
 
@@ -16,15 +16,6 @@ $admin = false;
 if(isAdminLoggedIn())
 {
 	$admin = true;
-}
-
-
-$chrismas2015sales = false;
-$inform_warning = false;
-$now = time();
-if($now > strtotime("2015-12-22") && $now < strtotime("2016-01-04 13:00:00")) {
-	$chrismas2015sales = true;	
-	if($now > strtotime("2016-01-01") && $now < strtotime("2016-01-04 13:00:00")) $inform_warning = true;
 }
 
 
@@ -147,67 +138,28 @@ if(isset($_POST["gameid"]))
 						mysqli_real_escape_string($con, $clientEmail), $_SERVER["REMOTE_ADDR"]))
 						{
 
-							// *** Enviar email ****
-							$subject = "Se ha generado tu pedido por el juego ".$productData["product_name"];
-							$body = "Estimado/a ".$clientName.", se ha generado tu pedido por el juego <strong>".$productData["product_name"]."</strong> por <strong>$".$gameArsPrice." 
-							pesos argentinos</strong>. El ID del pedido es <strong>".$order->orderInfo["order_id"]."</strong> y la clave es <strong>".$order->orderInfo["order_password"]."</strong>.<br/>
-							El siguiente paso para recibir el juego es";
+							$mail_data = array(
+								"receiver_name"=>$clientName,
+								"order_id"=>$order->orderInfo["order_id"],
+								"order_password"=>$order->orderInfo["order_password"],
+								"product_name"=>$productData["product_name"],
+								"order_ars_price"=>$gameArsPrice,
+								"payment_method"=>$pay_method,
+								"product_external_discount"=>$productData["product_external_limited_offer"],
+								"product_sellingsite"=>$productData["product_sellingsite"],
+								"product_site_url"=>$productData["product_site_url"],
+								"order_fromcatalog"=>1
+							);
 							if($pay_method == 1) {
-								$body .= " imprimir y abonar en cualquier sucursal de pago la boleta de pago que puedes encontrar en el siguiente link: <br/>
-								<a href='".$order->orderInfo["order_purchaseticket"]."' target='_blank'>".$order->orderInfo["order_purchaseticket"]."</a>.<br/><br/>
-								Una vez abonado, el pago tomará entre 12 y 48 horas en acreditarse, y el juego será enviado el día en que se acredita el pago (por lo general al día siguiente 
-								de abonar).<br/><br/>";
-							} else if($pay_method == 2) {	
-								$body .= " realizar una transferencia o depósito bancario a la siguiente cuenta:<br/><br/>
-								<strong>Banco:</strong> ICBC<br/>
-								<strong>Cuenta:</strong> Caja de ahorro $ 0849/01118545/07<br/>
-								<strong>CBU:</strong> 0150849701000118545070<br/>
-								<strong>Titular:</strong> Rodrigo Fernandez Nuñez<br/>
-								<strong>CUIL:</strong> 23-35983336-9<br/>
-								<strong>Monto:</strong> &#36;".$gameArsPrice." (Pesos argentinos)<br/><br/>
-								Una vez realizado el pago, informa el mismo en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> enviando una
-								foto o imágen del comprobante de transferencia/depósito para que podamos identificarlo. Este se acredita de forma instantánea en horario hábil, y el juego será enviado 
-								durante las siguientes 12 horas hábiles luego de haberse acreditado el pago.<br/><br/>";
+								$mail_data["order_purchaseticket_url"] = $order->orderInfo["order_purchaseticket"];	
 							}
 							if($productData["product_external_limited_offer"] == 1) {
-								$body .= "<strong>El juego posee una oferta de tiempo limitado, por lo tanto deberás informar el pago en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> 
-								antes de que finalice esta oferta para que sea reservado.</strong> ";
-								
-								$end_hour = date("H:i:s", strtotime($productData["product_external_offer_endtime"]));
-
-								if($productData["product_external_offer_endtime"] != "0000-00-00 00:00:00" && $end_hour != "00:00:00") {
-									$body .= "La oferta de este juego finaliza el <strong>".date("d/m/y H:i:s", strtotime($productData["product_external_offer_endtime"]))."</strong>.";
-								} else if($productData["product_external_offer_endtime"] != "0000-00-00 00:00:00") {
-									$body .= "La oferta de este juego finaliza el <strong>".date("d/m/y", strtotime($productData["product_external_offer_endtime"]))." (medianoche)</strong>.";
-								} else if($productData["product_sellingsite"] == 2) {
-									$body .= "Te recomendamos informar el pago lo antes posible ya que Amazon no especifica la fecha de fin de oferta de este juego.";
-								} else {
-									$body .= "Revisa la <a href='".$productData["product_site_url"]."' target='_blank'>página de venta</a> externa del producto para saber cuándo finaliza la oferta.";	
-								}
-								$body .= "<br/><br/>
-								<strong>Recuerda que este pedido se cancelará automáticamente en 5 días si no se recibe el pago o si finaliza la oferta limitada.</strong><br/>";
-							} else {
-								$body .= "<strong>Recuerda que este pedido se cancelará automáticamente en 5 días si no se recibe el pago.</strong><br/>";
+								$mail_data["product_external_offer_endtime"] = $productData["product_external_offer_endtime"];	
 							}
-							$body .= "Ante cualquier duda revisa la página de <a href='http://steambuy.com.ar/soporte/' target='_blank'>soporte</a> o <a href='mailto:contacto@steambuy.com.ar'>contáctanos</a>.<br/><br/>
-							Un saludo.";
 							
-							$mail = new PHPMailer;
-							$mail->CharSet = 'UTF-8';
-							$mail->isSMTP();
-							$mail->Host = 'box756.bluehost.com'; 
-							$mail->SMTPAuth = true; 
-							$mail->Username = 'info@steambuy.com.ar';
-							$mail->Password = '03488639268';
-							$mail->SMTPSecure = 'tls';
-							$mail->From = 'info@steambuy.com.ar';
-							$mail->FromName = 'SteamBuy';
-							$mail->addAddress($clientEmail,$clientName);
-							$mail->addReplyTo('contacto@steambuy.com.ar', 'Contacto SteamBuy');
-							$mail->isHTML(true);
-							$mail->Subject = $subject;
-							$mail->Body    = $body;
-							$mail->AltBody = strip_tags($body);
+							$mail = new Mail;
+							$mail->prepare_email("pedido_juego_generado", $mail_data);
+							$mail->add_address($clientEmail, $clientName);
 							
 							if(!@$mail->send()) $mailError = true;
 							else $mailError = false;
@@ -401,14 +353,6 @@ if(isset($_POST["gameid"]))
                             <div class="checkbox"><label><input type="checkbox" name="rememberdata" <?php if(isset($_COOKIE["client_name"]) && isset($_COOKIE["client_email"])) echo "checked"; ?>> Recordar e-mail y nombre para futuras compras.</label></div>
 						</form>
                         <?php
-						if($chrismas2015sales) {
-							echo "<div class='alert alert-danger offer_warning'>";  
-							echo "<strong>IMPORTANTE:</strong> Durante las ofertas de verano de Steam, debido a la alta cantidad de compras, los pedidos pueden llegar a tomar entre 12 a 72 horas luego de abonado el pago en enviarse.";                
-                            if($inform_warning) echo "<br/><br/>Consideramos la finalización de las ofertas de verano en la fecha 04/01/2016 a las 13hs, informá el pago antes de esta hora o tu pedido podrá no ser reservado.";
-							echo "</div>";
-
-						}
-						
 						if($productData["product_external_limited_offer"] == 1) {
 							?>
                        		<div class="alert alert-warning offer_warning">Este juego se encuentra en oferta externa limitada, una vez pagado, deberás informar el pago en 
@@ -508,14 +452,6 @@ if(isset($_POST["gameid"]))
 									}
 									?></div>
 									<?php	
-								}
-								
-								if($chrismas2015sales) {
-									echo "<div class='alert alert-danger pi_offerwarning'>";  
-									echo "<strong>IMPORTANTE:</strong> Durante las ofertas de verano de Steam, debido a la alta cantidad de compras, los pedidos pueden llegar a tomar entre 12 a 72 horas luego de abonado el pago en enviarse.";                
-									if($inform_warning) echo "<br/><br/>Consideramos la finalización de las ofertas de verano en la fecha 04/01/2016 a las 13hs, informá el pago antes de esta hora o tu pedido podrá no ser reservado.";
-									echo "</div>";
-		
 								}
 								?>
                                 

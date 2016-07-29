@@ -6,14 +6,15 @@ require_once("PHPMailer/PHPMailerAutoload.php");
 class Mail
 {
 	
-	const MAIL_HOST = "box756.bluehost.com";
-	const MAIL_PORT = 587;
+	const MAIL_HOST = "localhost";
+	//const MAIL_PORT = 587;
 	const MAIL_USERNAME = "info@steambuy.com.ar";
-	const MAIL_PASSWORD = "03488639268";
+	const MAIL_PASSWORD = "xIHHOTb_q9h6";
 
 	private $email; // objeto PHPMailer
 	private $dir_location;
 	
+	public $debug = 0;
 	public $reportFailure = false;
 	public $errorInfo;
 	
@@ -56,15 +57,16 @@ class Mail
 		$this->email->CharSet = 'UTF-8';
 		$this->email->isSMTP();
 		$this->email->Host = self::MAIL_HOST; 
-		$this->email->Port = self::MAIL_PORT;  
+		//$this->email->Port = self::MAIL_PORT;  
 		$this->email->SMTPAuth = true; 
 		$this->email->Username = self::MAIL_USERNAME;
 		$this->email->Password = self::MAIL_PASSWORD;
-		$this->email->SMTPSecure = 'SSL';
+		//$this->email->SMTPSecure = 'SSL';
 		$this->email->From = self::MAIL_USERNAME;
 		$this->email->FromName = 'SteamBuy';
 		$this->email->addReplyTo('contacto@steambuy.com.ar', 'Contacto SteamBuy');
 		$this->email->isHTML(true);
+		if($this->debug) $this->email->SMTPDebug = 1;
 
 		if($this->email->send()) return true;
 		else {

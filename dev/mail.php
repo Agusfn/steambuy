@@ -1,18 +1,18 @@
 <?php
 
 
-require_once("../global_scripts/PHPMailer/PHPMailerAutoload.php");
+require_once("../global_scripts/email/PHPMailer/PHPMailerAutoload.php");
 
 
 $mail = new PHPMailer;
 
 $mail->isSMTP();                                      // Set mailer to use SMTP
-$mail->Host = 'box756.bluehost.com';  // Specify main and backup SMTP servers
+$mail->Host = 'localhost';  // Specify main and backup SMTP servers
 $mail->SMTPAuth = true;                               // Enable SMTP authentication
 $mail->Username = 'info@steambuy.com.ar';                 // SMTP username
-$mail->Password = '03488639268';                           // SMTP password
-$mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
-//$mail->SMTPDebug = 1;
+$mail->Password = 'xIHHOTb_q9h6';                           // SMTP password
+//$mail->SMTPSecure = 'ssl';                            // Enable encryption, 'ssl' also accepted
+$mail->SMTPDebug = 1;
 
 $mail->From = 'info@steambuy.com.ar';
 $mail->FromName = 'Mailer';
@@ -39,7 +39,7 @@ if(!$mail->send()) {
 }
 
 
-echo "HOLA";
+echo "enviado!";
 
 
 ?>

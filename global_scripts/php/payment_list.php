@@ -2,6 +2,13 @@
 header("Content-Type: text/html; charset=UTF-8");
 
 require_once("mysql_connection.php");
+require_once("admlogin_functions.php");
+
+
+if(!isAdminLoggedIn()) {
+	echo "Denied";
+	exit;	
+}
 
 echo "<html><title>Ver lista de pagos</title></html>";
 

@@ -4,6 +4,12 @@ define("ROOT_LEVEL","../../");
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 require_once("mysql_connection.php");
+require_once("admlogin_functions.php");
+
+if(!isAdminLoggedIn()) {
+	echo "Denied";
+	exit;	
+}
 
 if(!$con) exit;
 $config = include("../config.php");

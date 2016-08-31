@@ -6,15 +6,33 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 require_once("mysql_connection.php");
 require_once("admlogin_functions.php");
 
+$forbidden = false;
+
+// Si no se ingresa con las credenciales de admin vía hhtp, sólo se ejecuta si existe el arg1 pasado por linea de comandos con la clave correcta, de lo contrario se deniega el acceso.
 if(!isAdminLoggedIn()) {
+	if(isset($argv[1])) { 
+		if($argv[1] != "6F4p1369shX") $forbidden = true;
+	} else $forbidden = true;
+}
+
+if($forbidden) {
 	echo "Denied";
-	exit;	
+	exit;		
 }
 
 if(!$con) exit;
 $config = include("../config.php");
 
 require_once("../AfipWs/AfipWs.php");
+
+
+// Si se carga el archivo desde el servidor local, y si no existe el argumento pasado por consola (no es cron), se establece testing=true para NO facturar.
+$TESTING = false;
+if($_SERVER["REMOTE_ADDR"] == "::1" && !isset($argv[1])) {
+	$TESTING = true;
+	echo "No se facturan los pedidos debido a que el sitio está alojado en servidor local de sitio web de desarrollo.<br/>";
+}
+
 
 
 echo date("d-m-Y")."<br/><br/>";
@@ -55,17 +73,19 @@ if($config["payments_last_revised"] == date("d-m-Y")) {
 }
 
 
-
-$afip = false;
-try {
-	$afipWs = new AfipWsfe();
-	$afip = true;
-
-} catch(Exception $e) {
-	file_put_contents("afipWs_fails.txt", date("d/m/Y H:i:s")."\r\n".$e->getMessage()."\r\n\r\n\r\n", FILE_APPEND);
-	echo $e->getMessage();
+if($TESTING == FALSE) {
+	$afip = false;
+	try {
+		$afipWs = new AfipWsfe();
+		$afip = true;
 	
+	} catch(Exception $e) {
+		file_put_contents("afipWs_fails.txt", date("d/m/Y H:i:s")."\r\n".$e->getMessage()."\r\n\r\n\r\n", FILE_APPEND);
+		echo $e->getMessage();
+		
+	}	
 }
+
 
 
 $cuit = array("1"=>"20396674182", "2"=>"20375378117");
@@ -79,12 +99,14 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 		if($payments[0] == "") continue;	
 	}
 	
-	
-	if($afip && $e != 3) {
-		$afip_query = mysqli_query($con, "SELECT COALESCE(SUM(`factura_total`), 0) FROM `facturas` WHERE  month(`factura_fecha`) = ".date("m")." AND year(`factura_fecha`) = ".date("Y")." AND `factura_cuit`='".$cuit[$e]."'");
-		$result = mysqli_fetch_row($afip_query);
-		$facturado[$e] = $result[0];
+	if($TESTING == false) {
+		if($afip && $e != 3) {
+			$afip_query = mysqli_query($con, "SELECT COALESCE(SUM(`factura_total`), 0) FROM `facturas` WHERE  month(`factura_fecha`) = ".date("m")." AND year(`factura_fecha`) = ".date("Y")." AND `factura_cuit`='".$cuit[$e]."'");
+			$result = mysqli_fetch_row($afip_query);
+			$facturado[$e] = $result[0];
+		}		
 	}
+
 	
 	$payments = array_reverse(array_filter($payments));
 	
@@ -115,22 +137,23 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 							// Actualizar pedido marcar como 'acreditado'
 							mysqli_query($con, "UPDATE `orders` SET `order_confirmed_payment`=1 WHERE `order_id`='".$pData["order_id"]."'");
 							$log_recipient = $matches[1];
-							
-							
+
 							// Facturación
-							if($afip && $e != 3) {
-								if($pData["order_type"] == 1 && $pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < 31500) {
-									$monto_fact = round($pData["product_arsprice"], 2);
-									if($cbte = $afipWs->generarCbte($e, 11, $monto_fact)) {
-										$facturado[$e] += $monto_fact;
-										$productos = ($pData["product_fromcatalog"] ? $pData["product_id_catalog"] : "0")."|".mysqli_real_escape_string($con, $pData["product_name"])."|1|".$monto_fact; // cod1|producto1|cantidad1|precio1,cod2|producto2|cantidad2|monto2|etc
-										$sql_factura = "INSERT INTO `facturas` (`factura_id`,`factura_cuit`,`factura_iibb`,`factura_ptovta`,`factura_nro`,`factura_fecha`,`factura_cae`,`factura_vtocae`,`factura_receptor`,`factura_productos`,`factura_total`,`factura_pedidoasoc`)
-										VALUES (NULL, '".$afipWs->CUIT[$e]."', '".$afipWs->IIBB[$e]."', 2, ".$cbte["nro"].", '".date("Y-m-d",strtotime($cbte["fecha"]))."', '".$cbte["CAE"]."', 
-										'".date("Y-m-d",strtotime($cbte["vtoCAE"]))."', '".$pData["buyer_name"]."', '".$productos."', ".$monto_fact.", '".$pData["order_id"]."')";
-										mysqli_query($con, $sql_factura);
-										$pedido_facturado = true;
-									} else {
-										file_put_contents("afipWs_fails.txt", date("d/m/Y H:i:s")."\r\n".$afipWs->error_text."\r\n\r\n\r\n", FILE_APPEND);	
+							if($TESTING == false) {
+								if($afip && $e != 3) {
+									if($pData["order_type"] == 1 && $pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < 31500) {
+										$monto_fact = round($pData["product_arsprice"], 2);
+										if($cbte = $afipWs->generarCbte($e, 11, $monto_fact)) {
+											$facturado[$e] += $monto_fact;
+											$productos = ($pData["product_fromcatalog"] ? $pData["product_id_catalog"] : "0")."|".mysqli_real_escape_string($con, $pData["product_name"])."|1|".$monto_fact; // cod1|producto1|cantidad1|precio1,cod2|producto2|cantidad2|monto2|etc
+											$sql_factura = "INSERT INTO `facturas` (`factura_id`,`factura_cuit`,`factura_iibb`,`factura_ptovta`,`factura_nro`,`factura_fecha`,`factura_cae`,`factura_vtocae`,`factura_receptor`,`factura_productos`,`factura_total`,`factura_pedidoasoc`)
+											VALUES (NULL, '".$afipWs->CUIT[$e]."', '".$afipWs->IIBB[$e]."', 2, ".$cbte["nro"].", '".date("Y-m-d",strtotime($cbte["fecha"]))."', '".$cbte["CAE"]."', 
+											'".date("Y-m-d",strtotime($cbte["vtoCAE"]))."', '".$pData["buyer_name"]."', '".$productos."', ".$monto_fact.", '".$pData["order_id"]."')";
+											mysqli_query($con, $sql_factura);
+											$pedido_facturado = true;
+										} else {
+											file_put_contents("afipWs_fails.txt", date("d/m/Y H:i:s")."\r\n".$afipWs->error_text."\r\n\r\n\r\n", FILE_APPEND);	
+										}
 									}
 								}
 							}
@@ -163,8 +186,10 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 		}
 	}
 	if($count > 0) echo "Registrados ".$count." pagos nuevos de la cuenta ".$e."<br/>";
-	file_put_contents("facturado.txt", date("d/m/Y H:i:s")." -- Cta ".$e." fact hasta el momento del mes: $".$facturado[$e]." \r\n\r\n", FILE_APPEND);	
-
+	
+	if($TESTING == false) {
+		file_put_contents("facturado.txt", date("d/m/Y H:i:s")." -- Cta ".$e." fact hasta el momento del mes: $".$facturado[$e]." \r\n\r\n", FILE_APPEND);	
+	}
 }
 
 //var_dump($facturado);

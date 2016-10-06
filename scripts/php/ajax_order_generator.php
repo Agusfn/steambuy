@@ -62,8 +62,8 @@ if(isset($_POST["type"])) {
 			echo "Error: Medio de pago no válido."; return;	
 		}
 		if(is_numeric($gameUsdPrice) && $gameUsdPrice != "") {
-			if($gameUsdPrice > 100) {
-				echo "Error: El precio del juego no debe ser mayor a 100 usd."; return;	
+			if($gameUsdPrice > 70) {
+				echo "Error: El precio del juego no debe ser mayor a 70 usd."; return;	
 			}
 		} else {
 			echo "Error: No se ha ingresado un monto válido."; return;	

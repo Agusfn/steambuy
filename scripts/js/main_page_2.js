@@ -185,8 +185,8 @@ $(document).ready(function(e) {
 			gf_product_price = $("#gf_input_gameprice").val();
 			if(isNaN(gf_product_price) || gf_product_price == 0) {
 				gf_error_text += "<li>Ingresa el precio del juego en dólares</li>";
-			} else if(gf_product_price > 100) {
-				gf_error_text += "<li>El juego no debe tener un valor mayor a los 100 USD</li>";
+			} else if(gf_product_price > 70) {
+				gf_error_text += "<li>El valor no puede superar los 70 USD. Contactanos para consultar si podemos venderlo.</li>";
 			}
 			
 			gf_product_discount = $("#gf_input_gamediscount").prop("selectedIndex");

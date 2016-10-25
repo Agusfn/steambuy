@@ -13,27 +13,34 @@ if(!isAdminLoggedIn()) {
 $post_vars = array("cd_number", "date", "ammount", "invoice_number", "site_payment", "order_id");
 
 $form_sent = true;
+$error = false;
 foreach($post_vars as $var) {
 	if(!isset($_POST[$var])) {
 		$form_sent = false;
 		break;
+	} else {
+		if($_POST[$var] == "") $error = true;
 	}
 }
 
-
 if($form_sent) {
 	
-	$sql = "INSERT INTO `cd_payments` (`number`, `cd_account`, `date`, `net_ammount`, `invoice_number`, `site_payment`, `order_id`, `description`, `price_warning`)
-	VALUES (NULL, '".escape($_POST["cd_number"])."', '".escape($_POST["date"])."', ".escape($_POST["ammount"]).", '".escape($_POST["invoice_number"])."', 
-	'".escape($_POST["site_payment"])."', '".escape($_POST["order_id"])."', '', 0);";
+	if(!$error) {
+		$sql = "INSERT INTO `cd_payments` (`number`, `cd_account`, `date`, `net_ammount`, `invoice_number`, `site_payment`, `order_id`, `description`, `price_warning`)
+		VALUES (NULL, '".escape($_POST["cd_number"])."', '".escape($_POST["date"])."', ".escape($_POST["ammount"]).", '".escape($_POST["invoice_number"])."', 
+		'".escape($_POST["site_payment"])."', '".escape($_POST["order_id"])."', '', 0);";
+	
+		$sql2 = "UPDATE `orders` SET `order_confirmed_payment`=1 WHERE `order_id`='".escape($_POST["order_id"])."'";	
+		
+		mysqli_query($con, $sql);
+		mysqli_query($con, $sql2);
+		
+		echo "Hecho!";
+	
+	} else {
+		echo "Error: No se ingresó alguno de los datos.";
+	}
 
-	$sql2 = "UPDATE `orders` SET `order_confirmed_payment`=1 WHERE `order_id`='".escape($_POST["order_id"])."'";	
-	
-	mysqli_query($con, $sql);
-	mysqli_query($con, $sql2);
-	
-	echo "Hecho!";
-	
 }
 
 

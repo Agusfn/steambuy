@@ -356,8 +356,8 @@ h3 {
 {
 	width: 1000px;
 	margin: 0 auto;
-	border-left:1px solid #505050;
-	border-right:1px solid #505050;
+	border-left:1px solid #AAA;
+	border-right:1px solid #AAA;
 	z-index:20;
 	position:relative
 }
@@ -366,7 +366,7 @@ h3 {
 .main_content
 {
 	width:998px;
-	background-color:#2F2F2FE6;
+	background-color:#F9F9F9;
 	padding: 65px 20px 10px;
 }
 

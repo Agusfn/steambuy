@@ -50,28 +50,28 @@
 /* Clases compartidas 3er paso ambos formularios */
 
 
-.gf_tf_ticketinstructions, .ppf_tf_ticketinstructions
+.gf_tf_ticketinstructions,
 {
 	margin-top:15px;
 	text-align:justify;
 	
 }
 
-.gf_tf_transferinstructions, .ppf_tf_transferinstructions
+.gf_tf_transferinstructions,
 {
 	margin-top:15px;
 	text-align:justify;
 	display:none;
 }
 
-.gf_tf_ticketdata, .ppf_tf_ticketdata
+.gf_tf_ticketdata,
 {
 	text-align:center;
 	margin:18px 0;
 	
 }
 
-.gf_tf_transferdata, .ppf_tf_transferdata
+.gf_tf_transferdata,
 {
 	margin: 20px 0 20px 144px;
 	background-color: #F0F0F0;
@@ -86,9 +86,6 @@
 
 /* FORMULARIO DE COMPRA DE JUEGOS */
 
-#game_form_modal .modal-body
-{
-}
 
 
 #gf_loadicon
@@ -100,10 +97,6 @@
 
 /* primer paso */
 
-#gf_first_form
-{
-	
-}
 
 .form_row
 {

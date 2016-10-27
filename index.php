@@ -140,35 +140,35 @@ $steam_sales_featured_items = 13;
                         
                         	<h4>Elige un medio de pago y confirma los datos:</h4>
                         	<div style="height:266px">
-                                <div class="sf_left">
+                                <div class="gf_left">
                                 
-                                    <div class="list-group sf_payment_options" id="gf_paymentoptions">
+                                    <div class="list-group gf_payment_options" id="gf_paymentoptions">
                                         <a href="javascript:void(0);" class="list-group-item active">
                                             <div style="height: 30px;">
-                                                <div style="float:left;font-size:17px;">Cupón de pago</div><div id="gf_arsprice1" class="sf_payoption_arsprice">$0 ARS</div>
+                                                <div style="float:left;font-size:17px;">Cupón de pago</div><div id="gf_arsprice1" class="gf_payoption_arsprice">$0 ARS</div>
                                             </div>
                                             <p class="list-group-item-text">Abona en <strong>Rapipago</strong>, <strong>Pago Fácil</strong> u otras sucursales presentando un cupón de pago. Después de entre 12 y 48 hs. hábiles se acreditará el 
                                             pago y recibirás el juego. </p>
                                         </a>
                                         <a href="javascript:void(0);" class="list-group-item">
                                             <div style="height: 30px;">
-                                                <div style="float:left;font-size:17px;">Transferencia bancaria</div><div id="gf_arsprice2" class="sf_payoption_arsprice">$0 ARS</div>
+                                                <div style="float:left;font-size:17px;">Transferencia bancaria</div><div id="gf_arsprice2" class="gf_payoption_arsprice">$0 ARS</div>
                                             </div>
                                             <p class="list-group-item-text">Realiza un depósito bancario o haz una transferencia por home banking sin moverte de tu casa. En un máximo de 12 horas hábiles recibirás el juego.</p>
                                         </a>
                                     </div>
     
                                 </div>
-                                <div class="sf_right">
-                                	<div class="sf_confirmationdata" style="text-decoration:underline; margin-top:-4px">Datos del comprador:</div>
-                                    <div class="sf_confirmationdata"><strong>Nombre:</strong> <span id="gf_sf_confirmation_name"></span></div>
-                                    <div class="sf_confirmationdata"><strong>E-mail:</strong> <span id="gf_sf_confirmation_email"></span></div>
-                                    <div class="sf_confirmationdata" style="margin-top:15px; text-decoration:underline">Datos del juego:</div>
-                                    <div class="sf_confirmationdata"><strong>Nombre:</strong> <span id="gf_sf_confirmation_gamename"></span></div>
-                                    <div class="sf_confirmationdata"><strong>Sitio de venta:</strong> <span id="gf_sf_confirmation_gamesite"></span></div>
-                                    <div class="sf_confirmationdata" style="height:auto !important;"><strong>URL de tienda:</strong> <input type="text" class="form-control" id="gf_sf_confirmation_gameurl" readonly></div>
-                                    <div class="sf_confirmationdata"><strong>Precio actual en tienda:</strong> <span id="gf_sf_confirmation_gameprice"></span></div>
-                                    <div class="sf_confirmationdata"><strong>En oferta:</strong> <span id="gf_sf_confirmation_gameoffer"></span></div>
+                                <div class="gf_right">
+                                	<div class="gf_confirmationdata" style="text-decoration:underline; margin-top:-4px">Datos del comprador:</div>
+                                    <div class="gf_confirmationdata"><strong>Nombre:</strong> <span id="gf_sf_confirmation_name"></span></div>
+                                    <div class="gf_confirmationdata"><strong>E-mail:</strong> <span id="gf_sf_confirmation_email"></span></div>
+                                    <div class="gf_confirmationdata" style="margin-top:15px; text-decoration:underline">Datos del juego:</div>
+                                    <div class="gf_confirmationdata"><strong>Nombre:</strong> <span id="gf_sf_confirmation_gamename"></span></div>
+                                    <div class="gf_confirmationdata"><strong>Sitio de venta:</strong> <span id="gf_sf_confirmation_gamesite"></span></div>
+                                    <div class="gf_confirmationdata" style="height:auto !important;"><strong>URL de tienda:</strong> <input type="text" class="form-control" id="gf_sf_confirmation_gameurl" readonly></div>
+                                    <div class="gf_confirmationdata"><strong>Precio actual en tienda:</strong> <span id="gf_sf_confirmation_gameprice"></span></div>
+                                    <div class="gf_confirmationdata"><strong>En oferta:</strong> <span id="gf_sf_confirmation_gameoffer"></span></div>
                                 </div>
                             </div>
                             <div class="alert alert-warning" id="gf_sf_repeatwarning">Parece que ya realizaste un pedido por este juego a este e-mail recientemente, te recomendamos usar otro e-mail para realizar pedidos repetidos
@@ -232,6 +232,169 @@ $steam_sales_featured_items = 13;
         <div class="wrapper">
         	
             <div class="main_content">
+
+					<?php  
+					?>
+                    <div class="event_section">
+                        <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
+                        <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
+                            
+                            <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
+                            <?php
+							$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0)) AND 
+							product_update_error = 0 ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
+							$query = mysqli_query($con, $sql);
+							
+							$results = array(); 
+							while($row = mysqli_fetch_assoc($query)) {
+								array_push($results, $row);
+							}
+							shuffle($results);
+							foreach($results as $product) {
+								?>
+                                <a href="juegos/<?php echo $product["product_id"]; ?>/"><div class="event_catalog_product">
+                                    <div class="ecp_game_overlay"></div>
+                                    <div class="ecp_game_info">
+                                        <div class="ecp_game_name"><?php echo $product["product_name"]; ?></div>
+                                        <div class="ecp_game_platform"><img src="global_design/img/icons/<?php if($product["product_platform"] == 1) echo "steam"; ?>_22x22.png"/></div>
+                                    </div>
+                                    <div class="ecp_game_price">
+                                        <div class="ecp_firstprice">$<?php echo quickCalcGame(1, $product["product_listprice"]); ?> ARS</div>
+                                        <div class="ecp_finalprice">$<?php echo quickCalcGame(1, $product["product_finalprice"]); ?> ARS</div>
+                                    </div> 
+                                <img class="ecp_game_img" src="data/img/game_imgs/<?php echo $product["product_mainpicture"]; ?>"/>
+                           		</div></a>
+                                <?php
+							}
+							?>
+                        </div>
+                    </div> 
+                    <?php
+					
+					?>
+
+                <!-- Catálogo destacados -->
+				<div class="catalog-panel" style="margin-bottom:20px;">
+                	
+                    <div class="cp-top">
+                    	<div class="cp-title">Lo más destacado<a href="#"><div class="cp-viewmore">Ver todo</div></a></div>
+                    </div>
+                    
+                    <div class="cp-content">
+                    
+                    
+                    	<div class="cp-product-grid">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Battlefield 3</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
+                        </div>
+                        
+                    	<div class="cp-product-grid">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Battlefield 3</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
+                        </div>
+                        
+                    	<div class="cp-product-grid">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Battlefield 3</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
+                        </div>
+
+
+                    </div>
+                </div>
+                
+              	<div class="left-column">
+                Categorías populares: Accion, aventura, rts, fps, competitivo, multijugador, atmosferico, mundo abierto, estrategia,  primera persona, tercera persona, rol, obra maestra
+
+                    <div class="catalog-panel" style="margin-top:25px;">
+                        <div class="cp-top">
+                            <div class="cp-title">Ofertas propias aleatorias<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
+                        </div>
+                        <div class="cp-content">
+
+                    	<div class="cp-product-grid cp-product-sm">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Battlefield 3</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
+                        </div>
+                    	<div class="cp-product-grid cp-product-sm">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Age of Empires III: Complete Collection</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/age-of-empires-iii-complete-collection.jpg" alt="imagen">
+                        </div>
+                    	<div class="cp-product-grid cp-product-sm">
+                        	<div class="cp-product-overlay"></div>
+                            <div class="cp-product-info">
+                            	<div class="cp-product-name">Battlefield 3</div>
+                                <div class="cp-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
+                            </div>
+                        	<img class="cp-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
+                        </div>
+                        
+                        </div>
+                    </div>
+
+                    <div class="catalog-panel" style="margin-top:25px;">
+                        <div class="cp-top">
+                            <div class="cp-title">Ofertas externas<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
+                        </div>
+                        <div class="cp-content">
+                            <div class="cp-product-grid cp-product-sm">a</div>
+                        </div>
+                    </div>
+                
+                </div>
+                
+                <div class="right-column">
+
+                    <!--div class="catalog-panel" style="margin-bottom:20px;">
+                        <div class="cp-top-short">
+                            <div class="cp-title">Gift cards populares<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
+                        </div>
+                    	<div class="cp-content" style="overflow:hidden;height:400px;">
+                        	<div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                            <div class="cp-element-list">a</div>
+                        </div>
+                    </div-->
+                
+                    <button class="btn btn-primary" id="btn_showbuyform" data-toggle="modal" data-target="#game_form_modal">
+                    	<div style="float:left;">¿El juego que buscás no está<br /> en el catálogo? Hacé click aquí</div>
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                   	</button>
+
+                </div>
+							
+							
+							<?php
+							//$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
+							//AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").(4*$filas_a);
+                            ?>
+
+            
             	<?php
 				/*
 				if($steam_sales_event) {
@@ -560,6 +723,8 @@ $steam_sales_featured_items = 13;
             <?php */
 			
 			?>
+            
+            
             </div><!-- End main content -->
             
         	<?php require_once("global_scripts/php/footer.php"); ?>

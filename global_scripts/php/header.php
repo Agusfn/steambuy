@@ -32,7 +32,7 @@
        	<?php 
 		if($admin == true) {
 			?>
-   			<div class="nav_admin_options">
+   			<div class="nav_options">
                 <div class="btn-group">
                     <a href="<?php echo ROOT_LEVEL . "admin/"; ?>" class="btn btn-primary">Panel de admin</a>
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -48,35 +48,49 @@
                         <li class="divider"></li>
                         <li><a href="<?php echo ROOT_LEVEL . "admin/logout.php?redir=".urlencode($_SERVER["REQUEST_URI"]); ?>">Cerrar sesión</a></li>
                     </ul>
-                </div> 
-            </div>            
-            <?php			
-		} ?>
-        
-        <div id="fb-root"></div>
-		<script>(function(d, s, id) {
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) return;
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.0";
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
-        <?php 
-		if(!$admin) {
-			?>
-			<div class="fblike">
-            	<div class="fb-like" data-href="http://facebook.com/steambuy" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+                </div>
             </div>
-			<?php
-			}
+            <?php			
+		} else {
 		?>
+   			<div class="nav_options">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-primary">Estado del pedido</a>
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                    	<li><a href="#">Informar pago</a></li>
+                    	<li class="divider"></li>
+                    	<li><a href="#">Formulario de compra juegos</a></li>
+                    </ul>
+                </div>
+            </div>
+        <?php	
+		}?>
+        
+
     </div>
 
 
     <div class="header">
-		<a href="<?php echo ROOT_LEVEL; ?>"><img class="mainlogo" style="position:absolute" src="<?php echo ROOT_LEVEL; ?>global_design/img/header-logo.png" alt="steambuy logo" /></a>
-        <div class="header_socialbtns">
-            <a href="http://facebook.com/steambuy" target="_blank"><i class="fa fa-facebook-square"></i></a><a href="http://twitter.com/steambuy" target="_blank"><i class="fa fa-twitter-square"></i></a><a href="http://plus.google.com/+SteamBuyAR" target="_blank"><i class="fa fa-google-plus-square"></i></a>
+		<a href="<?php echo ROOT_LEVEL; ?>"><img class="mainlogo" src="<?php echo ROOT_LEVEL; ?>global_design/img/header-logo.png" alt="steambuy logo" /></a>
+        <div style="float:right">
+            <div class="header_socialbtns">
+                <a href="http://facebook.com/steambuy" target="_blank"><i class="fa fa-facebook-square"></i></a><a href="http://twitter.com/steambuy" target="_blank"><i class="fa fa-twitter-square"></i></a><a href="http://plus.google.com/+SteamBuyAR" target="_blank"><i class="fa fa-google-plus-square"></i></a>
+            </div>
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.0";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            <div class="fblike">
+                <div class="fb-like" data-href="http://facebook.com/steambuy" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+            </div>
         </div>
 	</div>
     

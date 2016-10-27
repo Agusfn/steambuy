@@ -3,87 +3,6 @@
 
 
 
-/* Clases compartidas 2do paso ambos formularios */
-
-.sf_left
-{
-	float:left;
-	width: 330px;
-	margin: 15px 0 0 0;
-}
-
-.sf_payment_options p
-{
-	font-size:14px;
-}
-
-.sf_payment_options .list-group-item
-{
-	outline:none !important;
-	
-}
-
-.sf_payoption_arsprice
-{
-	float: right;
-	font-size: 16px;
-	font-weight: bold;
-	margin-top: 3px;
-}
-
-.sf_right
-{
-	float:right;
-	margin: 15px 0 0 0;
-	width: 305px;
-}
-
-.sf_confirmationdata
-{
-	font-size:14px;
-	margin-top:4px;
-	height: 20px;
-	overflow: hidden;
-	white-space:nowrap;
-}
-
-/* Clases compartidas 3er paso ambos formularios */
-
-
-.gf_tf_ticketinstructions,
-{
-	margin-top:15px;
-	text-align:justify;
-	
-}
-
-.gf_tf_transferinstructions,
-{
-	margin-top:15px;
-	text-align:justify;
-	display:none;
-}
-
-.gf_tf_ticketdata,
-{
-	text-align:center;
-	margin:18px 0;
-	
-}
-
-.gf_tf_transferdata,
-{
-	margin: 20px 0 20px 144px;
-	background-color: #F0F0F0;
-	padding: 6px;
-	width: 360px;
-	-webkit-box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.2);
-	-moz-box-shadow:    2px 2px 2px 0px rgba(50, 50, 50, 0.2);
-	box-shadow:         2px 2px 2px 0px rgba(50, 50, 50, 0.2);
-	display:none;
-}
-
-
 /* FORMULARIO DE COMPRA DE JUEGOS */
 
 
@@ -193,6 +112,49 @@
 	margin-top:14px;
 }
 
+
+.gf_left
+{
+	float:left;
+	width: 330px;
+	margin: 15px 0 0 0;
+}
+
+.gf_payment_options p
+{
+	font-size:14px;
+}
+
+.gf_payment_options .list-group-item
+{
+	outline:none !important;
+	
+}
+
+.gf_payoption_arsprice
+{
+	float: right;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 3px;
+}
+
+.gf_right
+{
+	float:right;
+	margin: 15px 0 0 0;
+	width: 305px;
+}
+
+.gf_confirmationdata
+{
+	font-size:14px;
+	margin-top:4px;
+	height: 20px;
+	overflow: hidden;
+	white-space:nowrap;
+}
+
 /* tercer paso */
 
 
@@ -215,6 +177,40 @@
 	
 }
 
+.gf_tf_ticketinstructions,
+{
+	margin-top:15px;
+	text-align:justify;
+	
+}
+
+.gf_tf_transferinstructions,
+{
+	margin-top:15px;
+	text-align:justify;
+	display:none;
+}
+
+.gf_tf_ticketdata,
+{
+	text-align:center;
+	margin:18px 0;
+	
+}
+
+.gf_tf_transferdata,
+{
+	margin: 20px 0 20px 144px;
+	background-color: #F0F0F0;
+	padding: 6px;
+	width: 360px;
+	-webkit-box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+	-moz-box-shadow:    2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+	box-shadow:         2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+	display:none;
+}
+
+
 
 /************************************/
 
@@ -225,7 +221,7 @@
 	padding-top: 67px;
 }
 
-/* Cuadro de descuentos de eventos *****/
+/* Cuadro especial de descuentos de eventos de oferta *****/
 
 .event_section
 {
@@ -337,14 +333,145 @@
 }
 
 /*****************************/
+/*   Catálogos página ppal */
 
-.left_column
+/* parte superior  */
+.catalog-panel .cp-top, .catalog-panel .cp-top-short {
+	color: #E9E9E9;
+	background-color: #3F3F3F;
+}
+
+.catalog-panel > .cp-top > .cp-title {
+	padding: 3px 0 3px 20px;
+}
+
+.catalog-panel > .cp-top-short > .cp-title {
+	padding: 3px 0 3px 12px;
+}
+
+.catalog-panel .cp-viewmore
+{
+	float:right;
+	border-left: 1px solid #625A5A;
+	padding: 3px 25px;
+	color:#EEE;
+	margin-top:-3px;
+}
+
+.catalog-panel .cp-viewmore:hover {
+	background-color:#555;	
+}
+
+.catalog-panel > .cp-top-short .cp-viewmore
+{
+	padding: 3px 13px;
+}
+
+/** Contenido **/
+
+.cp-content {
+	overflow:hidden;	
+}
+
+/* En forma de grilla */
+
+.cp-product-grid {
+	float: left;
+	position:relative;
+	overflow:hidden;
+	/* medium */
+	width: 240px;
+	height: 112px;	
+}
+
+.cp-product-grid.cp-product-sm {
+	width: 224px;
+	height: 105px;	
+}
+
+
+
+.cp-product-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	background-color: #000;
+	opacity: 0;
+}
+
+
+.cp-product-info {
+	position: absolute;
+	width: 100%;
+	background-color: rgba(48, 48, 48, 0.8);
+	color:#E7E7E7;
+	
+	/* medium */
+	height: 50px;	
+	margin-top: 120px;
+}
+.cp-product-sm .cp-product-info {
+	height: 40px;
+	margin-top:109px;	
+}
+
+
+.cp-product-name {
+	float:left;
+	overflow:hidden;
+	margin: 2px 0 0 7px;
+	word-break:break-all;
+	/* medium */
+	font-size:14px;
+		
+}
+.cp-product-sm .cp-product-name {
+	font-size: 13px;
+	max-width: 181px;
+	max-height: 35px;
+}
+
+
+.cp-product-drm {
+	float:right;
+	/* medium */
+	margin: 7px 5px 0 0;
+}
+
+
+.cp-product-sm .cp-product-drm {
+	margin: 5px 5px 0 0;
+}
+.cp-product-sm .cp-product-drm img {
+	width:19px;	
+}
+
+
+.cp-product-grid .cp-product-img {
+	width:240px;
+	height:112px;	
+}
+
+.cp-product-grid.cp-product-sm .cp-product-img {
+	width:224px;
+	height:105px;	
+}
+
+.catalog-panel .cp-element-list {
+	height: 79px;
+	border: 1px solid black;	
+}
+
+
+/***************************/
+
+.left-column
 {
 	float:left;
 	width:674px;
 }
 
-.right_column
+.right-column
 {
 	float:right;
 	width:260px;

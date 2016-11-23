@@ -19,8 +19,8 @@ if(isAdminLoggedIn())
 
 
 // si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
-$steam_sales_event = false;
-$steam_sales_featured_items = 13;
+$steam_sales_event = true;
+$steam_sales_featured_items = 12;
 
 ?>
 <!DOCTYPE html>
@@ -236,7 +236,7 @@ $steam_sales_featured_items = 13;
 				if($steam_sales_event) {
 					?>
                     <div class="event_section">
-                        <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
+                        <div class="event_title">REBAJAS DE PRIMAVERA DE STEAM<div class="event_duration">desde el 23 al 29 de noviembre</div></div>
                         <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
                             
                             <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
@@ -299,7 +299,7 @@ $steam_sales_featured_items = 13;
                     	<?php
 						if($steam_sales_event) {
 							?>
-                            <div class="panel-heading">Ofertas de Steam aleatorias<a href="juegos/?amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas las ofertas</div></a></div>	
+                            <div class="panel-heading">Ofertas aleatorias<a href="juegos/?amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas las ofertas</div></a></div>	
                             <?php
 						} else { ?>
                             <div class="panel-heading">Ofertas propias aleatorias<a href="juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas</div></a></div>	
@@ -367,12 +367,12 @@ $steam_sales_featured_items = 13;
 					} else { 
 					?>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Acción populares<a href="juegos/?q=accion"><div class="panel_sidelink">Ver juegos de Acción</div></a></div> 
+                            <div class="panel-heading">Juegos de Acción en oferta<a href="juegos/?q=accion"><div class="panel_sidelink">Ver juegos de Acción</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
                                 $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%accion%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) AND product_tags LIKE '%accion%' ORDER BY RAND() LIMIT 8";
                                 
                                 $res2 = mysqli_query($con, $sql);
                                 $i = 0;
@@ -389,12 +389,12 @@ $steam_sales_featured_items = 13;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Aventura populares<a href="juegos/?q=aventura"><div class="panel_sidelink">Ver juegos de Aventura</div></a></div> 
+                            <div class="panel-heading">Juegos de Aventura en oferta<a href="juegos/?q=aventura"><div class="panel_sidelink">Ver juegos de Aventura</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
                                 $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%aventura%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) AND product_tags LIKE '%aventura%' ORDER BY RAND() LIMIT 8";
                                 
                                 $res2 = mysqli_query($con, $sql);
                                 $i = 0;
@@ -411,12 +411,12 @@ $steam_sales_featured_items = 13;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Rol populares<a href="juegos/?q=rol"><div class="panel_sidelink">Ver juegos de Rol</div></a></div> 
+                            <div class="panel-heading">Juegos de Rol en oferta<a href="juegos/?q=rol"><div class="panel_sidelink">Ver juegos de Rol</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
                                 $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%rol%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) AND product_tags LIKE '%rol%' ORDER BY RAND() LIMIT 8";
                                 
                                 $res2 = mysqli_query($con, $sql);
                                 $i = 0;
@@ -433,12 +433,12 @@ $steam_sales_featured_items = 13;
                             </div>
                         </div>
                         <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Estrategia populares<a href="juegos/?q=estrategia"><div class="panel_sidelink">Ver juegos de Estrategia</div></a></div> 
+                            <div class="panel-heading">Juegos de Estrategia en oferta<a href="juegos/?q=estrategia"><div class="panel_sidelink">Ver juegos de Estrategia</div></a></div> 
                             <div class="panel-body">
                                 <?php 
                                 // 2 filas, 8 prod
                                 $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%estrategia%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
+                                 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) AND product_tags LIKE '%estrategia%' ORDER BY RAND() LIMIT 8";
                                 
                                 $res2 = mysqli_query($con, $sql);
                                 $i = 0;

@@ -35,8 +35,6 @@ $(document).ready(function(e) {
 		var hash = window.location.hash.substring(1);
 		if(hash == "formulario-juegos") {
 			$("#game_form_modal").modal("show");
-		} else if(hash == "formulario-paypal") {
-			$("#paypal_form_modal").modal("show");
 		}
 	}
 	
@@ -107,47 +105,37 @@ $(document).ready(function(e) {
 		}
     };
 	
-	$(".cp-product-grid").mouseenter(function(e) {
-		$(this).children(".cp-product-overlay").stop().animate({opacity:"0.35"}, 200, "swing");
+	$(".cpg-product").mouseenter(function(e) {
+		$(this).children(".cpg-product-overlay").stop().animate({opacity:"0.35"}, 200, "swing");
 		
-		if($(this).hasClass("cp-product-sm")) {
-			$(this).children(".cp-product-info").stop().animate({marginTop: "69px"}, 200, "swing");
-		} else if($(this).hasClass("cp-product-lg")) {
-			
+		if($(this).hasClass("cpg-product-sm")) {
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "65px"}, 200, "swing");
+		} else if($(this).hasClass("cpg-product-lg")) {
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "99px"}, 200, "swing");
 		} else {
-			$(this).children(".cp-product-info").stop().animate({marginTop: "70px"}, 200, "swing");
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "70px"}, 200, "swing");
 		}
     });
 	
-	$(".cp-product-grid").mouseleave(function(e) {
-		$(this).children(".cp-product-overlay").stop().animate({opacity:"0"}, 200, "swing");
-		if($(this).hasClass("cp-product-sm")) {
-			$(this).children(".cp-product-info").stop().animate({marginTop: "109px"}, 200, "swing");
-		} else if($(this).hasClass("cp-product-lg")) {
-			
+	$(".cpg-product").mouseleave(function(e) {
+		$(this).children(".cpg-product-overlay").stop().animate({opacity:"0"}, 200, "swing");
+		if($(this).hasClass("cpg-product-sm")) {
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "105px"}, 200, "swing");
+		} else if($(this).hasClass("cpg-product-lg")) {
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "149px"}, 200, "swing");
 		} else {
-			$(this).children(".cp-product-info").stop().animate({marginTop: "120px"}, 200, "swing");
+			$(this).children(".cpg-product-info").stop().animate({marginTop: "112px"}, 200, "swing");
 		}
     });	
+	
 
-
-
-
-
-
-	$(".event_catalog_product").mouseenter(function(e) {
-        
-		$(this).children(".ecp_game_info").stop().animate({marginTop: "98px"}, 200, "swing");
-		$(this).children(".ecp_game_overlay").stop().animate({opacity:"0.35"}, 200, "swing");
-		
-    }); 
-
-	$(".event_catalog_product").mouseleave(function(e) {
-        
-		$(this).children(".ecp_game_info").stop().animate({marginTop: "148px"}, 200, "swing");
-		$(this).children(".ecp_game_overlay").stop().animate({opacity:"0"}, 200, "swing");
-		
-    }); 
+	$(".catalog-panel .carousel").each(function(index, element) {
+		update_catalog_slider_pagination($(this));
+    });
+	
+	$(".catalog-panel .carousel").on('slid.bs.carousel', function () {
+		update_catalog_slider_pagination($(this));
+	})
 
 
 
@@ -522,7 +510,11 @@ $(document).ready(function(e) {
   
 });
 
-
+function update_catalog_slider_pagination(carousel) {
+	var total_items = carousel.find(".item").length;
+	var current_post = carousel.find(".item.active").index() + 1;
+	carousel.closest(".catalog-panel").find(".cp-carousel-pagination").text(current_post + "/" + total_items);
+}
 
 function n_round(number,decimals)
 {

@@ -317,16 +317,18 @@ if(isset($_POST["gameid"]))
 					}
 					if($stage == 1) {
 						?>
+                        <div class="alert alert-danger" style="margin-bottom:10px">El pago por transferencia/depósito bancario está tempooralmente deshabilitado, disculpa las molestias.</div>
 						<div class="payment_options">
 							<div class="list-group">
 								<a href="javascript:void(0);" class="list-group-item active" id="payoption1">
 									<div style="height: 32px;"><h4 class="list-group-item-heading">Cupón de pago</h4> <div class="list_group_price">$<?php echo $ticketPrice; ?></div></div>
 									<p class="list-group-item-text">Abona en <strong>Rapipago</strong>, <strong>Pago Fácil</strong>, <strong>Ripsa</strong>, <strong>BaproPagos</strong> u otras sucursales presentando un cupón de pago. Después de entre 12 y 48 hs. hábiles se acreditará el 
 									pago y recibirás el juego. </p>
-								</a><a href="javascript:void(0);" class="list-group-item" id="payoption2">
+								</a>
+                                <?php /* <a href="javascript:void(0);" class="list-group-item" id="payoption2">
 									<div style="height: 32px;"><h4 class="list-group-item-heading">Transferencia bancaria</h4> <div class="list_group_price">$<?php echo $transferPrice; ?></div></div>
 									<p class="list-group-item-text">Realiza un depósito bancario o haz una transferencia por home banking sin moverte de tu casa. En un máximo de 12 horas hábiles luego de acreditarse recibirás el juego.</p>
-								</a>
+								</a> */ ?>
 							</div>
 						</div>
 						<?php	

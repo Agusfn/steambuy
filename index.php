@@ -19,7 +19,7 @@ if(isAdminLoggedIn())
 
 
 // si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
-$steam_sales_event = true;
+$steam_sales_event = false;
 $steam_sales_featured_items = 12;
 
 ?>
@@ -236,7 +236,7 @@ $steam_sales_featured_items = 12;
 				if($steam_sales_event) {
 					?>
                     <div class="event_section">
-                        <div class="event_title">REBAJAS DE PRIMAVERA DE STEAM<div class="event_duration">desde el 23 al 29 de noviembre</div></div>
+                        <div class="event_title">REBAJAS DE PRIMAVERA DE STEAM<div class="event_duration">desde el 23 al 29 de noviembre <strong>13 hs</strong></div></div>
                         <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
                             
                             <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>

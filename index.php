@@ -352,7 +352,8 @@ $steam_sales_featured_items = 9;
                         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="10000">
 							<div class="carousel-inner" role="listbox">
                                 <div class="item active">
-                                    <div class="cpg-product">
+                                    
+                            		 <div class="cpg-product">
                                 <div class="cpg-product-overlay"></div>
                                 <div class="cpg-product-info">
                                     <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
@@ -812,6 +813,7 @@ $steam_sales_featured_items = 9;
                                 </div>
                                 <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
                             </div>
+                            
                                 </div>
 							</div>
                         </div>
@@ -826,7 +828,7 @@ $steam_sales_featured_items = 9;
                 </div>
 
               	<div class="left-column">
-                	<div class="explore-section">
+                	<!--div class="explore-section">
                     	<span class="explore-title" style="font-size:25px;margin-right:50px;">Explorar</span>
                         <a href="#"><span class="explore-item">Accion</span></a>
 						<a href="#"><span class="explore-item">Aventura</span></a>
@@ -842,9 +844,9 @@ $steam_sales_featured_items = 9;
                         <a href="#"><span class="explore-item">Rol</span></a>
                         <a href="#"><span class="explore-item">Obra maestra</span></a>
                         
-                    </div>
+                    </div-->
 
-                    <div class="catalog-panel" style="margin-top:40px;">
+                    <div class="catalog-panel">
                         <div class="cp-top">
                             <div class="cp-title">Ofertas propias aleatorias<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
                         </div>
@@ -1304,49 +1306,79 @@ $steam_sales_featured_items = 9;
                 
                 <div class="right-column">
 
-                    <div class="catalog-panel" style="margin-bottom:20px;">
+                    <div class="catalog-panel" style="margin-bottom:30px;">
                         <div class="cp-top-short">
                             <div class="cp-title">Gift cards populares<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
                         </div>
-                    	<div class="cp-content" style="overflow:hidden;height:400px;">
+                    	<div class="cp-content" style="height:395px;border-bottom:1px solid #AAA;">
                         
                         	<div class="cpl-product">
-                            	
-                                <!--table style="height:100%">
-                                	<tr >
-                                    	<td style="vertical-align:middle">
-                                        	<img src="resources/css/img/amazon.png" width="35">
-                                        </td>
-                                        <td style="vertical-align:middle">
-                                        	<div style="font-size:13px"><span style="font-size:27px;">5</span> USD</div>
-                                        </td>
-                                        <td style="vertical-align:middle">Hola
-                                        </td>
-                                    </tr>
-                                </table-->
-                                
                                 <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" style="margin: 19px 0 0 4px;float:left;" width="35">
-                                    <div style="float:left;margin: 20px 10px 0 12px;font-size:13px"><span style="font-size:27px;">5</span> USD</div>
+                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                    <div class="cpl-gftcrd-ammount"><span>5</span> USD</div>
                                 </div>
-                                <div style="margin: 8px 6px 0 0;">
-                                    	<div style="font-size:13px;max-width:160px;overflow:hidden;">Gift card Amazon 5 USD (US Only)</div>
+                                <div class="cpl-gftcrd-name">
+                                    <div>Gift card Amazon 5 USD (US Only)</div>
                                 </div>
-                            	
-                                
+                                <div class="cpl-gftcrd-price">$157 <span>ARS</span></div>
                             </div>
-                            <div class="cpl-product">a</div>
-                            <div class="cpl-product">a</div>
-                            <div class="cpl-product">a</div>
-                            <div class="cpl-product">a</div>
+                            
+                        	<div class="cpl-product">
+                                <div style="float:left;">
+                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                    <div class="cpl-gftcrd-ammount"><span>10</span> USD</div>
+                                </div>
+                                <div class="cpl-gftcrd-name">
+                                    <div>Gift card Amazon 10 USD (US Only)</div>
+                                </div>
+                                <div class="cpl-gftcrd-price">$200 <span>ARS</span></div>
+                            </div>
+                            <div class="cpl-product">
+                                <div style="float:left;">
+                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                    <div class="cpl-gftcrd-ammount"><span>20</span> USD</div>
+                                </div>
+                                <div class="cpl-gftcrd-name">
+                                    <div>Gift card Amazon 20 USD (US Only)</div>
+                                </div>
+                                <div class="cpl-gftcrd-price">$400 <span>ARS</span></div>
+                            </div>
+                            <div class="cpl-product">
+                                <div style="float:left;">
+                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                    <div class="cpl-gftcrd-ammount"><span>50</span> USD</div>
+                                </div>
+                                <div class="cpl-gftcrd-name">
+                                    <div>Gift card Amazon 50 USD (US Only)</div>
+                                </div>
+                                <div class="cpl-gftcrd-price">$1000 <span>ARS</span></div>
+                            </div>
+                            <div class="cpl-product" style="border-bottom:none;">
+                                <div style="float:left;">
+                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                    <div class="cpl-gftcrd-ammount"><span>100</span> USD</div>
+                                </div>
+                                <div class="cpl-gftcrd-name">
+                                    <div>Gift card Amazon 100 USD (US Only)</div>
+                                </div>
+                                <div class="cpl-gftcrd-price">$2000 <span>ARS</span></div>
+                            </div>
 
                         </div>
                     </div>
                 
-                    <button class="btn btn-primary" id="btn_showbuyform" data-toggle="modal" data-target="#game_form_modal">
-                    	<div style="float:left;">¿El juego que buscás no está<br /> en el catálogo? Hacé click aquí</div>
-                        <span class="glyphicon glyphicon-list-alt"></span>
-                   	</button>
+                    <a style="text-decoration:none !important;" href="#"><div class="game-form-box" style="margin-bottom:20px">
+                    	¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
+                   	</div></a>
+                    
+                    <a style="text-decoration:none !important;" href="soporte/"><div class="support-box" style="margin-bottom:30px">
+                        <div class="support-box-question"><i class="fa fa-question-circle-o" aria-hidden="true"></i></div>
+                        Si tienes alguna consulta o duda, visita nuestra sección de soporte
+                    </div></a>
+                    
+                    
+					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
+    				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
 
                 </div>
 							

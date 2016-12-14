@@ -278,20 +278,26 @@ h3 {
 	margin-left: -10px;
 }
 
-.nav_tags_dropdown
+
+.nav-explore-dropdown
 {
 	float:left;
-	margin: 0 15px 0 45px;
+	margin-left: 45px;
 }
 
-.tags_dropdown
+.explore-dropdown
 {
 	border-radius: 0px;
-	padding: 13px 10px;
+	padding: 13px 28px;
 	background-color: transparent;
 	border-color: #D0D0D0;
 	border-top:none;
 	border-bottom:none;
+}
+
+.explore-dropdown-content {
+	padding: 15px 22px;
+	width:480px;	
 }
 
 .nav_tags_dropdown > ul
@@ -300,45 +306,46 @@ h3 {
 	border-radius:0 0 4px 4px;
 }
 
-.nav_search_form
+.nav-search-form
 {
 	float:left;
-	margin: 6px 0 0 40px;
+	margin: 6px 0 0 98px;
 }
 
-.nav_search_form input 
+.nav-search-form input 
 {
 	float:left;
 	display:inline-block;
 	width:320px;
 	height:34px;
-	border-top-right-radius:0px;
-	border-bottom-right-radius:0px;	
+	border-radius: 0;
+	border-top-left-radius:3px;
+	border-bottom-left-radius:3px;
 }
 
-.nav_search_form button
+.nav-search-form button
 {
 	float:left;
-	border-top-left-radius:0px;
-	border-bottom-left-radius:0px;
+	border-radius: 0;
+	border-top-right-radius:3px;
+	border-bottom-right-radius:3px;
 	height:34px;
 	width:64px;
-	border-left:1px solid #666;
 	font-size:16px;
 }
 
-.nav_options
+.nav-toolbtn
 {
-	float:left;
-	margin: 0 0 0 60px;
+	float:right;
+	margin-right: 90px;
 }
 
-.nav_options .btn
+.nav-toolbtn .btn
 {
 	border-radius:0;
 	border-top:none;
 	border-bottom:none;
-	padding:13px 10px;
+	padding:13px 21px;
 }
 
 

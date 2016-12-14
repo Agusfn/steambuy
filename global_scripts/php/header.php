@@ -8,33 +8,45 @@
     
 	<div class="nav_bar">
         
-        <div class="btn-group nav_tags_dropdown">
-  			<button type="button" class="btn btn-default dropdown-toggle tags_dropdown" data-toggle="dropdown">Categorías populares <span class="caret"></span></button>
-			<ul class="dropdown-menu" role="menu">
-            	<?php
-				$tag_query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'frecuent_tags'");
-				$tags = mysqli_fetch_row($tag_query);
-				$splittags = explode(",", $tags[0]);
-				foreach($splittags as $tag) {
-					echo "<li><a href='".ROOT_LEVEL."juegos/?q=".$tag."'>".$tag."</a></li>";
-				}
-				?>
-			</ul>
+        <div class="btn-group nav-explore-dropdown">
+  			<button type="button" class="btn btn-default dropdown-toggle explore-dropdown" data-toggle="dropdown">Explorar <span class="caret"></span></button>
+			<div class="dropdown-menu explore-dropdown-content" role="menu">
+            	<h3 style="margin-bottom:10px;">Categorías</h3>
+            	<div>
+					<div style="float:left">
+						<?php
+                        $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 0,20");
+                        while($category = mysqli_fetch_assoc($tag_query)) {
+                            echo "<a href='".ROOT_LEVEL."juegos/?q=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                        }
+                        ?>
+                    </div>
+                    <div style="float:right">
+						<?php
+                        $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 20,20");
+                        while($category = mysqli_fetch_assoc($tag_query)) {
+                            echo "<a href='".ROOT_LEVEL."juegos/?q=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                        }
+                        ?>
+                    </div>
+                </div>
+
+			</div>
 		</div>
         
-        <div class="nav_search_form">
+        <div class="nav-search-form">
             <form action="<?php echo ROOT_LEVEL . "juegos/" ?>" method="get">
                 <input type="text" name="q" class="form-control" placeholder="Buscar juegos..." <?php if(isset($_GET["q"])) { ?> value="<?php echo htmlspecialchars($_GET["q"]); ?>" <?php } ?> />	
                 <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button>
             </form>
         </div>
         
-       	<?php 
-		if($admin == true) {
-			?>
-   			<div class="nav_options">
-                <div class="btn-group">
-                    <a href="<?php echo ROOT_LEVEL . "admin/"; ?>" class="btn btn-primary">Panel de admin</a>
+        <div class="nav-toolbtn">
+			<?php 
+            if($admin == true) {
+                ?>
+				<div class="btn-group">
+					<a href="<?php echo ROOT_LEVEL . "admin/"; ?>" class="btn btn-primary">Panel de admin</a>
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -49,27 +61,25 @@
                         <li><a href="<?php echo ROOT_LEVEL . "admin/logout.php?redir=".urlencode($_SERVER["REQUEST_URI"]); ?>">Cerrar sesión</a></li>
                     </ul>
                 </div>
-            </div>
-            <?php			
-		} else {
-		?>
-   			<div class="nav_options">
-                <div class="btn-group">
-                    <a href="#" class="btn btn-primary">Estado del pedido</a>
+                <?php			
+            } else {
+            ?>
+				<div class="btn-group">
+                    <a href="#" class="btn btn-primary">Mi pedido</a>
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                    	<li><a href="#">Informar pago</a></li>
-                    	<li class="divider"></li>
-                    	<li><a href="#">Formulario de compra juegos</a></li>
+                        <li><a href="#">Informar pago</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Formulario de compra juegos</a></li>
                     </ul>
                 </div>
-            </div>
-        <?php	
-		}?>
-        
+            <?php	
+            }
+			?>
+        </div>
 
     </div>
 

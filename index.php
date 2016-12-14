@@ -141,7 +141,6 @@ $steam_sales_featured_items = 12;
                         	<h4>Elige un medio de pago y confirma los datos:</h4>
                         	<div style="height:266px">
                                 <div class="sf_left">
-                                	<div class="alert alert-danger" style="margin-bottom:10px">No estamos recibiendo pagos por transf. bancaria temporalmente, disculpa las molestias.</div>
                                     <div class="list-group sf_payment_options" id="gf_paymentoptions">
                                         <a href="javascript:void(0);" class="list-group-item active">
                                             <div style="height: 30px;">
@@ -150,12 +149,12 @@ $steam_sales_featured_items = 12;
                                             <p class="list-group-item-text">Abona en <strong>Rapipago</strong>, <strong>Pago Fácil</strong> u otras sucursales presentando un cupón de pago. Después de entre 12 y 48 hs. hábiles se acreditará el 
                                             pago y recibirás el juego. </p>
                                         </a>
-                                        <?php /*<a href="javascript:void(0);" class="list-group-item">
+                                        <a href="javascript:void(0);" class="list-group-item">
                                             <div style="height: 30px;">
                                                 <div style="float:left;font-size:17px;">Transferencia bancaria</div><div id="gf_arsprice2" class="sf_payoption_arsprice">$0 ARS</div>
                                             </div>
                                             <p class="list-group-item-text">Realiza un depósito bancario o haz una transferencia por home banking sin moverte de tu casa. En un máximo de 12 horas hábiles recibirás el juego.</p>
-                                        </a>*/ ?>
+                                        </a>
                                     </div>
     
                                 </div>

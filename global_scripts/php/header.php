@@ -90,6 +90,7 @@
             <div class="header_socialbtns">
                 <a href="http://facebook.com/steambuy" target="_blank"><i class="fa fa-facebook-square"></i></a><a href="http://twitter.com/steambuy" target="_blank"><i class="fa fa-twitter-square"></i></a><a href="http://plus.google.com/+SteamBuyAR" target="_blank"><i class="fa fa-google-plus-square"></i></a>
             </div>
+            <div class="xmass"></div>
             <div id="fb-root"></div>
             <script>(function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];

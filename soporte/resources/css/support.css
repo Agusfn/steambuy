@@ -1,0 +1,51 @@
+@charset "utf-8";
+/* CSS Document */
+
+.faq1-panel, .faq2-panel {
+	border:none;
+	border-radius:0 !important;
+	margin-bottom:5px;
+	background-color: transparent;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.faq1-panel > a, .faq2-panel > a {
+	text-decoration:none;	
+}
+
+.faq1-panel > a > .panel-heading, 
+.faq2-panel > a > .panel-heading {
+	padding:15px 20px;
+	color: #EDEDED;
+	background-color: #3E3E3E;
+	border-radius:0;
+	transition: 0.15s ease;
+}
+
+
+.faq1-panel > a > .panel-heading:hover {
+	background-color: #4B4B4B;
+}
+
+.faq1-panel > .panel-collapse > .panel-body {
+	padding: 22px 20px 13px 50px;
+}
+
+
+
+
+.faq2-panel > a > .panel-heading {
+	padding: 7px 20px;
+	background-color: #3B4F87;
+}
+
+.faq2-panel > a > .panel-heading:hover {
+	background-color: #2E3D62;
+}
+
+.faq2-panel > a > .panel-heading > .panel-title,
+.faq1-panel > .panel-collapse > .panel-body {
+	font-size:14px;
+}
+

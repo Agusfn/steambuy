@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<support>
+	<category>
+		<title>Consulta sobre una compra que realicé en SteamBuy</title>
+		<content>
+			<qa>
+				<question>Cuándo recibo mi producto?</question>
+				<answer_id>123</answer_id>
+			</qa>
+			<qa>
+				<question>Cuál es el estado de mi pedido?</question>
+				<answer_id>456</answer_id>
+			</qa>
+			<subcategory>
+				<title>Consulta con la compra de un juego</title>
+				<content>
+					<qa>
+						<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
+						<answer_id>456</answer_id>
+					</qa>
+					<qa>
+						<question>¿Para qué sirve el informe de pago?</question>
+						<answer_id>456</answer_id>
+					</qa>
+				</content>
+			</subcategory>
+		</content>
+	</category>
+	
+	<category>
+		<title>Consulta sobre juegos</title>
+		<content>
+			<qa>
+				<question>Cuándo recibo mi producto?</question>
+				<answer_id>123</answer_id>
+			</qa>
+			<subcategory>
+				<title>Subcategoría 2</title>
+				<content>
+					<qa>
+						<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
+						<answer_id>12326</answer_id>
+					</qa>
+					<subcategory>
+						<title>Subcategoría 2-3</title>
+						<content>
+							<qa>
+								<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
+								<answer_id>123</answer_id>
+							</qa>
+						</content>
+					</subcategory>
+				</content>
+			</subcategory>
+
+		</content>
+	</category>
+</support>

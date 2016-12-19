@@ -123,7 +123,7 @@ h3 {
 	margin:0;
 }
 
-.panel-default > .panel-heading
+/*.panel-default > .panel-heading
 {
 	background-color: rgba(240, 240, 240, 1);
 }
@@ -146,7 +146,7 @@ h3 {
 .panel-group .panel-body
 {
 	padding: 15px;
-}
+}*/
 
 .popover {
     z-index: 1060;
@@ -376,6 +376,12 @@ h3 {
 	color: #EEE;
     padding: 0px 4px;
     border-radius: 10px;
+}
+
+.page-title {
+	text-align: center;
+	margin: 10px 0 30px 0;
+	color: rgba(38, 116, 183, 1);	
 }
 
 /*********************/

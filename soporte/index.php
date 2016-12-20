@@ -7,7 +7,7 @@ header("Content-Type: text/html; charset=UTF-8");
 
 require_once("../global_scripts/php/client_page_preload.php");
 require_once("../global_scripts/php/admlogin_functions.php");
-
+require_once("resources/faq_answer_fetcher.php");
 
 
 
@@ -36,7 +36,9 @@ function createFaqCollapseNode($branch_dir, $collapse_count, $title, $content) {
 
 
 function developCategoryContentTree($content_tree, $branch_dir) {
-
+	
+	global $faq;	
+	
 	$accordion = "<div class='panel-group' id='accordion-".$branch_dir."' role='tablist' aria-multiselectable='true'>"; // accordion-1 (dentro del primer collapse del main accordion)
 	$collapse_count = 0;
 	if(isset($content_tree["qa"])) {
@@ -45,7 +47,7 @@ function developCategoryContentTree($content_tree, $branch_dir) {
 		} else $questions = $content_tree["qa"]; 
 		foreach($questions as $question) {
 			$collapse_count += 1;
-			$accordion .= createFaqCollapseNode($branch_dir, $collapse_count, $question["question"], $question["answer_id"]);
+			$accordion .= createFaqCollapseNode($branch_dir, $collapse_count, $question["question"], $faq->getAnswer($question["answer_id"]));
 		}
 	}
 	if(isset($content_tree["subcategory"])) {	
@@ -69,10 +71,9 @@ function displaySupportTree() {
 	$xml = simplexml_load_file("resources/support_tree.xml");	
 	$json_string = json_encode($xml);
 	$result_array = json_decode($json_string, TRUE);
-		
+
 	$main_html = "<div class='panel-group' id='accordion-faq-main' role='tablist' aria-multiselectable='true'>";
-	
-	
+
 	// Cada categoría tiene un accordion
 	$category_n = 0;
 	
@@ -108,6 +109,11 @@ function displaySupportTree() {
 	
 	echo $main_html;
 }
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" itemscope itemtype="http://schema.org/Article">
@@ -148,7 +154,6 @@ function displaySupportTree() {
 		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>     
         <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
 		<script type="text/javascript" src="../global_scripts/js/global_scripts.js"></script>
-		<script type="text/javascript" src=""></script>
         
     </head>
     
@@ -160,13 +165,17 @@ function displaySupportTree() {
         	
             <div class="main_content">
 
-            	<h3 class="page-title">¿En qué necesitas ayuda?</h3>
-            
+            	<h3 class="page-title">¿En qué podemos ayudarte?</h3>
             	<?php
-				
+				$faq = new obtainFaqAnswer(); // Inicializamos la clase para obtener answer
 				displaySupportTree();
-				
 				?>
+                <h3 class="page-title" style="margin:50px 0 25px 0;">¿No encontraste la respuesta?</h3>
+                <div style="margin-bottom:50px;font-size:18px;text-align:center;">
+                    Revisa la lista completa de <a href="preguntas-frecuentes/">preguntas frecuentes</a> o contáctanos
+                    <div style="margin-top:10px;"><i class="fa fa-envelope" aria-hidden="true"></i> <a href="mailto:admin@steambuy.com.ar">contacto@steambuy.com.ar</a></div>
+                </div>
+                
             </div><!-- End main content -->
             
         	<?php require_once("../global_scripts/php/footer.php"); ?>

@@ -27,3 +27,7 @@ ol
 {
 	margin-bottom:8px !important;
 }
+
+#accordion .panel-heading {
+	background-color: rgba(240, 240, 240, 1);	
+}

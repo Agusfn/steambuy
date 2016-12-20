@@ -2,58 +2,109 @@
 
 <support>
 	<category>
-		<title>Consulta sobre una compra que realicé en SteamBuy</title>
+		<title>Consulta acerca de compras y envíos</title>
 		<content>
 			<qa>
-				<question>Cuándo recibo mi producto?</question>
-				<answer_id>123</answer_id>
+				<question>¿Cuándo recibo mi producto?</question>
+				<answer_id>cuando-recibo-mi-producto</answer_id>
 			</qa>
 			<qa>
-				<question>Cuál es el estado de mi pedido?</question>
-				<answer_id>456</answer_id>
+				<question>¿Cuál es el estado de mi pedido?</question>
+				<answer_id>estado-de-mi-pedido</answer_id>
 			</qa>
 			<subcategory>
-				<title>Consulta con la compra de un juego</title>
+				<title>► Consulta comprando un juego</title>
 				<content>
 					<qa>
-						<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
-						<answer_id>456</answer_id>
+						<question>¿Cómo instalo el juego una vez que me lo envían?</question>
+						<answer_id>como-obtener-el-juego</answer_id>
 					</qa>
 					<qa>
 						<question>¿Para qué sirve el informe de pago?</question>
-						<answer_id>456</answer_id>
+						<answer_id>para-que-sirve-informe-pago</answer_id>
+					</qa>
+					<qa>
+						<question>Realicé un pedido, lo pagué, y el juego ahora tiene un precio diferente.</question>
+						<answer_id>juego-cambio-precio</answer_id>
+					</qa>
+					<qa>
+						<question>No informé el pago a tiempo, ¿qué debo hacer?</question>
+						<answer_id>no-informe-el-pago</answer_id>
 					</qa>
 				</content>
 			</subcategory>
+			<subcategory>
+				<title>► Consulta comprando una gift card</title>
+				<content>
+					<qa>
+						<question>¿Cómo activo una Steam Wallet?</question>
+						<answer_id>como-activar-steam-wallet</answer_id>
+					</qa>
+				</content>
+			</subcategory>
+		</content>
+	</category>
+
+	<category>
+		<title>Consulta acerca de un juego</title>
+		<content>
+			<qa>
+				<question>¿En qué formato y para qué plataformas envían los juegos?</question>
+				<answer_id>en-que-formato-y-plataformas</answer_id>
+			</qa>			
+			<qa>
+				<question>¿Cómo puedo saber si un juego funcionará bien en mi PC?</question>
+				<answer_id>funcionara-en-mi-pc</answer_id>
+			</qa>	
+			<qa>
+				<question>¿Puedo enviarle el juego a un amigo?</question>
+				<answer_id>enviar-juego-amigo</answer_id>
+			</qa>
+			<subcategory>
+				<title>Tengo un problema con un juego</title>
+				<content>
+					<qa>
+						<question>Recibí el juego pero no sé cómo instalarlo.</question>
+						<answer_id>como-instalar-juego</answer_id>
+					</qa>
+					<qa>
+						<question>El juego no inicia/funciona mal.</question>
+						<answer_id>juego-funciona-mal</answer_id>
+					</qa>
+					<qa>
+						<question>Tengo otro problema con el juego</question>
+						<answer_id>otro-problema-con-juego</answer_id>
+					</qa>
+				</content>
+			</subcategory>	
+		</content>
+	</category>
+
+	<category>
+		<title>Consultas acerca de la tienda</title>
+		<content>
+			<qa>
+				<question>¿En qué moneda y en qué países venden?</question>
+				<answer_id>moneda-y-pais</answer_id>
+			</qa>			
+			<qa>
+				<question>¿Qué medios de pago aceptan?</question>
+				<answer_id>medios-de-pago</answer_id>
+			</qa>	
+			<qa>
+				<question>¿Los juegos vendidos tienen restricción de región?</question>
+				<answer_id>restriccion-de-region</answer_id>
+			</qa>
+			<qa>
+				<question>Quiero comprar un producto que no está en el catálogo, ¿cómo hago?</question>
+				<answer_id>comprar-juego-fuera-catalogo</answer_id>
+			</qa>
+			<qa>
+				<question>¿Cómo funcionan las ofertas?</question>
+				<answer_id>como-funcionan-las-ofertas</answer_id>
+			</qa>
 		</content>
 	</category>
 	
-	<category>
-		<title>Consulta sobre juegos</title>
-		<content>
-			<qa>
-				<question>Cuándo recibo mi producto?</question>
-				<answer_id>123</answer_id>
-			</qa>
-			<subcategory>
-				<title>Subcategoría 2</title>
-				<content>
-					<qa>
-						<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
-						<answer_id>12326</answer_id>
-					</qa>
-					<subcategory>
-						<title>Subcategoría 2-3</title>
-						<content>
-							<qa>
-								<question>¿Cómo obtengo el juego que compré una vez que me lo envían?</question>
-								<answer_id>123</answer_id>
-							</qa>
-						</content>
-					</subcategory>
-				</content>
-			</subcategory>
-
-		</content>
-	</category>
+	
 </support>

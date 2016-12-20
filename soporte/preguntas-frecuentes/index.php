@@ -16,9 +16,6 @@ if(isAdminLoggedIn())
 	$admin = true;
 }
 
-if(isset($_GET["v"])) {
-	if(is_numeric($_GET["v"])) mysqli_query($con, "UPDATE `faq` SET `visits` = `visits` + 1 WHERE `order` = ".mysqli_real_escape_string($con, $_GET["v"]).";");
-}
 
 ?>
 <!DOCTYPE html>
@@ -50,17 +47,24 @@ if(isset($_GET["v"])) {
         <meta itemprop="image" content="http://steambuy.com.ar/global_design/img/logo-complete-meta.jpg">
         
         
-        <link rel="shortcut icon" href="../../favicon.ico?2">
+        <link rel="shortcut icon" href="../../favicon.ico">
         
         <link rel="stylesheet" href="../../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
         <link rel="stylesheet" href="../../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
         <link rel="stylesheet" href="../../global_design/css/main.css" type="text/css">
-        <link rel="stylesheet" href="" type="text/css">
+        <link rel="stylesheet" href="resources/css/faq_pg.css" type="text/css">
         
 		<script type="text/javascript" src="../../global_scripts/js/jquery-1.8.3.min.js"></script>
         <script type="text/javascript" src="../../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="../../global_scripts/js/global_scripts.js"></script>
-        
+		<script type="text/javascript">
+		$(document).ready(function(e) {
+            if(window.location.hash) {
+				var anchor_str = window.location.hash.substring(1);
+				$("#"+anchor_str).collapse("show");
+			}
+        });
+		</script>
     </head>
     
     <body>
@@ -71,21 +75,14 @@ if(isset($_GET["v"])) {
         	
             <div class="main_content">
                 
-                
-                
-                
-                
-                
-                
-                <?php /*<h3 class="main_title">Preguntas frecuentes</h3>
+                <h3 class="page-title">Preguntas frecuentes</h3>
             	
                 <div class="panel-group" id="accordion">
                 	<?php 
-					//require_once("resources/faq.html"); 
+					require_once("resources/faq.html"); 
 					?>
 				</div>
-					*/ 
-				?>
+					
 				
             </div><!-- End main content -->
             

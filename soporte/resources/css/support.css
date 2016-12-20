@@ -49,3 +49,10 @@
 	font-size:14px;
 }
 
+.faq2-panel > .panel-collapse > .panel-body {
+	padding: 25px 15px;
+}
+
+.faq2-panel > .panel-collapse > .panel-body > .panel-body {
+	padding: 0;
+}

@@ -7,9 +7,6 @@ $(document).ready(function(e) {
 		pay_method = parseInt($(this).index()) + 1;
 		$("#total_price").text("$"+price[pay_method]+" ARS");
 		$("#paymethod").val(pay_method);
-		if($(this).index() == 1) {
-			alert("Los pagos por transferencia bancaria pueden demorar 24-72 hs debido a mantenimiento de la cuenta, disculpa las molestias.");
-		}
     });
 	
 

@@ -379,7 +379,6 @@ $(document).ready(function(e) {
 		  	if($(this).index() == 0) {
 			   $("#gf_button_confirm").html("Generar cupón&nbsp;&nbsp;<span class='glyphicon glyphicon-barcode'></span>");
 		   	} else if($(this).index() == 1) {
-				alert("Los pagos por transferencia bancaria pueden demorar 24-72 hs debido a mantenimiento de la cuenta, disculpa las molestias.");
 			   $("#gf_button_confirm").html("Generar pedido");
 	   		}
 		}

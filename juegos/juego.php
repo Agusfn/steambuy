@@ -336,7 +336,7 @@ if(is_numeric($_GET["id"])){
 											<?php
                                             $tags = explode(",", $gameData["product_tags"]);
                                             foreach($tags as $tag) {
-                                                echo "<a href='../?q=".$tag."'><div class='product_tag'>".$tag."</div></a>";
+                                                echo "<a href='../?tag=".$tag."'><div class='product_tag'>".$tag."</div></a>";
                                             }
                                             ?>
                                         </div>

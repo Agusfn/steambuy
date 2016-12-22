@@ -18,11 +18,9 @@ if(isAdminLoggedIn())
 }
 
 
-/* si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
-
-*/
-$steam_sales_event = true;
-$steam_sales_featured_items = 9;
+// si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
+$steam_sales_event = false;
+$steam_sales_featured_items = 12;
 
 ?>
 <!DOCTYPE html>
@@ -142,9 +140,10 @@ $steam_sales_featured_items = 9;
                         
                         	<h4>Elige un medio de pago y confirma los datos:</h4>
                         	<div style="height:266px">
+
                                 <div class="gf_left">
-                                
                                     <div class="list-group gf_payment_options" id="gf_paymentoptions">
+
                                         <a href="javascript:void(0);" class="list-group-item active">
                                             <div style="height: 30px;">
                                                 <div style="float:left;font-size:17px;">Cupón de pago</div><div id="gf_arsprice1" class="gf_payoption_arsprice">$0 ARS</div>
@@ -244,6 +243,7 @@ $steam_sales_featured_items = 9;
                             <div class="cp-title">OFERTAS DESTACADAS DE HOY</div>
                         </div>
                         <div class="cp-content">
+
                             <?php
 							$sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
 							$query = mysqli_query($con, $sql);
@@ -262,6 +262,7 @@ $steam_sales_featured_items = 9;
 
                         </div>
                     </div>
+
                     <?php
                 }
                 ?>
@@ -276,7 +277,7 @@ $steam_sales_featured_items = 9;
 
                         <div id="carousel-relevant" class="carousel slide" data-ride="carousel" data-interval="10000">
 							<div class="carousel-inner" role="listbox">
-                                
+
                             <?php
 							$filas = 3;
 							$paginas = 2;
@@ -323,6 +324,7 @@ $steam_sales_featured_items = 9;
 								else echo "<div class='cp-title'>Ofertas propias aleatorias<a href='juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
 								?>
                             </div>
+
                             <div class="cp-content">
                                 
                                 <div id="carousel-random" class="carousel slide" data-ride="carousel" data-interval="false">
@@ -361,8 +363,10 @@ $steam_sales_featured_items = 9;
                                         ?>
                                     </div>
                                 </div>
+
                                 
                             </div>
+
                             <div class="cp-bottom">
                                 <span class="cp-carousel-pagination">0/0</span>
                                 <span class="cp-carousel-pag-controls">
@@ -389,6 +393,7 @@ $steam_sales_featured_items = 9;
                                     $query = mysqli_query($con, $sql);
                                     $i = 0;
                                     while($pData = mysqli_fetch_assoc($query)) 
+
                                     {
                                         if($i <$cant_productos && !in_array($pData["product_id"],$displayedProducts)) 
                                         {

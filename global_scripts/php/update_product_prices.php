@@ -19,6 +19,7 @@ define("ignore_sales_start", strtotime("2016-12-22 11:00:00"));
 define("ignore_sales_end", strtotime("2016-12-22 15:00:00"));  */
 
 
+
 require_once("mysql_connection.php");
 require_once("steam_product_fetch.php");
 
@@ -40,6 +41,7 @@ while($pData = mysqli_fetch_array($res))
 	if($product->loadError == 0) {
 		$prices = $product->getPriceInfo(true);
 		if($prices["error"] == 0) {
+
 
 			if($prices["product_discount"] == 0) {	
 

@@ -39,7 +39,7 @@ if(isset($_POST["order_id"]) && isset($_POST["order_password"]))
 	$query = mysqli_query($con, $sql);
 	if(mysqli_num_rows($query) == 1) {
 		$orderData = mysqli_fetch_assoc($query);
-		if($_POST["order_password"] == $orderData["order_password"]) {
+		if($_POST["order_password"] === $orderData["order_password"]) {
 			if($orderData["order_status"] == 1) {
 				if($orderData["product_limited_discount"] == 1 || $orderData["order_paymentmethod"] == 2) {
 						if($_FILES["order_inform_img"]["error"] == 0) {

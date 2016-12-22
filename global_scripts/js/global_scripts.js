@@ -1,7 +1,8 @@
 $(document).ready(function() {  
 	
 	$(".button").on('dragstart', function(event) { event.preventDefault(); });
-	$('.w_tooltip').tooltip();
+	//$('.w_tooltip').tooltip();
+	$('[data-toggle="tooltip"]').tooltip()
 	
 	var stickyNavTop = $('.nav_bar').offset().top;  
       

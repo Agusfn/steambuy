@@ -58,6 +58,12 @@ a:hover{
 	text-decoration:underline;
 }
 
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 /********** Modificaciones Bootstrap********/
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {

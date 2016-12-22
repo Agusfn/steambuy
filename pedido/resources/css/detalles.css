@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+.order_id {
+	font-size: 14px;
+	color:#444;	
+}
+
+
+.product_name {
+	font-size: 20px;
+	color: #444;
+}
+
+
+.order_price {
+	font-size: 18px;
+	color: #555;
+}
+
+.order-detail-title
+{
+	font-size:14px;
+	color:#777;
+	margin-bottom:5px;
+}
+
+.dotted
+{
+	text-decoration:underline;
+	text-decoration-style:dashed;
+}

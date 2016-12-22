@@ -86,6 +86,7 @@ $(document).ready(function(e) {
 			 moveGalleryItem($(".ics_item_active").next());
 		});
 	}
+	
 	function moveGalleryItem($targetItem) {
         if($targetItem.length) {
             var newPosition = n_round($targetItem.position().top,0);

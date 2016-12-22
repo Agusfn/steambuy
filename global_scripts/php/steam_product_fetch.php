@@ -91,11 +91,13 @@ class steamProduct {
 			imagecopyresampled($cropped, $wide_img, 0, 0, 0, 0, 460, 215, $width, $height);
 			if(!imagejpeg($cropped, $finalImgPath, 98)) return false;
 		} else return false;
-
-		$smallImg = imagecreatetruecolor(198, 93);
-		imagecopyresampled($smallImg, imagecreatefromjpeg($finalImgPath), 0, 0, 0, 0, 198, 93, 460, 215);
-		if(imagejpeg($smallImg, $finalSmImgPath, 98)) return $fileName;
-		else return false;
+		
+		save_game_image_rescaled($finalImgPath, ROOT_LEVEL."data/img/game_imgs/small/".$fileName, 198, 93);
+		save_game_image_rescaled($finalImgPath, ROOT_LEVEL."data/img/game_imgs/224x105/".$fileName, 224, 105);
+		save_game_image_rescaled($finalImgPath, ROOT_LEVEL."data/img/game_imgs/240x112/".$fileName, 240, 112);
+		save_game_image_rescaled($finalImgPath, ROOT_LEVEL."data/img/game_imgs/320x149/".$fileName, 320, 149);
+		
+		return $fileName;
 	}
 	
 	public function getDescription() {
@@ -188,6 +190,15 @@ class steamProduct {
 	
 	
 	
+}
+
+
+function save_game_image_rescaled($orig_path, $new_path, $new_width, $new_height) {
+	if(file_exists($orig_path)) {
+		$smallImg = imagecreatetruecolor($new_width, $new_height);
+		imagecopyresampled($smallImg, imagecreatefromjpeg($orig_path), 0, 0, 0, 0, $new_width, $new_height, 460, 215); // TODAS LAS IMG TIENEN 460x215
+		return imagejpeg($smallImg, $new_path, 98);
+	} else return false;
 }
 
 

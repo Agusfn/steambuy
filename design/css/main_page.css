@@ -217,8 +217,8 @@
 
 .main_content
 {
-	height:1650px;
 	padding-top: 67px;
+	padding-bottom:30px;
 }
 
 
@@ -535,6 +535,64 @@
 
 /*************** Right column ***********************/
 
+
+.panel_question_info
+{
+	float:right;
+    margin: 3px 0px 0px;
+}
+
+
+#calcbox_input
+{
+	display:inline-block;	
+	width:90px;
+	margin:0 4px 0 7px;
+}
+
+#calcbox_btn
+{
+	padding: 4px 8px;
+	margin-top:-4px;
+}
+
+#calcbox_loadicon
+{
+	margin: 9px 9px 0 0;
+	float: right;
+	display:none;
+}
+
+
+.calcbox_respline
+{
+	margin:10px 10px 0;
+	font-size: 17px;
+	height: 25px;	
+}
+
+.calcbox_placeholder
+{
+	font-size: 14px;
+	color: #666;
+}
+
+.calcbox_usdammount
+{
+	float: left;
+	margin-left: 6px;
+	font-weight: bold;
+	color: #080;
+	display: none;
+}
+
+.calcbox_arsresponse
+{
+	position: absolute;
+	margin-left: 125px;
+	color: rgb(119, 119, 119);
+	display: none;
+}
 
 
 

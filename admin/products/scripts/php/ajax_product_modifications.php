@@ -39,14 +39,25 @@ if($_POST["action"] == "reorder" && isset($_POST["products_array"]))
 	else $result = mysql_error($con);	
 	
 	// Crear miniatura de imágen si no existe (cuando se añaden manualmente los juegos)
-	if(!file_exists("../../../../data/img/game_imgs/small/".$pdata["product_mainpicture"]) && $pdata["product_mainpicture"] != "") {
-		$mainImgPath = "../../../../data/img/game_imgs/".$pdata["product_mainpicture"];
-		$miniaturaPath = "../../../../data/img/game_imgs/small/".$pdata["product_mainpicture"];
-		$newSmallImg = imagecreatetruecolor(198, 93);
-		imagecopyresampled($newSmallImg, imagecreatefromjpeg($mainImgPath), 0, 0, 0, 0, 198, 93, 460, 215);
-		imagejpeg($newSmallImg, $miniaturaPath, 98);
-	}
+	$mainImgPath = "../../../../data/img/game_imgs/".$pdata["product_mainpicture"];
 	
+	$new_img = "../../../../data/img/game_imgs/small/".$pdata["product_mainpicture"];
+	if(!file_exists($new_img) && $pdata["product_mainpicture"] != "") {
+		save_game_image_rescaled($mainImgPath, $new_img, 198,93);
+	}	
+	$new_img = "../../../../data/img/game_imgs/224x105/".$pdata["product_mainpicture"];
+	if(!file_exists($new_img) && $pdata["product_mainpicture"] != "") {
+		save_game_image_rescaled($mainImgPath, $new_img, 224,105);
+	}
+	$new_img = "../../../../data/img/game_imgs/240x112/".$pdata["product_mainpicture"];
+	if(!file_exists($new_img) && $pdata["product_mainpicture"] != "") {
+		save_game_image_rescaled($mainImgPath, $new_img, 240,112);
+	}
+	$new_img = "../../../../data/img/game_imgs/320x149/".$pdata["product_mainpicture"];
+	if(!file_exists($new_img) && $pdata["product_mainpicture"] != "") {
+		save_game_image_rescaled($mainImgPath, $new_img, 320,149);
+	}
+		
 } else if($_POST["action"] == "insert" && isset($_POST["product_data"])) {
 	
 	$pdata = $_POST["product_data"];
@@ -123,5 +134,15 @@ if($_POST["action"] == "reorder" && isset($_POST["products_array"]))
 }
 
 echo $result;
+
+
+function save_game_image_rescaled($orig_path, $new_path, $new_width, $new_height) {
+	if(file_exists($orig_path)) {
+		$smallImg = imagecreatetruecolor($new_width, $new_height);
+		imagecopyresampled($smallImg, imagecreatefromjpeg($orig_path), 0, 0, 0, 0, $new_width, $new_height, 460, 215); // TODAS LAS IMG TIENEN 460x215
+		return imagejpeg($smallImg, $new_path, 98);
+	} else return false;
+}
+
 
 ?>

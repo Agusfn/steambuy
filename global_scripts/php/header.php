@@ -17,7 +17,7 @@
 						<?php
                         $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 0,20");
                         while($category = mysqli_fetch_assoc($tag_query)) {
-                            echo "<a href='".ROOT_LEVEL."juegos/?q=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                            echo "<a href='".ROOT_LEVEL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
                         }
                         ?>
                     </div>
@@ -25,7 +25,7 @@
 						<?php
                         $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 20,20");
                         while($category = mysqli_fetch_assoc($tag_query)) {
-                            echo "<a href='".ROOT_LEVEL."juegos/?q=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                            echo "<a href='".ROOT_LEVEL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
                         }
                         ?>
                     </div>
@@ -65,15 +65,14 @@
             } else {
             ?>
 				<div class="btn-group">
-                    <a href="#" class="btn btn-primary">Mi pedido</a>
+                    <a href="<?php echo ROOT_LEVEL."pedido/"; ?>" class="btn btn-primary">Mi pedido</a>
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Informar pago</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">Formulario de compra juegos</a></li>
+                        <li><a href="<?php echo ROOT_LEVEL."informar/"; ?>">Informar pago</a></li>
+                        <li><a href="<?php echo ROOT_LEVEL."cancelar/"; ?>">Cancelar pedido</a></li>
                     </ul>
                 </div>
             <?php	

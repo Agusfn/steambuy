@@ -1,0 +1,21 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+
+
+#form
+{
+	width: 200px;
+	margin: 0 auto;
+}
+
+#input_id
+{
+	margin-bottom:15px;
+}
+
+#button_submit
+{
+	margin: 14px 0px 0px 70px;
+}

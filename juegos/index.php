@@ -65,10 +65,12 @@ if(isset($_GET["pg"])) {
 	}
 } else $current_page = 0;	
 
+$searching = 0; // 0 = no se busca, 1 = busqueda por nombre/tags/etc, 2 = busqueda por tags exclusivamente
 if(isset($_GET["q"])) {
-	if($_GET["q"] != "") $searching = true;
-	else $searching = false;	
-} else $searching = false;
+	if($_GET["q"] != "") $searching = 1;	
+} else if(isset($_GET["tag"])) {
+	if($_GET["tag"] != "") $searching = 2;	
+}
 
 ?>
 <!DOCTYPE html>
@@ -77,7 +79,10 @@ if(isset($_GET["q"])) {
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         
-        <title><?php if($searching) echo "Buscar '".$_GET["q"]."' - SteamBuy"; else echo "Catálogo de juegos - SteamBuy"; ?></title>
+        <title><?php 
+		if($searching == 1) echo "Buscar '".htmlspecialchars($_GET["q"])."' - SteamBuy"; 
+		else if($searching == 2) echo "Categoría ".htmlspecialchars($_GET["tag"])." - SteamBuy";
+		else echo "Catálogo de juegos - SteamBuy"; ?></title>
         
         <meta name="description" content="Encuentra los juegos que buscas en el catálogo de juegos.">
         <meta name="keywords" content="juegos,comprar,steam,origin,amazon,buscar,hallar,tarjeta,crédito,pago fácil,rapipago,ripsa">
@@ -115,7 +120,8 @@ if(isset($_GET["q"])) {
         
         <script type="text/javascript">
 		<?php
-		if($searching) echo "var so_query = 'q=".$_GET["q"]."';\n";
+		if($searching == 1) echo "var so_query = 'q=".urlencode($_GET["q"])."';\n";
+		else if($searching == 2) echo "var so_query = 'tag=".urlencode($_GET["tag"])."';\n";
 		else echo "var so_query = '';\n";
 			
 		echo "var so_order = '&order=".$filter_order."';\n";
@@ -175,7 +181,7 @@ if(isset($_GET["q"])) {
 				}
 				//3, texto de búsqueda
 				$sql3 = "";
-				if($searching) {
+				if($searching == 1) {
 					
 					$split_search = explode(" ", mysqli_real_escape_string($con, $_GET["q"]));
 
@@ -185,6 +191,9 @@ if(isset($_GET["q"])) {
 						$sql3a .= "`product_name` LIKE '%".$split_search[$i]."%'";	
 					}
 					$sql3 = " AND ((".$sql3a.") OR product_tags LIKE '%".mysqli_real_escape_string($con, $_GET["q"])."%')";	
+				} else if($searching == 2) {
+					
+					$sql3 = " AND `product_tags` LIKE '%".mysqli_real_escape_string($con, $_GET["tag"])."%'";
 				}
 				
 				//4, orden de los productos
@@ -208,7 +217,8 @@ if(isset($_GET["q"])) {
 				
 				
 				if($results > 0) {
-					if($searching) echo "<div style='font-size:14px;text-align:center;'>Se encontraron ".$results." resultados, mostrando página ".(($current_page / 20) + 1)." de ".$totalpages."</div>";	
+					if($searching == 1) echo "<div style='font-size:14px;text-align:center;'>Se encontraron ".$results." resultados, mostrando página ".(($current_page / 20) + 1)." de ".$totalpages."</div>";	
+					else if($searching == 2) echo "<div style='font-size:14px;text-align:center;'>Categoría '".htmlspecialchars($_GET["tag"])."', se encontraron ".$results." resultados</div>";
 					$sql = $sql0b.$sql1.$sql2.$sql3.$sql4.$sql5;
 					$query = mysqli_query($con, $sql);
 				}
@@ -314,7 +324,8 @@ if(isset($_GET["q"])) {
 						$current_real_pg = ($current_page / 20) + 1; // Número de página (1, 2, 3, 4, 5...)
 						
 						$q = "";
-						if($searching) $q = "q=".$_GET["q"]."&";
+						if($searching == 1) $q = "q=".urlencode($_GET["q"])."&";
+						else if($searching == 2) $q = "tag=".urlencode($_GET["tag"])."&";
 						$current_filters = "?".$q."order=".$filter_order."&st=".$filter_showSteam."&stb=".$filter_showSteambuy."&amz=".$filter_showAmazon."&hb=".$filter_showHumble."&bs=".$filter_showBundlestars."&gm=".$filter_gameMode;
 						
 						if($totalpages > 5) {

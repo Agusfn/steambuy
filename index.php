@@ -8,7 +8,7 @@ header("Content-Type: text/html; charset=UTF-8");
 require_once("global_scripts/php/client_page_preload.php");
 require_once("global_scripts/php/admlogin_functions.php");
 require_once("global_scripts/php/main_purchase_functions.php");
-
+require_once("resources/php/catalog_functions.php");
 
 
 $admin = false;
@@ -18,8 +18,10 @@ if(isAdminLoggedIn())
 }
 
 
-// si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
-$steam_sales_event = false;
+/* si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
+
+*/
+$steam_sales_event = true;
 $steam_sales_featured_items = 9;
 
 ?>
@@ -233,588 +235,71 @@ $steam_sales_featured_items = 9;
         	
             <div class="main_content">
 
-					<?php  /*
-					?>
-                    <div class="event_section">
-                        <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
-                        <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
-                            
-                            <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
+				<?php
+                if($steam_sales_event) {
+                ?>
+                    <div class="event_title">REBAJAS DE VERANO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
+                    <div class="catalog-panel" style="margin:25px 0;">
+                        <div class="cp-top">
+                            <div class="cp-title">OFERTAS DESTACADAS DE HOY</div>
+                        </div>
+                        <div class="cp-content">
                             <?php
-							$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0)) AND 
-							product_update_error = 0 ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
+							$sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
 							$query = mysqli_query($con, $sql);
-							
+                            
 							$results = array(); 
 							while($row = mysqli_fetch_assoc($query)) {
 								array_push($results, $row);
 							}
 							shuffle($results);
-							foreach($results as $product) {
-								?>
-                                <a href="juegos/<?php echo $product["product_id"]; ?>/"><div class="event_catalog_product">
-                                    <div class="ecp_game_overlay"></div>
-                                    <div class="ecp_game_info">
-                                        <div class="ecp_game_name"><?php echo $product["product_name"]; ?></div>
-                                        <div class="ecp_game_platform"><img src="global_design/img/icons/<?php if($product["product_platform"] == 1) echo "steam"; ?>_22x22.png"/></div>
-                                    </div>
-                                    <div class="ecp_game_price">
-                                        <div class="ecp_firstprice">$<?php echo quickCalcGame(1, $product["product_listprice"]); ?> ARS</div>
-                                        <div class="ecp_finalprice">$<?php echo quickCalcGame(1, $product["product_finalprice"]); ?> ARS</div>
-                                    </div> 
-                                <img class="ecp_game_img" src="data/img/game_imgs/<?php echo $product["product_mainpicture"]; ?>"/>
-                           		</div></a>
-                                <?php
-							}
-							?>
+
+                            foreach($results as $pData)  {
+								$displayedProducts[] = $pData["product_id"];
+								display_catalog_product($pData, "lg");
+                            }
+                            ?>
+
                         </div>
-                    </div> 
+                    </div>
                     <?php
-					*/
-					?>
-					
-                    <!--div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
-					<div class="catalog-panel" style="margin:25px 0;">
-                        <div class="cp-top">
-                            <div class="cp-title">OFERTAS DESTACADAS DE HOY</div>
-                        </div>
-                        <div class="cp-content">
-
-                            <div class="cpg-product cpg-product-lg">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-
-                    	<div class="cpg-product cpg-product-lg">
-                        	<div class="cpg-product-overlay"></div>
-                            <div class="cpg-product-info">
-                            	<div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                            </div>
-                            <div class="cpg-product-price">
-                            	<div class="cpg-firstprice">$645,7 ARS</div>
-                                <div class="cpg-lastprice">$214,5 ARS</div>
-                            </div>
-                        	<img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                        </div>
-
-                    	<div class="cpg-product cpg-product-lg">
-                        	<div class="cpg-product-overlay"></div>
-                            <div class="cpg-product-info">
-                            	<div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                            </div>
-                            <div class="cpg-product-price">
-                            	<div class="cpg-firstprice">$500,5 ARS</div>
-                                <div class="cpg-lastprice">$1250,2 ARS</div>
-                            </div>
-                        	<img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                        </div>
-                        
-                    	<div class="cpg-product cpg-product-lg">
-                        	<div class="cpg-product-overlay"></div>
-                            <div class="cpg-product-info">
-                            	<div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                            </div>
-                            <div class="cpg-product-price">
-                            	<div class="cpg-firstprice">$645,7 ARS</div>
-                                <div class="cpg-lastprice">$214,5 ARS</div>
-                            </div>
-                        	<img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                        </div>
-
-                        </div>
-                    </div-->
-
-
-                <!-- Catálogo destacados -->
-                
-
-
-				
+                }
+                ?>
+	
 				<div class="catalog-panel" style="margin-bottom:30px;">
                 	
                     <div class="cp-top">
-                    	<div class="cp-title">Lo más destacado<a href="#"><div class="cp-viewmore">Ver todo</div></a></div>
+                    	<div class="cp-title">Lo más destacado<a href="juegos/"><div class="cp-viewmore">Ver todo</div></a></div>
                     </div>
                     
                     <div class="cp-content">
 
-                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="10000">
+                        <div id="carousel-relevant" class="carousel slide" data-ride="carousel" data-interval="10000">
 							<div class="carousel-inner" role="listbox">
-                                <div class="item active">
-                                    
-                            		 <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                                </div>
-                                <div class="item">
-                                    <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                                </div>
-                                <div class="item">
-                                    <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Sid Meier's Civilization: V - The Complete Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/sid-meiers-civilization-v-complete-edition.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Call of Duty: Black Ops III - Digital Deluxe Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$500,5 ARS</div>
-                                    <div class="cpg-lastprice">$1250,2 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/call-of-duty-black-ops-iii-digital-deluxe.jpg" alt="imagen">
-                            </div>
-                            
-                            <div class="cpg-product">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Assassin's Creed: Director's Cut Edition</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7 ARS</div>
-                                    <div class="cpg-lastprice">$214,5 ARS</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/assassins-creed-directors-cut-edition.jpg" alt="imagen">
-                            </div>
-                            
-                                </div>
+                                
+                            <?php
+							$filas = 3;
+							$paginas = 2;
+							$prod_por_pag = $filas*4; // 4 columnas
+							$cant_productos = $prod_por_pag * $paginas;
+
+							$sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").$cant_productos;
+							$res = mysqli_query($con, $sql);
+                            $i = 0;
+
+                            while($pData = mysqli_fetch_assoc($res)) 
+                            {
+								$i++;
+								$displayedProducts[] = $pData["product_id"];
+								if(is_int(($i-1)/$prod_por_pag)) {
+									echo "<div class='item".($i==1?" active":"")."'>";	
+								}
+								display_catalog_product($pData);
+								if(is_int($i/$prod_por_pag)) {
+									echo "</div>";	
+								}
+                            }
+                            ?>
 							</div>
                         </div>
                         
@@ -822,902 +307,231 @@ $steam_sales_featured_items = 9;
                     <div class="cp-bottom">
                     	<span class="cp-carousel-pagination">0/0</span>
                     	<span class="cp-carousel-pag-controls">
-                        	<a href="#carousel-example-generic" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a><a href="#carousel-example-generic" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                        	<a href="#carousel-relevant" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a><a href="#carousel-relevant" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
                         </span>
                     </div>
                 </div>
-
-              	<div class="left-column">
-                	<!--div class="explore-section">
-                    	<span class="explore-title" style="font-size:25px;margin-right:50px;">Explorar</span>
-                        <a href="#"><span class="explore-item">Accion</span></a>
-						<a href="#"><span class="explore-item">Aventura</span></a>
-                        <a href="#"><span class="explore-item">RTS</span></a>
-                        <a href="#"><span class="explore-item">FPS</span></a>
-                        <a href="#"><span class="explore-item">Competitivo</span></a>
-                        <a href="#"><span class="explore-item">Multijugador</span></a>
-                        <a href="#"><span class="explore-item">Atmosférico</span></a>
-                        <a href="#"><span class="explore-item">Mundo abierto</span></a>
-                        <a href="#"><span class="explore-item">Estrategia</span></a>
-                        <a href="#"><span class="explore-item">Primera persona</span></a>
-                        <a href="#"><span class="explore-item">Tercera persona</span></a>
-                        <a href="#"><span class="explore-item">Rol</span></a>
-                        <a href="#"><span class="explore-item">Obra maestra</span></a>
-                        
-                    </div-->
-
-                    <div class="catalog-panel">
-                        <div class="cp-top">
-                            <div class="cp-title">Ofertas propias aleatorias<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
-                        </div>
-                        <div class="cp-content">
-							
-                            <div id="carousel2" class="carousel slide" data-ride="carousel" data-interval="false">
-                            	<div class="carousel-inner" role="listbox">
-                                	<div class="item active">
-                                    	<div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
- 
-                                    </div>
-                                	<div class="item">
-                                    	<div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
- 
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
-						<div class="cp-bottom">
-                            <span class="cp-carousel-pagination">0/0</span>
-                            <span class="cp-carousel-pag-controls">
-                                <a href="#carousel2" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a><a href="#carousel2" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="catalog-panel" style="margin-top:25px;">
-                        <div class="cp-top">
-                            <div class="cp-title">Ofertas externas<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
-                        </div>
-                        <div class="cp-content">
-                            
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Battlefield 3</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$645,7</div>
-                                    <div class="cpg-lastprice">$214,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/bf3.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Chivalry: Medieval Warfare</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$148,5</div>
-                                    <div class="cpg-lastprice">$41,3</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/chivalry-medieval-warfare.jpg" alt="imagen">
-                            </div>
-    
-                            <div class="cpg-product cpg-product-sm">
-                                <div class="cpg-product-overlay"></div>
-                                <div class="cpg-product-info">
-                                    <div class="cpg-product-name">Deus Ex: Human Revolution - Director's Cut</div>
-                                    <div class="cpg-product-drm"><img src="global_design/img/icons/steam_24x24.png"></div>
-                                </div>
-                                <div class="cpg-product-price">
-                                    <div class="cpg-firstprice">$300</div>
-                                    <div class="cpg-lastprice">$238,5</div>
-                                </div>
-                                <img class="cpg-product-img" src="data/img/game_imgs/deus-ex-human-revolution-directors-cut.jpg" alt="imagen">
-                            </div>
- 
-                            
-                            
-                        </div>
-                    </div>
+				
+                <div class="clearfix">
                 
-                </div>
-                
-                <div class="right-column">
+                    <div class="left-column">
 
-                    <div class="catalog-panel" style="margin-bottom:30px;">
-                        <div class="cp-top-short">
-                            <div class="cp-title">Gift cards populares<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
-                        </div>
-                    	<div class="cp-content" style="height:395px;border-bottom:1px solid #AAA;">
-                        
-                        	<div class="cpl-product">
-                                <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                    <div class="cpl-gftcrd-ammount"><span>5</span> USD</div>
-                                </div>
-                                <div class="cpl-gftcrd-name">
-                                    <div>Gift card Amazon 5 USD (US Only)</div>
-                                </div>
-                                <div class="cpl-gftcrd-price">$157 <span>ARS</span></div>
-                            </div>
-                            
-                        	<div class="cpl-product">
-                                <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                    <div class="cpl-gftcrd-ammount"><span>10</span> USD</div>
-                                </div>
-                                <div class="cpl-gftcrd-name">
-                                    <div>Gift card Amazon 10 USD (US Only)</div>
-                                </div>
-                                <div class="cpl-gftcrd-price">$200 <span>ARS</span></div>
-                            </div>
-                            <div class="cpl-product">
-                                <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                    <div class="cpl-gftcrd-ammount"><span>20</span> USD</div>
-                                </div>
-                                <div class="cpl-gftcrd-name">
-                                    <div>Gift card Amazon 20 USD (US Only)</div>
-                                </div>
-                                <div class="cpl-gftcrd-price">$400 <span>ARS</span></div>
-                            </div>
-                            <div class="cpl-product">
-                                <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                    <div class="cpl-gftcrd-ammount"><span>50</span> USD</div>
-                                </div>
-                                <div class="cpl-gftcrd-name">
-                                    <div>Gift card Amazon 50 USD (US Only)</div>
-                                </div>
-                                <div class="cpl-gftcrd-price">$1000 <span>ARS</span></div>
-                            </div>
-                            <div class="cpl-product" style="border-bottom:none;">
-                                <div style="float:left;">
-                                	<img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                    <div class="cpl-gftcrd-ammount"><span>100</span> USD</div>
-                                </div>
-                                <div class="cpl-gftcrd-name">
-                                    <div>Gift card Amazon 100 USD (US Only)</div>
-                                </div>
-                                <div class="cpl-gftcrd-price">$2000 <span>ARS</span></div>
-                            </div>
-
-                        </div>
-                    </div>
-                
-                    <a style="text-decoration:none !important;" href="#"><div class="game-form-box" style="margin-bottom:20px">
-                    	¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
-                   	</div></a>
-                    
-                    <a style="text-decoration:none !important;" href="soporte/"><div class="support-box" style="margin-bottom:30px">
-                        <div class="support-box-question"><i class="fa fa-question-circle-o" aria-hidden="true"></i></div>
-                        Si tienes alguna consulta o duda, visita nuestra sección de soporte
-                    </div></a>
-                    
-                    
-					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
-    				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
-
-                </div>
-							
-							
-							<?php
-							//$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-							//AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").(4*$filas_a);
-                            ?>
-
-            
-            	<?php
-				/*
-				if($steam_sales_event) {
-					?>
-                    <div class="event_section">
-                        <div class="event_title">REBAJAS DE INVIERNO DE STEAM<div class="event_duration">desde el 23 de junio hasta el 4 de julio</div></div>
-                        <div class="event_catalog" <?php echo "style='height:".(31+ceil($steam_sales_featured_items/3)*148)."px'"; ?>>
-                            
-                            <div class="catalog_title">OFERTAS DESTACADAS DE HOY</div>
-                            <?php
-							$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0)) AND 
-							product_update_error = 0 ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
-							$query = mysqli_query($con, $sql);
-							
-							$results = array(); 
-							while($row = mysqli_fetch_assoc($query)) {
-								array_push($results, $row);
-							}
-							shuffle($results);
-							foreach($results as $product) {
+                        <div class="catalog-panel">
+                            <div class="cp-top">
+                            	<?php
+								if($steam_sales_event) echo "<div class='cp-title'>Ofertas de Steam aleatorias<a href='juegos/?amz=0&hb=0&bs=0&gm=0&pg=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
+								else echo "<div class='cp-title'>Ofertas propias aleatorias<a href='juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
 								?>
-                                <a href="juegos/<?php echo $product["product_id"]; ?>/"><div class="event_catalog_product">
-                                    <div class="ecp_game_overlay"></div>
-                                    <div class="ecp_game_info">
-                                        <div class="ecp_game_name"><?php echo $product["product_name"]; ?></div>
-                                        <div class="ecp_game_platform"><img src="global_design/img/icons/<?php if($product["product_platform"] == 1) echo "steam"; ?>_22x22.png"/></div>
+                            </div>
+                            <div class="cp-content">
+                                
+                                <div id="carousel-random" class="carousel slide" data-ride="carousel" data-interval="false">
+                                	<div class="carousel-inner" role="listbox">
+
+										<?php
+                                        $filas = 4;
+                                        $paginas = 2;
+                                        $prod_por_pag = $filas*3; // 3 columnas
+                                        $cant_productos = $prod_por_pag * $paginas;
+
+										if($steam_sales_event) { // Si hay evento de ofertas se muestran aleatorias de Steam
+											$sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT 40";
+										} else { // Si no hay evento, se muestran aleatorias de SteamBuy
+											$sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND product_has_customprice = 1 ORDER BY RAND() LIMIT 40";
+										}
+						                
+										$query = mysqli_query($con, $sql);
+                                        $i = 0;
+
+										while($pData = mysqli_fetch_assoc($query)) 
+                                        {
+											if($i < $cant_productos && !in_array($pData["product_id"],$displayedProducts)) 
+											{
+												$i++;
+												$displayedProducts[] = $pData["product_id"];
+												if(is_int(($i-1)/$prod_por_pag)) {
+													echo "<div class='item".($i==1?" active":"")."'>";	
+												}
+												display_catalog_product($pData, "sm");
+												if(is_int($i/$prod_por_pag)) {
+													echo "</div>";	
+												}
+											}
+                                        }
+                                        ?>
                                     </div>
-                                    <div class="ecp_game_price">
-                                        <div class="ecp_firstprice">$<?php echo quickCalcGame(1, $product["product_listprice"]); ?> ARS</div>
-                                        <div class="ecp_finalprice">$<?php echo quickCalcGame(1, $product["product_finalprice"]); ?> ARS</div>
-                                    </div> 
-                                <img class="ecp_game_img" src="data/img/game_imgs/<?php echo $product["product_mainpicture"]; ?>"/>
-                           		</div></a>
-                                <?php
-							}
-							?>
+                                </div>
+                                
+                            </div>
+                            <div class="cp-bottom">
+                                <span class="cp-carousel-pagination">0/0</span>
+                                <span class="cp-carousel-pag-controls">
+                                    <a href="#carousel-random" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a><a href="#carousel-random" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                                </span>
+                            </div>
                         </div>
-                    </div>                    
-                    <?php	
-				}
-				?>     
-                
-                <div class="left_column">
-  
-                    <div class="panel panel-default panel_catalog" style="margin-top:5px;">
-
-                        <div class="panel-heading"><?php echo ($steam_sales_event ? "Ofertas más relevantes" : "Juegos más relevantes") ?><a href="juegos/"><div class="panel_sidelink">Ver todos los juegos</div></a></div>
-                        <div class="panel-body">
-							<?php
-							$filas_a = 4;
-
-							$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-							AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").(4*$filas_a);
-							$res = mysqli_query($con, $sql);
-                            $i = 0;
-                            while($pData = mysqli_fetch_assoc($res)) 
-                            {
-								$displayedProducts[] = $pData["product_id"];
-								$i++;
-								display_mainpage_catalog_product($pData, $i, $filas_a);
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <div class="panel panel-default panel_catalog">
-                    	<?php
-						if($steam_sales_event) {
-							?>
-                            <div class="panel-heading">Ofertas de Steam aleatorias<a href="juegos/?amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas las ofertas</div></a></div>	
-                            <?php
-						} else { ?>
-                            <div class="panel-heading">Ofertas propias aleatorias<a href="juegos/?st=0&amz=0&hb=0&bs=0&gm=0&pg=0"><div class="panel_sidelink">Ver todas</div></a></div>	
-						<?php
+    					
+                        <?php
+						if(!$steam_sales_event) {
+						?>
+                            <div class="catalog-panel" style="margin-top:25px;">
+                                <div class="cp-top">
+                                    <div class="cp-title">Ofertas externas</div>
+                                </div>
+                                <div class="cp-content">
+                                    <?php
+                                    $filas = 3;
+                                    $cant_productos = $filas * 3; // 3 columnas
+                                    
+                                    $sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
+                                     ORDER BY product_rating DESC LIMIT 35";
+                                    
+                                    $query = mysqli_query($con, $sql);
+                                    $i = 0;
+                                    while($pData = mysqli_fetch_assoc($query)) 
+                                    {
+                                        if($i <$cant_productos && !in_array($pData["product_id"],$displayedProducts)) 
+                                        {
+											$i++;
+                                            $displayedProducts[] = $pData["product_id"];
+                                            display_catalog_product($pData, "sm");									
+                                        }
+                                    }
+                                    ?> 
+                                </div>
+                            </div>
+                        <?php
 						}
 						?>
-                        
-                        <div class="panel-body">
-							<?php
+                        <?php
+						if($steam_sales_event) {
+							$tags = array("acción", "aventura", "rol", "estrategia"); // se van a mostrar pequeños catálogos aleatorios de juegos con estos tags
 							
-							$filas_c = 4;
-							
-							if($steam_sales_event) {
-								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-							 AND product_update_error = 0 AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT 40";
-							} else {
-								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-							 AND product_update_error = 0 AND product_has_customprice = 1 ORDER BY RAND() LIMIT 40";
-							}
-							
-							$res3 = mysqli_query($con, $sql);
-                            $i = 0;
-                            while($pData = mysqli_fetch_assoc($res3)) 
-                            {
-								if($i < (4 * $filas_c) && !in_array($pData["product_id"],$displayedProducts)) 
-								{
-									$displayedProducts[] = $pData["product_id"];
-									$i++;
-									display_mainpage_catalog_product($pData, $i, $filas_c);
-								}
-                            }
-                            ?> 
-                        </div>
-                    </div>
-					
-                    <?php
-					if(!$steam_sales_event) { 
-					?>
-                        <div class="panel panel-default panel_catalog">
-                            <div class="panel-heading">Ofertas externas</div> 
-    
-                            <div class="panel-body">
-                                <?php
-                                  
-                                $filas_b = 3;
-                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
-                                 ORDER BY product_rating DESC LIMIT 35";
-                                
-                                $res2 = mysqli_query($con, $sql);
-                                $i = 0;
-                                while($pData = mysqli_fetch_assoc($res2)) 
-                                {
-                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<($filas_b*4)) 
-                                    {
-                                        $displayedProducts[] = $pData["product_id"];
-                                        $i++;
-                                        display_mainpage_catalog_product($pData, $i, $filas_b);									
-                                    }
-                                }
-                                ?> 
-                            </div>
-                        </div>
-                    <?php
-					} else { 
-					?>
-                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Acción populares<a href="juegos/?q=accion"><div class="panel_sidelink">Ver juegos de Acción</div></a></div> 
-                            <div class="panel-body">
-                                <?php 
-                                // 2 filas, 8 prod
-                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%accion%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
-                                
-                                $res2 = mysqli_query($con, $sql);
-                                $i = 0;
-                                while($pData = mysqli_fetch_assoc($res2)) 
-                                {
-                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
-                                    {
-                                        $displayedProducts[] = $pData["product_id"];
-                                        $i++;
-                                        display_mainpage_catalog_product($pData, $i, 2);									
-                                    }
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Aventura populares<a href="juegos/?q=aventura"><div class="panel_sidelink">Ver juegos de Aventura</div></a></div> 
-                            <div class="panel-body">
-                                <?php 
-                                // 2 filas, 8 prod
-                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%aventura%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
-                                
-                                $res2 = mysqli_query($con, $sql);
-                                $i = 0;
-                                while($pData = mysqli_fetch_assoc($res2)) 
-                                {
-                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
-                                    {
-                                        $displayedProducts[] = $pData["product_id"];
-                                        $i++;
-                                        display_mainpage_catalog_product($pData, $i, 2);									
-                                    }
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Rol populares<a href="juegos/?q=rol"><div class="panel_sidelink">Ver juegos de Rol</div></a></div> 
-                            <div class="panel-body">
-                                <?php 
-                                // 2 filas, 8 prod
-                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%rol%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
-                                
-                                $res2 = mysqli_query($con, $sql);
-                                $i = 0;
-                                while($pData = mysqli_fetch_assoc($res2)) 
-                                {
-                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
-                                    {
-                                        $displayedProducts[] = $pData["product_id"];
-                                        $i++;
-                                        display_mainpage_catalog_product($pData, $i, 2);									
-                                    }
-                                }
-                                ?>
-                            </div>
-                        </div>
-                        <div class="panel panel-default panel_catalog" style="margin-bottom:10px">
-                            <div class="panel-heading">Juegos de Estrategia populares<a href="juegos/?q=estrategia"><div class="panel_sidelink">Ver juegos de Estrategia</div></a></div> 
-                            <div class="panel-body">
-                                <?php 
-                                // 2 filas, 8 prod
-                                $sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0))
-                                 AND product_update_error = 0 AND product_tags LIKE '%estrategia%' ORDER BY product_rating DESC LIMIT ".$steam_sales_featured_items.",30";
-                                
-                                $res2 = mysqli_query($con, $sql);
-                                $i = 0;
-                                while($pData = mysqli_fetch_assoc($res2)) 
-                                {
-                                    if(!in_array($pData["product_id"],$displayedProducts) && $i<(2*4)) 
-                                    {
-                                        $displayedProducts[] = $pData["product_id"];
-                                        $i++;
-                                        display_mainpage_catalog_product($pData, $i, 2);									
-                                    }
-                                }
-                                ?>
-                            </div>
-                        </div>
-                    <?php
-					}
-					?>
-
+							foreach($tags as $tag) {
+								?>
+                                <div class="catalog-panel" style="margin-top:25px;">
+                                    <div class="cp-top">
+                                        <div class="cp-title">Juegos de <?php echo $tag; ?> aleatorios en oferta<a href="juegos/?tag=<?php echo $tag; ?>"><div class="cp-viewmore">Ver más</div></a></div>
+                                    </div>
+                                    <div class="cp-content">
+                                        <?php
+                                        $filas = 2;
+                                        $cant_productos = $filas * 3; // 3 columnas
                                         
-                </div>
-
-                <div class="right_column">
-
-                	<div class="order_options">
-                    	<a href="informar/" class="btn btn-primary">Informar pago</a>
-                        <a href="cancelar/" class="btn btn-danger" style="float:right;">Cancelar un pedido</a>
-                    </div>
-                
-               		<div class="panel panel-default panel_normal">
-                        <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info w_tooltip" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
-                        <div class="panel-body">
-                            <div class="calcbox_form">
-                                U$S<input type="text" class="form-control" id="calcbox_input" placeholder="Monto" onfocus="$(this).val('');" onkeypress="return limitInputChars(event, this);" onblur="applyFormat(this);" />
-                                <button type="button" class="btn btn-primary" id="calcbox_btn">Calcular</button>
-                                <i class="fa fa-spinner fa-spin fa-lg" id="calcbox_loadicon"></i>
-                            </div>
-                            <div class="calcbox_respline">
-                                <div class="calcbox_placeholder">Ingresa el precio en dólares</div>
-                                <div class="calcbox_usdammount">0 USD&nbsp;:</div><div class="calcbox_arsresponse">$0 ARS</div>
-                            </div>
-                        </div>
+                                        $sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." AND (`product_external_limited_offer`=1 OR `product_has_customprice`=1) AND `product_tags` LIKE '%".$tag."%' ORDER BY RAND() LIMIT ".$cant_productos;
+                                        
+                                        $query = mysqli_query($con, $sql);
+                                        $i = 0;
+                                        while($pData = mysqli_fetch_assoc($query)) {
+                                            if($i <$cant_productos) {
+                                                $i++;
+                                                display_catalog_product($pData, "sm");									
+                                            }
+                                        }
+                                        ?> 
+                                    </div>
+                                </div>
+								<?php
+							}
+						}
+						?>
                     </div>
                     
-                    <button class="btn btn-primary" id="btn_showbuyform" data-toggle="modal" data-target="#game_form_modal">
-                    	<div style="float:left;">¿El juego que buscás no está<br /> en el catálogo? Hacé click aquí</div>
-                        <span class="glyphicon glyphicon-list-alt"></span>
-                   	</button>
-
-                    <div class="panel panel-default panel_catalog">
-                        <div class="panel-heading">Más juegos relevantes</div>
-                        <div class="panel-body" id="indiecatalog_slider">
-                        	<?php
-							// Muestra la continuación de los juegos más relevantes
-							if($steam_sales_event) {
-								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-								AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($steam_sales_featured_items+($filas_a*4)).",15";
-							} else {
-								$sql = "SELECT * FROM products WHERE product_enabled = 1 AND (product_has_limited_units = 0 OR (product_has_limited_units = 1 
-								AND product_limited_units > 0)) AND product_update_error = 0 ORDER BY product_rating DESC LIMIT ".($filas_a*4).",15";
-							}					
-							
-							$res = mysqli_query($con, $sql);
-							if(mysqli_num_rows($res) > 5) {
-								?>
-                                <div id="ics_topscroll"><span class="glyphicon glyphicon-chevron-up ics_slide_icon"></span></div>
-                                <div id="ics_bottomscroll"><span class="glyphicon glyphicon-chevron-down ics_slide_icon" ></span></div>
-                                <?php
-							}
-							?>
-                        	<div <?php if(mysqli_num_rows($res) > 5) echo "class='ics_holder'"; ?>>
-                            <?php
-							while($product = mysqli_fetch_assoc($res)) {
-								?>
-                                <a class="ics_product" href="juegos/<?php echo $product["product_id"]; ?>/"><div class="ics_product_box">
-                                    <img src="data/img/game_imgs/small/<?php echo $product["product_mainpicture"]; ?>" class="ics_p_img" alt="<?php echo $product["product_name"]; ?>" />
-                                    <div class="ics_p_right">
-                                        <div class="ics_p_name"><?php echo $product["product_name"]; ?></div>
-                                        <img src="global_design/img/icons/<?php
-                                        if($product["product_platform"] == 1) echo "steam";
-										else if($product["product_platform"] == 2) echo "origin";
-										?>_20x20.png" width="18" height="18" alt="plataforma" />
-                                        <span class="ics_p_price">$<?php
-										if($product["product_has_customprice"] == 1 && $product["product_customprice_currency"] == "ars") {
-											echo $product["product_finalprice"];
-										} else {
-											echo quickCalcGame(1, $product["product_finalprice"]);
-										}
-										?> <span style="font-size:13px;">ARS</span></span>
+                    <div class="right-column">
+    					<?php
+						/*
+                        <!--div class="catalog-panel" style="margin-bottom:30px;">
+                            <div class="cp-top-short">
+                                <div class="cp-title">Gift cards populares<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
+                            </div>
+                            <div class="cp-content" style="height:395px;border-bottom:1px solid #AAA;">
+                            
+                                <div class="cpl-product">
+                                    <div style="float:left;">
+                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                        <div class="cpl-gftcrd-ammount"><span>5</span> USD</div>
                                     </div>
-                                </div></a>
-                                <?php
-							} 
-							?>
+                                    <div class="cpl-gftcrd-name">
+                                        <div>Gift card Amazon 5 USD (US Only)</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-price">$157 <span>ARS</span></div>
+                                </div>
+                                
+                                <div class="cpl-product">
+                                    <div style="float:left;">
+                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                        <div class="cpl-gftcrd-ammount"><span>10</span> USD</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-name">
+                                        <div>Gift card Amazon 10 USD (US Only)</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-price">$200 <span>ARS</span></div>
+                                </div>
+                                <div class="cpl-product">
+                                    <div style="float:left;">
+                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                        <div class="cpl-gftcrd-ammount"><span>20</span> USD</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-name">
+                                        <div>Gift card Amazon 20 USD (US Only)</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-price">$400 <span>ARS</span></div>
+                                </div>
+                                <div class="cpl-product">
+                                    <div style="float:left;">
+                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                        <div class="cpl-gftcrd-ammount"><span>50</span> USD</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-name">
+                                        <div>Gift card Amazon 50 USD (US Only)</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-price">$1000 <span>ARS</span></div>
+                                </div>
+                                <div class="cpl-product" style="border-bottom:none;">
+                                    <div style="float:left;">
+                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
+                                        <div class="cpl-gftcrd-ammount"><span>100</span> USD</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-name">
+                                        <div>Gift card Amazon 100 USD (US Only)</div>
+                                    </div>
+                                    <div class="cpl-gftcrd-price">$2000 <span>ARS</span></div>
+                                </div>
+    
+    
+                            </div>
+                        </div-->
+                        */
+						?>
+                        <a style="text-decoration:none !important;" href="soporte/"><div class="support-box" style="margin-bottom:30px">
+                            <div class="support-box-question"><i class="fa fa-question-circle-o" aria-hidden="true"></i></div>
+                            Si tienes alguna consulta o duda, visita nuestra sección de soporte
+                        </div></a>
+                        
+                        <div class="panel panel-default panel_normal">
+                            <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info w_tooltip" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
+                            <div class="panel-body">
+                                <div class="calcbox_form">
+                                    U$S<input type="text" class="form-control" id="calcbox_input" placeholder="Monto" onfocus="$(this).val('');" onkeypress="return limitInputChars(event, this);" onblur="applyFormat(this);" />
+                                    <button type="button" class="btn btn-primary" id="calcbox_btn">Calcular</button>
+                                    <i class="fa fa-spinner fa-spin fa-lg" id="calcbox_loadicon"></i>
+                                </div>
+                                <div class="calcbox_respline">
+                                    <div class="calcbox_placeholder">Ingresa el precio en dólares</div>
+                                    <div class="calcbox_usdammount">0 USD&nbsp;:</div><div class="calcbox_arsresponse">$0 ARS</div>
+                                </div>
                             </div>
                         </div>
+    
+                        <a style="text-decoration:none !important;" href="javascript:void(0);" data-toggle="modal" data-target="#game_form_modal"><div class="game-form-box" style="margin-bottom:20px">
+                            ¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
+                        </div></a>
+                        
+                        <div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
+    
                     </div>
-                    <div class="panel panel-default panel_normal">
-                        <div class="panel-heading">Soporte</div>
-                        <div class="panel-body">
-                            <span style="font-size:16px;">¿Tenés alguna consulta o duda? Revisa la sección de <a href="soporte/">soporte</a>.<br/></span>
-                            <div style="color: #666;font-size: 14px;margin-top: 10px;">Temas más consultados:</div>
-                            <div class="support_topics">
-                            	<?php
-								$res = mysqli_query($con, "SELECT * FROM faq ORDER BY visits DESC LIMIT 15");
-								while($question = mysqli_fetch_assoc($res)) {
-									echo "<a href='faq/#".$question["number"]."' style='text-decoration:none !important;'><div class='support_topic'>".$question["question"]."</div></a>";	
-								}
-								?>
-                            </div>
-                        </div>
-                    </div>
-
-					<div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>
-    				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
-                </div>
-            
-            <?php */
-			
-			?>
-            
+				</div>			
             
             </div><!-- End main content -->
             
@@ -1728,58 +542,3 @@ $steam_sales_featured_items = 9;
     
     
 </html>
-
-
-<?php
-
-function display_mainpage_catalog_product($pData, $i, $cant_filas) {
-
-	?>
-	<a href="juegos/<?php echo $pData["product_id"]; ?>/">
-		<div class="catalog_product" <?php 
-		if(is_int($i/4) || $i > ($cant_filas * 4 - 4)) {
-			echo "style='"; 
-			if(is_int($i/4)) echo "border-right:none;";
-			if($i > ($cant_filas * 4 - 4)) echo "border-bottom:none;";
-			echo "'";	
-		}
-		?>>
-			<?php
-            if($pData["product_platform"] == 1) {
-                echo "<img src='global_design/img/icons/steam_20x20.png' class='cp_game_platform' alt='steam' />";	
-            } else if($pData["product_platform"] == 2) {
-                echo "<img src='global_design/img/icons/origin_20x20.png' class='cp_game_platform' alt='origin' />";	
-            }
-            if($pData["product_sellingsite"] == 3) {
-                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-humblebundle'><div class='wo_img'>Humble Bundle</div></div></div>";
-            } else if($pData["product_sellingsite"] == 4) {
-                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-bundlestars'><div class='wo_img'>Bundlestars</div></div></div>";
-            } else if($pData["product_has_customprice"] == 1) {
-                echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steambuy'><div class='wo_img'>OFERTA</div></div></div>";
-            } else if($pData["product_external_limited_offer"] == 1){
-                if($pData["product_sellingsite"] == 1) {
-                    echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-steam'><img src='global_design/img/icons/steam_transparent_22x22.png' width='19' alt='oferta steam' /><div class='w_img'>OFERTA</div></div></div>";
-                } else if($pData["product_sellingsite"] == 2) {
-                    echo "<div class='cp-ribbon-wrapper'><div class='cp-ribbon cp-rib-amazon'><img src='global_design/img/icons/amazon_transparent_22x22.png' width='19' alt='oferta amazon' /><div class='w_img'>OFERTA</div></div></div>";
-                }
-            }
-            ?>
-            <div class="cp_img_blackscreen"></div>
-            <img src="data/img/game_imgs/small/<?php echo $pData["product_mainpicture"]; ?>" class="cp_game_img" alt="<?php echo $pData["product_name"]; ?>" />
-            <div class="cp_game_name"><?php echo $pData["product_name"]; ?></div>
-            <?php
-            if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") {
-                echo "<div class='cp_game_price'>&#36;".$pData["product_finalprice"]."</div>";
-            } else if(($pData["product_external_limited_offer"] == 0 && $pData["product_has_customprice"] == 0) || $pData["product_sellingsite"] == 4) {
-                echo "<div class='cp_game_price'>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";
-            } else if($pData["product_has_customprice"] == 1 || $pData["product_external_limited_offer"] == 1) {
-                echo "<div class='cp_game_price cp_discount'><span>&#36;".quickCalcGame(1,$pData["product_listprice"])."</span><br/>&#36;".quickCalcGame(1,$pData["product_finalprice"])."</div>";	
-            }
-            ?>
-		</div>
-	</a>
-    <?php
-	
-}
-
-?>

@@ -126,7 +126,7 @@ if(mysqli_num_rows($query) == 1) {
                     <h3 class="page-title">Mi pedido</h3>
                     
                     <?php
-					if($order_data["order_status"] == 1 && $order_data["product_limited_discount"] == 1 && $order_data["order_informedpayment"] == 0) {
+					if($order_data["order_status"] == 1 && $order_data["product_limited_discount"] == 1 && $order_data["order_informedpayment"] == 0 && $order_data["order_confirmed_payment"] == 0) {
 					?>
                         <div class="alert alert-warning alert-dismissible" role="alert">
                           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -220,7 +220,7 @@ if(mysqli_num_rows($query) == 1) {
 											echo "<span class='dotted' data-toggle='tooltip' data-placement='top' title='Estamos revisando el pago'>Pendiente <span class='glyphicon glyphicon-time'></span></span>";
 										}
 									} else if($order_data["order_status"] == 2) {
-										echo "<span style='color:#229E12;' class='dotted' data-toggle='tooltip' data-placement='top' title='El pedido ha sido enviado, eso significa que se acreditó el pago'>Acreditado</div>";
+										echo "<span style='color:#229E12;' class='dotted' data-toggle='tooltip' data-placement='top' title='El pedido se envió y el pago se acreditó'>Acreditado</span>";
 									} else if($order_data["order_status"] == 3) {
 										echo "No acreditado";
 									}

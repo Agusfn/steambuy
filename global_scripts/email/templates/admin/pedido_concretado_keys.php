@@ -16,7 +16,7 @@ las claves de activación o links para activar tu producto las puedes encontrar 
 Si no sabes como activar una clave de activación en Steam u Origin puedes ver la siguiente <a href='http://steambuy.com.ar/faq/#24' target='_blank'>guía</a>.
 <?php 
 if(strpos($data["listed_keys"], "humblebundle.com") !== false) echo "<br/>Para saber cómo activar productos de Humble Bundle puedes ver esta otra <a href='http://steambuy.com.ar/faq/#25' target='_blank'>guía</a>."; 
-if(strpos($data["listed_keys"], "store.steampowered.com/account/ackgift/") !== false) echo "<br/><strong>Para links de activación de Steam, antes de hacer click en el link procurá tener iniciada la sesión en la cuenta de Steam en la que deseás activar el juego.</strong>";
+if(strpos($data["listed_keys"], "store.steampowered.com/account/ackgift/") !== false) echo "<br/><strong>Para links de activación de Steam, antes de hacer click en el link procurá tener iniciada la sesión en la cuenta de Steam en la que deseás activar el juego. <u>No rechazarlo</u>.</strong>";
 ?>
 <br/>
 <br/>

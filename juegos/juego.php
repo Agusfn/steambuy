@@ -95,13 +95,13 @@ if(is_numeric($_GET["id"])){
 		{
 			$limitedOffer = 0;
             if($gameData["product_external_limited_offer"] == 1 && $gameData["product_external_offer_endtime"] != "0000-00-00 00:00:00") {
-            	$phpdate = strtotime($gameData["product_external_offer_endtime"]);
-				$end_time = date("H:i:s", $phpdate );
-				if($end_time == "00:00:00") {
+            	$discount_end_time = strtotime($gameData["product_external_offer_endtime"]);
+				$end_hour = date("H:i:s", $discount_end_time );
+				if($end_hour == "00:00:00" || ($discount_end_time - time()) > 172800) { // Si termina a las 00 hs o si faltan mas de 48hs se muestra solo fecha
 					$limitedOffer = 1;
-					$end_date = date("d/m/y", $phpdate);
+					$end_date = date("d/m/y", $discount_end_time);
 				} else { 
-				 	$limitedOffer = 2; 
+					$limitedOffer = 2;
 				}
 				
 			}	
@@ -110,7 +110,7 @@ if(is_numeric($_GET["id"])){
 				<?php
 				if($limitedOffer == 2) {
 					?>
-					var offer_end_datetime = new Date(<?php echo $phpdate * 1000; ?>);
+					var offer_end_datetime = new Date(<?php echo $discount_end_time * 1000; ?>);
 					offer_end_datetime = offer_end_datetime.getTime();
 					var current_date = new Date();
 					current_date = parseInt(current_date.getTime());
@@ -194,12 +194,14 @@ if(is_numeric($_GET["id"])){
                                         } else if(($gameData["product_has_customprice"] == 0 && $gameData["product_external_limited_offer"] == 0) || $gameData["product_sellingsite"] == 4) {
                                             echo "<div class='price_normal'>&#36;".quickCalcGame(1,$gameData["product_finalprice"])." ARS <span>(".$gameData["product_finalprice"]." usd)</span></div>";
                                         }  else if($gameData["product_external_limited_offer"] == 1 || $gameData["product_has_customprice"] == 1) {
+											$ars_listprice = quickCalcGame(1,$gameData["product_listprice"]);
+											$ars_finalprice = quickCalcGame(1,$gameData["product_finalprice"]);
                                         	?>
                                             <div class="pricebox_discount">
-                                                <div class="pd_percent">-<?php echo round(100-floatval($gameData["product_finalprice"] * 100 / $gameData["product_listprice"])); ?>%</div>
+                                                <div class="pd_percent">-<?php echo round(100-floatval($ars_finalprice * 100 / $ars_listprice)); ?>%</div>
                                                 <div class="pd_prices">
-                                                    <div class="pd_listprice">$<?php echo quickCalcGame(1,$gameData["product_listprice"]); ?> <span>(<?php echo $gameData["product_listprice"]; ?> usd)</span></div>
-                                                    <div class="pd_finalprice">$<?php echo quickCalcGame(1,$gameData["product_finalprice"]); ?> <span>(<?php echo $gameData["product_finalprice"]; ?> usd)</span></div>
+                                                    <div class="pd_listprice">$<?php echo $ars_listprice; ?> <span>(<?php echo $gameData["product_listprice"]; ?> usd)</span></div>
+                                                    <div class="pd_finalprice">$<?php echo $ars_finalprice; ?> <span>(<?php echo $gameData["product_finalprice"]; ?> usd)</span></div>
                                                 </div>
                                             </div>
                                             <?php

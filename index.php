@@ -245,7 +245,7 @@ $steam_sales_featured_items = 9;
                         <div class="cp-content">
 
                             <?php
-							$sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
+							$sql = "SELECT ".$needed_product_data." FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".$steam_sales_featured_items;
 							$query = mysqli_query($con, $sql);
                             
 							$results = array(); 
@@ -282,22 +282,34 @@ $steam_sales_featured_items = 9;
 							$filas = 3;
 							$paginas = 2;
 							$prod_por_pag = $filas*4; // 4 columnas
-							$cant_productos = $prod_por_pag * $paginas;
+							$max_productos = $prod_por_pag * $paginas;
 
-							$sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").$cant_productos;
+							$sql = "SELECT ".$needed_product_data." FROM `products` WHERE ".$basic_product_filter." ORDER BY `product_rating` DESC LIMIT ".($steam_sales_event ? $steam_sales_featured_items."," : "").$max_productos;
+
 							$res = mysqli_query($con, $sql);
-                            $i = 0;
-
+							$result_ammount = mysqli_num_rows($res);
+							
+                            $displayed = 0;
                             while($pData = mysqli_fetch_assoc($res)) 
                             {
-								$i++;
+								if($displayed >= $max_productos) break
+								;
+								$displayed++;
 								$displayedProducts[] = $pData["product_id"];
-								if(is_int(($i-1)/$prod_por_pag)) {
-									echo "<div class='item".($i==1?" active":"")."'>";	
+								if(is_int(($displayed-1)/$prod_por_pag)) {
+									echo "<div class='item".($displayed==1?" active":"")."'>";	
 								}
+								
 								display_catalog_product($pData);
-								if(is_int($i/$prod_por_pag)) {
+								
+								if(is_int($displayed/$prod_por_pag)) {
 									echo "</div>";	
+								} else if(!is_int($displayed/$prod_por_pag) && $displayed == $result_ammount) { // Si es el último elemento de la consulta y no el último de la página, se rellena y se cierra el .item
+									$items_restantes = $prod_por_pag - ($displayed % $prod_por_pag);
+									for($i=0;$i<$items_restantes;$i++) {
+										display_catalog_product(false, "sm");
+									}
+									echo "</div>";
 								}
                             }
                             ?>
@@ -317,6 +329,7 @@ $steam_sales_featured_items = 9;
                 
                     <div class="left-column">
 
+
                         <div class="catalog-panel">
                             <div class="cp-top">
                             	<?php
@@ -331,33 +344,45 @@ $steam_sales_featured_items = 9;
                                 	<div class="carousel-inner" role="listbox">
 
 										<?php
-                                        $filas = 4;
-                                        $paginas = 2;
-                                        $prod_por_pag = $filas*3; // 3 columnas
-                                        $cant_productos = $prod_por_pag * $paginas;
+                                        $rows = 4;
+                                        $max_pages = 2;
+                                        $prodcts_per_pg = $rows*3; // 3 columnas
+                                        $max_products = $prodcts_per_pg * $max_pages;
 
 										if($steam_sales_event) { // Si hay evento de ofertas se muestran aleatorias de Steam
-											$sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT 40";
+											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT ".($max_products + 10);
 										} else { // Si no hay evento, se muestran aleatorias de SteamBuy
-											$sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND product_has_customprice = 1 ORDER BY RAND() LIMIT 40";
+											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND product_has_customprice = 1 ORDER BY RAND() LIMIT ".($max_products + 10);
 										}
 						                
 										$query = mysqli_query($con, $sql);
-                                        $i = 0;
-
+										
+										$result_ammount = mysqli_num_rows($query);
+										$result = 0;
+										$displayed = 0;
 										while($pData = mysqli_fetch_assoc($query)) 
                                         {
-											if($i < $cant_productos && !in_array($pData["product_id"],$displayedProducts)) 
+											$result++;
+											if($displayed < $max_products && !in_array($pData["product_id"],$displayedProducts)) 
 											{
-												$i++;
+												$displayed++;
 												$displayedProducts[] = $pData["product_id"];
-												if(is_int(($i-1)/$prod_por_pag)) {
-													echo "<div class='item".($i==1?" active":"")."'>";	
+												if(is_int(($displayed-1)/$prodcts_per_pg)) {
+													echo "<div class='item".($displayed==1?" active":"")."'>";	
 												}
 												display_catalog_product($pData, "sm");
-												if(is_int($i/$prod_por_pag)) {
+		
+												if(is_int($displayed/$prodcts_per_pg)) { // Si es el último elemento de la página se cierra el .item del carousel
 													echo "</div>";	
+												} else if(!is_int($displayed/$prodcts_per_pg) && $result == $result_ammount) { // Si es el último elemento de la consulta y no el último de la página, se rellena y se cierra el .item
+													$items_restantes = $prodcts_per_pg - ($displayed % $prodcts_per_pg);
+													for($i=0;$i<$items_restantes;$i++) {
+														display_catalog_product(false, "sm");
+													}
+													echo "</div>";
 												}
+												
+												
 											}
                                         }
                                         ?>
@@ -376,6 +401,8 @@ $steam_sales_featured_items = 9;
                         </div>
     					
                         <?php
+						
+						
 						if(!$steam_sales_event) {
 						?>
                             <div class="catalog-panel" style="margin-top:25px;">
@@ -387,7 +414,7 @@ $steam_sales_featured_items = 9;
                                     $filas = 3;
                                     $cant_productos = $filas * 3; // 3 columnas
                                     
-                                    $sql = "SELECT * FROM products WHERE ".$basic_product_filter." AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
+                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND ((product_external_limited_offer = 1 AND NOT product_has_customprice = 1) OR ((product_sellingsite = 3 OR product_sellingsite = 4) AND product_external_limited_offer = 1))
                                      ORDER BY product_rating DESC LIMIT 35";
                                     
                                     $query = mysqli_query($con, $sql);
@@ -406,10 +433,7 @@ $steam_sales_featured_items = 9;
                                 </div>
                             </div>
                         <?php
-						}
-						?>
-                        <?php
-						if($steam_sales_event) {
+						} else if($steam_sales_event) {
 							$tags = array("acción", "aventura", "rol", "estrategia"); // se van a mostrar pequeños catálogos aleatorios de juegos con estos tags
 							
 							foreach($tags as $tag) {
@@ -423,7 +447,7 @@ $steam_sales_featured_items = 9;
                                         $filas = 2;
                                         $cant_productos = $filas * 3; // 3 columnas
                                         
-                                        $sql = "SELECT * FROM `products` WHERE ".$basic_product_filter." AND (`product_external_limited_offer`=1 OR `product_has_customprice`=1) AND `product_tags` LIKE '%".$tag."%' ORDER BY RAND() LIMIT ".$cant_productos;
+                                        $sql = "SELECT ".$needed_product_data." FROM `products` WHERE ".$basic_product_filter." AND (`product_external_limited_offer`=1 OR `product_has_customprice`=1) AND `product_tags` LIKE '%".$tag."%' ORDER BY RAND() LIMIT ".$cant_productos;
                                         
                                         $query = mysqli_query($con, $sql);
                                         $i = 0;

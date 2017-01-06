@@ -101,6 +101,5 @@
                 <div class="fb-like" data-href="http://facebook.com/steambuy" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
             </div>
         </div>
-        <div class="xmass"></div>
 	</div>
     

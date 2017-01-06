@@ -350,9 +350,9 @@ $steam_sales_featured_items = 9;
                                         $max_products = $prodcts_per_pg * $max_pages;
 
 										if($steam_sales_event) { // Si hay evento de ofertas se muestran aleatorias de Steam
-											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT ".($max_products + 10);
+											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT ".($max_products + 20);
 										} else { // Si no hay evento, se muestran aleatorias de SteamBuy
-											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND product_has_customprice = 1 ORDER BY RAND() LIMIT ".($max_products + 10);
+											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND product_has_customprice = 1 ORDER BY RAND() LIMIT ".($max_products + 20);
 										}
 						                
 										$query = mysqli_query($con, $sql);

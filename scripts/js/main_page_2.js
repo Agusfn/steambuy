@@ -28,6 +28,11 @@ var gf_validation_response = new Array();
 var slider_timer;
 
 
+var blocked_games = [["app","730","El CS:GO no está a la venta desde el formulario de compras. <a href='https://www.facebook.com/steambuy/posts/657170941110751' target='_blank'>Más info</a>."],
+					["sub","28987","No es posible comprar el GTA Complete debido a que no es posible enviarlo en formato Steam Gift desde Steam."],
+					["app","570660","No es posible comprar el Binding of Isaac Afertbirth+ debido a que no es posible enviarlo a en formato Steam Gift desde Steam."]];
+
+
 $(document).ready(function(e) {
 	
 	//Chequear anchors
@@ -37,26 +42,8 @@ $(document).ready(function(e) {
 			$("#game_form_modal").modal("show");
 		}
 	}
-	
-	// Ajustar height de main_content
-	
-	/*var event_height = 0;
-	if($(".event_section").length) {
-		event_height = $(".event_section").outerHeight(true);
-	}
-	var leftcol_height = $(".left_column").outerHeight(true);
-	var rightcol_height = $(".right_column").outerHeight(true);
-	var new_height = 0;
-	
-	if(leftcol_height > rightcol_height) {
-		new_height = leftcol_height + event_height + 80;
-	} else {
-		new_height = rightcol_height + event_height + 80;
-	}
-	$(".main_content").css("height", new_height);*/
-	
-	
-	
+
+
 	// Catálogo slider
 	
 	if($(".ics_holder")) {
@@ -189,10 +176,9 @@ $(document).ready(function(e) {
 						if(gf_product_siteurl.indexOf("/bundle/") !== -1) gf_error_text += "<strong>Los /bundles/ nuevos de Steam NO pueden ser vendidos debido a que no pueden ser enviados en formato Steam Gift</strong>";
 					} else {
 						var matches = pattern.exec(gf_product_siteurl);
-						//console.log(matches);
-						if(matches[2] == "app" && matches[3] == "730") gf_error_text += "<li>El CS:GO no está a la venta de forma indefinida. <a href='https://www.facebook.com/steambuy/posts/657170941110751' target='_blank'>Más info</a>.</li>";				
-						if(matches[2] == "sub" && matches[3] == "28987") gf_error_text += "<li>No es posible vender el GTA Complete debido a que no es posible comprarlo en formato 'steam gift'.</li>";				
-					
+
+						blocked = is_steamgame_blocked(matches); // chequea juegos que no se puedan vender
+						if(blocked != false) gf_error_text += "<li>"+blocked+"</li>";
 					}
 
 				} else if(gf_product_sellingsite == 1) {
@@ -510,6 +496,20 @@ $(document).ready(function(e) {
 	});
   
 });
+
+
+
+function is_steamgame_blocked(matches) {
+
+	for(var i = 0; i <  blocked_games.length; i++ ) {
+		if(matches[2] == blocked_games[i][0] && matches[3] == blocked_games[i][1]) {
+			return blocked_games[i][2];	
+		}
+	}
+	return false;
+	
+}
+
 
 function update_catalog_slider_pagination(carousel) {
 	var total_items = carousel.find(".item").length;

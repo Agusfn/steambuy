@@ -12,7 +12,7 @@ define("DEBUG", true); // Muestra resultados en pantalla
 /* En una megaoferta de steam, esta opción sirve para, durante un período de la oferta, configurar una fecha de fin de oferta arbitraria antes de la real, y una vez pasado
  esta fecha arbitraria, ignorar las ofertas de steam hasta que terminen
 */
-define("override_steam_sales_end", true);
+define("override_steam_sales_end", false);
 define("override_steam_sales_start", strtotime("2016-12-28 10:00:00")); // A partir de este momento se muestra la fecha de fin de oferta de todos los juegos en oferta, en la fecha customizada
 define("override_steam_sales_custom_end", strtotime("2017-01-02 11:00:00"));  // Fecha manual de fin de oferta que indican los juegos. A partir de este momento se ignoran todas las ofertas de Steam
 define("override_steam_sales_real_end", strtotime("2017-01-02 16:00:00")); // Acá se dejan de ignorar las ofertas de Steam

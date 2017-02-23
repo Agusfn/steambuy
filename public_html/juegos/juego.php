@@ -267,7 +267,7 @@ if(is_numeric($_GET["id"])){
 											<div class="carousel-inner">
                                             <?php
 											for($i=0;$i<sizeof($pics);$i++) {
-												if((strpos($pics[$i], "cdn.akamai.steamstatic.com") !== false) || (strpos($pics[$i], "steampowered.com") !== false)) { ?>
+												if((strpos($pics[$i], "cdn.edgecast.steamstatic.com") !== false) || (strpos($pics[$i], "cdn.akamai.steamstatic.com") !== false) || (strpos($pics[$i], "steampowered.com") !== false)) { ?>
                                                     <div class="item<?php if($i == 0) echo " active"; ?>"><a href="<?php echo $pics[$i]."1920x1080.jpg"; ?>" target='_blank'><img src="<?php echo $pics[$i]."600x338.jpg"; ?>" alt="captura <?php echo ($i+1); ?>"></a></div>
                                                     <?php
 												} else { ?>

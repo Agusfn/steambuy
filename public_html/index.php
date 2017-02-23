@@ -179,6 +179,12 @@ $steam_sales_featured_items = 9;
                         
                         <div id="gf_third_form">
                         	<h4>El pedido se ha generado</h4>
+                            
+                            <div class="alert alert-warning" style="font-size: 14px;margin:15px 0; text-align:justify">
+                            	Guarda estos datos para poder informar el pago luego, revisar los detalles de tu pedido, o para soporte:<br/>
+                            	ID de pedido: <strong><span id="gf_tf_orderid"></span></strong>&nbsp;&nbsp;&nbsp;clave: <strong><span id="gf_tf_orderpass"></span></strong>
+                            </div>
+                            
                             <div class="gf_tf_ticketinstructions">Se ha generado tu pedido de <strong><span class="gf_tf_gamearsprice">$0 ARS</span></strong> por el juego <span class="gf_tf_gamename">x</span>, el siguiente paso es imprimir y abonar el cupón de pago en cualquier sucursal de <strong>Rapipago</strong>,
                             <strong>Pago Fácil</strong>, <strong>Ripsa</strong>, <strong>Cobroexpress</strong>, <strong>Bapropagos</strong>, u otras cadenas de pago especficadas en la boleta o cupón de pago.<br></div>
                         	
@@ -207,11 +213,6 @@ $steam_sales_featured_items = 9;
                              <div class="alert alert-warning gf_tf_offerwarning"> El juego tiene un descuento de tiempo limitado, informá el pago 
                             antes de que termine la oferta (revisa en el <a href="" target="_blank" id="gf_tf_site_url">sitio de venta</a> cuándo finaliza) en la sección de <a href="informar/" target="_blank">informar pago</a>, para asegurarte de que
                             te guardemos el juego, <strong>de lo contrario podrás perder la oferta</strong> y deberás elegir otro/s producto/s.</div>
-                            
-                            <div class="alert alert-info" style="font-size: 14px;margin-top:15px; text-align:justify">
-                            	El ID de tu pedido es <strong><span id="gf_tf_orderid"></span></strong> y la clave es <strong><span id="gf_tf_orderpass"></span></strong>. Estos datos se requieren en caso de informar un pago, 
-                                cancelar un pedido, o para asistencia. Se te ha enviado un mensaje al e-mail <strong><span id="gf_tf_clientemail"></span></strong> con esta información.
-                            </div>
                             
                             <div class="alert alert-danger" style="font-size: 14px;margin-top:10px; text-align:justify;display:none;" id="gf_tf_mailerror">Ha ocurrido un error enviando el e-mail con los datos del pedido, te recomendamos guardar el <strong>ID</strong> y <strong>clave de pedido</strong>
                             mostrados en este cuadro, disculpa las molestias.</div>

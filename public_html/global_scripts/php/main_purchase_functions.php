@@ -112,8 +112,8 @@ class order
 			if($order_paymethod == 1) {
 
 				$rand = array($CD_ID[3]); 
-				if(floatval($config["cd1_balance"]) < (32000 - 3000)) $rand[] = $CD_ID[1];	
-				if(floatval($config["cd2_balance"]) < (32000 - 3000)) $rand[] = $CD_ID[2];	
+				if(floatval($config["cd1_balance"]) < (42000 - 1000)) $rand[] = $CD_ID[1];	
+				if(floatval($config["cd2_balance"]) < (28000 - 1000)) $rand[] = $CD_ID[2];	
 				$cd_to_send = $rand[array_rand($rand)];
 
 				$paymentTicketLink = get_url("https://www.cuentadigital.com/api.php?id=".$cd_to_send."&precio=".$product_arsprice."&venc=5&codigo=ID-".$orderId."-".$product_usdprice."USD-".$product_arsprice."ARS&hacia=".$client_email."&concepto=Venta+de+productos+digitales");		

@@ -6,6 +6,8 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 require_once("mysql_connection.php");
 require_once("admlogin_functions.php");
 
+$MAX_FACTURACION = array(1=>42000,2=>28000); // 1: agustin, 2: tomas
+
 $forbidden = false;
 
 // Si no se ingresa con las credenciales de admin vía hhtp, sólo se ejecuta si existe el arg1 pasado por linea de comandos con la clave correcta, de lo contrario se deniega el acceso.
@@ -32,8 +34,6 @@ if($_SERVER["REMOTE_ADDR"] == "::1" && !isset($argv[1])) {
 	$TESTING = true;
 	echo "No se facturan los pedidos debido a que el sitio está alojado en servidor local de sitio web de desarrollo.<br/>";
 }
-
-
 
 echo date("d-m-Y")."<br/><br/>";
 
@@ -141,7 +141,7 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 							// Facturación
 							if($TESTING == false) {
 								if($afip && $e != 3) {
-									if($pData["order_type"] == 1 && $pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < 31500) {
+									if($pData["order_type"] == 1 && $pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < $MAX_FACTURACION[$e]) {
 										$monto_fact = round($pData["product_arsprice"], 2);
 										if($cbte = $afipWs->generarCbte($e, 11, $monto_fact)) {
 											$facturado[$e] += $monto_fact;

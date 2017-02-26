@@ -181,6 +181,14 @@ if($admin == false) {
 		if(is_numeric($_POST["mxn_quote"])) {
 			mysqli_query($con, "UPDATE settings SET `value` = ".$_POST["mxn_quote"]." WHERE `name` = 'mxn_quote'");	
 		}
+	} else if(isset($_POST["alicuota_menor32"])) {
+		if(is_numeric($_POST["alicuota_menor32"])) {
+			mysqli_query($con, "UPDATE settings SET `value` = ".$_POST["alicuota_menor32"]." WHERE `name` = 'alicuota_menor32'");	
+		}
+	} else if(isset($_POST["alicuota_mayor32"])) {
+		if(is_numeric($_POST["alicuota_mayor32"])) {
+			mysqli_query($con, "UPDATE settings SET `value` = ".$_POST["alicuota_mayor32"]." WHERE `name` = 'alicuota_mayor32'");	
+		}
 	}
 	
 	
@@ -530,6 +538,11 @@ if($admin == false) {
 								
 								$res10 = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'mxn_quote'");
 								$mxn_quote = mysqli_fetch_row($res10);
+								
+								$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_menor32'");
+								$alicuota_menor32 = mysqli_fetch_row($query);
+								$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_mayor32'");
+								$alicuota_mayor32 = mysqli_fetch_row($query);
 								?>
                                 
                                 <span style="font-weight:bold; text-decoration:underline">Servicio de reventa activo:</span>
@@ -559,6 +572,20 @@ if($admin == false) {
                                		Cotiz MXN 1 usd:
                                     <form action="" method="post">
                                     <input type="text" name="mxn_quote" class="form-control" style="width:70px;margin-right:10ox;display:inline-block" value="<?php echo $mxn_quote[0]; ?>">
+                                    <input type="submit" class="btn btn-sm btn-primary" value="OK" style="display:inline-block">
+                                    </form>
+                                </div>
+                                <div style="margin-top:18px">
+                               		Alicuota juegos &lt;32usd:
+                                    <form action="" method="post">
+                                    <input type="text" name="alicuota_menor32" class="form-control" style="width:70px;margin-right:10ox;display:inline-block" value="<?php echo $alicuota_menor32[0]; ?>">
+                                    <input type="submit" class="btn btn-sm btn-primary" value="OK" style="display:inline-block">
+                                    </form>
+                                </div>
+                                <div style="margin-top:18px">
+                               		Alicuota juegos &gt;32 usd:
+                                    <form action="" method="post">
+                                    <input type="text" name="alicuota_mayor32" class="form-control" style="width:70px;margin-right:10ox;display:inline-block" value="<?php echo $alicuota_mayor32[0]; ?>">
                                     <input type="submit" class="btn btn-sm btn-primary" value="OK" style="display:inline-block">
                                     </form>
                                 </div>

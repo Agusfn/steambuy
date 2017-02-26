@@ -153,7 +153,7 @@ if($count[0] > 0) {
                     </div>
                    	<div class="searchorder_bar">
                     	<form action="pedido.php" method="get" id="searchorder_form" onkeypress="return event.keyCode != 13;">
-                        	<input type="text" name="orderid" class="form-control" id="searchorder_input"/>
+                        	<input type="text" name="orderid" class="form-control" id="searchorder_input" placeholder="ID/nro boleta/cdkey/link"/>
                             <input type="button" class="btn btn-success" id="searchorder_button" value="Buscar" />
                         </form>
 						<!--div class="btn-group">

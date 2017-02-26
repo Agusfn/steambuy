@@ -68,10 +68,18 @@ $gameCount = mysqli_num_rows($query);
 								
 		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'mxn_quote'");
 		$mxn_quote = mysqli_fetch_row($res);
+		
+		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_menor32'");
+		$alicuota_menor32 = mysqli_fetch_row($res);
+		
+		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_mayor32'");
+		$alicuota_mayor32 = mysqli_fetch_row($res);
 		?>
         <script type="text/javascript">
-		var brl_quote = <?php echo $brl_quote[0]; ?>;
-		var mxn_quote = <?php echo $mxn_quote[0]; ?>;
+			var brl_quote = <?php echo $brl_quote[0]; ?>;
+			var mxn_quote = <?php echo $mxn_quote[0]; ?>;
+			var alicuota_mayor32 = <?php echo $alicuota_mayor32[0]; ?>;
+			var alicuota_menor32 = <?php echo $alicuota_menor32[0]; ?>;
 		</script>
     </head>
     

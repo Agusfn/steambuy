@@ -18,7 +18,12 @@ if(!isAdminLoggedIn()) {
 
 $error = -1; // Error inicial:  -1: no se está procesando (no se envio form), 0: ok para proceder, 1: las alicuotas no son numericas 
 
-if(isset($_POST["more32_profit"]) && isset($_POST["less32_profit"])) {
+if(isset($_POST["more32_profit"]) && isset($_POST["less32_profit"]) && isset($_POST["ignore_games"])) {
+	
+	$ignored_games = explode(",", $_POST["ignore_games"]);
+	
+	$start_from = $_POST["start_from"];
+	$limit = $_POST["limit"];
 	
 	$more32_profit = $_POST["more32_profit"];
 	$less32_profit = $_POST["less32_profit"];
@@ -49,19 +54,29 @@ if(isset($_POST["more32_profit"]) && isset($_POST["less32_profit"])) {
     if($error >= 0) {
 		if($error == 0) {
 			
-			reducir_precios($con, $less32_profit, $more32_profit);
+			reducir_precios($con, $less32_profit, $more32_profit, $ignored_games);
 			
 		} else if($error == 1) echo "Las alicuotas no son numericas.";
     } else {
+		$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_menor32'");
+		$alicuotas_menor32 = mysqli_fetch_row($query);
+		$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_mayor32'");
+		$alicuotas_mayor32 = mysqli_fetch_row($query);
         ?>
         Si comienza o finaliza una oferta de Steam, dejar que se refleje en el sitio primero antes de usar esta herramienta<br/><br/>
         <form action="" method="post">
         	Alicuota juegos &gt; 32 usd:<br/>
-            <input type="text" name="more32_profit" placeholder="1.35" /><br/>
+            <input type="text" name="more32_profit" value="<?php echo $alicuotas_mayor32[0]; ?>" /><br/>
             Alicuota juegos &lt; 32 usd:<br/>
-            <input type="text" name="less32_profit" placeholder="1.30" /><br/>
-            <input type="checkbox" name="force_update" />Forzar actualización de precio (ignora si el precio de ahora es más barato y pone el nuevo mas caro)<br/>
+            <input type="text" name="less32_profit" value="<?php echo $alicuotas_menor32[0]; ?>" /><br/>
+            <input type="checkbox" name="force_update" />Forzar actualización de precio (si un juego tiene una oferta más baja que la sugerida, le pone el precio sugerido igual)<br/>
             <input type="checkbox" name="ignore_stock" />Ignorar juegos en oferta de Stock (se conservan)<br/><br/>
+            Ignorar juegos (separar IDs con coma)<br/>
+            <input type="text" name="ignore_games" value="38"/><br/>
+            Arrancar desde el juego (a partir del mas rateado)<br/>
+            <input type="text" name="start_from" value="0"/><br/>
+            Límite cantidad de juegos (0: sin limite):<br/>
+            <input type="text" name="limit" value="0"/><br/><br/>
             <input type="submit" value="Comenzar" />
         </form>
         <?php
@@ -73,22 +88,48 @@ if(isset($_POST["more32_profit"]) && isset($_POST["less32_profit"])) {
 <?php
 
 
-function reducir_precios($con, $profit1, $profit2) {
+function reducir_precios($con, $profit1, $profit2, $ignored_games) {
 	
 	global $ignore_stock_games;
 	global $force_update;
+	global $start_from;
+	global $limit;
 
 	$cotiz = obtener_cotiz_mxbr($con);
 
-	$sql = "SELECT * FROM `products` WHERE `product_enabled`=1 AND `product_sellingsite`=1 AND NOT (`product_has_customprice`=1 AND `product_customprice_currency`='ars')";
-	if($ignore_stock_games) {
-		$sql .= " AND NOT (`product_has_customprice`=1 AND `product_has_limited_units`=1)";	
-	}
-	$sql .= " ORDER BY `product_rating` DESC";
+	$sql = "SELECT * FROM `products` ORDER BY `product_rating` DESC LIMIT ".mysqli_real_escape_string($con, $start_from).",".($limit == 0 ? 999999 : mysqli_real_escape_string($con, $limit));
 	$query = mysqli_query($con, $sql);
-	
+
+	$error_continuo = 0; // Si hay un error contactando a la api, sube +1, si no hay, se pone en cero. Si hay +7 errores sucesivos, se termina el script.
+	$juegos_analizados = 0; // Cada 20, se hace un descanzo de 10 segundos.
 		
 	while($pData = mysqli_fetch_assoc($query)) {
+		
+		//Ignorar juegos que no son de Steam, ni están habilitados, o tienen precios custom en pesos
+		if($pData["product_enabled"] == 0 || $pData["product_sellingsite"] != 1 || ($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars")) {
+			echo $pData["product_name"]." <strong> no es de steam/no está habilitado/tiene oferta especial</strong><br/>";
+			continue;	
+		}
+		
+		// Ignorar los de stock, si se pide
+		if($ignore_stock_games) {
+			if($pData["product_has_customprice"] == 1 && $pData["product_has_limited_units"] == 1) {
+				echo $pData["product_name"]." <strong>de stock, ignorado.</strong><br/>";
+				continue;
+			}
+		}
+		
+		// Lista ignorados
+		if(in_array($pData["product_id"], $ignored_games)) {
+			echo $pData["product_name"]." <strong>IGNORADO</strong><br/>";
+			continue;
+		}
+		
+		$juegos_analizados += 1;
+		if(is_integer($juegos_analizados/20)) {
+			echo "<br/><br/>Pausa 10 segundos<br/><br/>";
+			sleep(10);
+		}
 		
 		echo $pData["product_name"].". ";
 		
@@ -97,8 +138,14 @@ function reducir_precios($con, $profit1, $profit2) {
 
 		if($priceDataBr["error"] != 0 || $priceDataMx["error"] != 0) {
 			echo "<strong><span style='color:#DB0000;'>Error obteniendo precios mxn/brl de Steam.</span></strong> Err mx: ".$priceDataMx["error"].". Error brl: ".$priceDataBr["error"].".<br/>";
-			continue;
+			$error_continuo +=1;
+			if($error_continuo >= 7) {
+				echo "Tarea detenida por errores repetidos";
+				break;	
+			}
+			else continue;
 		}
+		$error_continuo = 0;
 				
 		$brPriceToUsd = $priceDataBr["finalprice"] / $cotiz["br"];
 		$mxPriceToUsd = $priceDataMx["finalprice"] / $cotiz["mx"];
@@ -113,8 +160,8 @@ function reducir_precios($con, $profit1, $profit2) {
 		else $new_price = round($cheapest * $profit2, 2);
 		
 		
-		
-		if($new_price < $pData["product_finalprice"] || $force_update) {
+		// Si el precio nuevo es menor que el precio de lista, y además: si el precio nuevo es menor que el precio actual o si se fuerza la actualización (en caso que el precio de oferta este muy bajo, sube)
+		if(($new_price < $pData["product_listprice"]) && ($new_price < $pData["product_finalprice"] || $force_update)) {
 			if($priceDataMx["firstprice"] == $priceDataMx["finalprice"]) { // si no tiene una oferta de Steam
 				$sql = "UPDATE `products` SET `product_external_limited_offer`=0, `product_steam_discount_price`=0, `product_has_customprice`=1, `product_customprice_currency`='usd', 
 				`product_has_limited_units`=0, `product_finalprice`=".mysqli_real_escape_string($con, $new_price)." WHERE `product_id`=".$pData["product_id"];
@@ -133,6 +180,8 @@ function reducir_precios($con, $profit1, $profit2) {
 			echo "<strong>No necesario reducir</strong>. Precio actual: ".$pData["product_finalprice"].", precio región mxn/brl: ".$new_price.".";
 		}
 		echo " (".$priceDataBr["finalprice"]." brl,".$priceDataMx["finalprice"]." mxn).<br/>";
+		
+		sleep(1); // Esperar 1 segundo, para no saturar al servidor de la API.
 
 	}
 }

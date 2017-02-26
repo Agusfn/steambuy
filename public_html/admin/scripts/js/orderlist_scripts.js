@@ -72,6 +72,23 @@ $(document).ready(function(e) {
 		var val = $("#searchorder_input").val();
 		if(val.length == 5 || val.length == 6) {
 			$("#searchorder_form").submit();
+		} else if(val.length == 14 && isInt(val)) {
+			$.ajax({
+				data:{invoice_number: val},
+				url:"scripts/php/ajax_searchorder_invoice.php",
+				type:"post",
+				success: function(response) {
+					var data = JSON.parse(response);
+					console.log(data);
+					if(data["result"] == 0) {
+						alert("No se encontraron pedidos con esa boleta");
+					} else if(data["result"] == 1) {
+						window.location="pedido.php?orderid="+data["text"];
+					} else if(data["result"] == 2) {
+						alert("Se encontró más de un pedido con esa boleta:\n"+data["text"]);
+					}
+				}
+			});
 		} else if(val.length > 6) {
 			$.ajax({
 				data:{key: val},
@@ -317,6 +334,11 @@ function cleanOrderLinksModal() {
 }
 
 
+function isInt(n) {
+   return n % 1 === 0;
+}
+
+
 jQuery.fn.selectText = function(){
    var doc = document;
    var element = this[0];
@@ -333,6 +355,7 @@ jQuery.fn.selectText = function(){
        selection.addRange(range);
    }
 };
+
 
 
 

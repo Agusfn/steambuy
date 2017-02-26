@@ -312,9 +312,10 @@ if(isset($_POST["gameid"]))
 								} 
 							}
 							?>
-                        </div>		
+                        </div>
 						<?php
 					}
+					echo "<div class='alert alert-warning' style='margin: 0 75px 26px;'>Por tareas de mantenimiento, los pedidos generados hasta el 16 de marzo tomarán entre 1 y 48 horas en ser enviados una vez acreditado su pago.</div>";
 					if($stage == 1) {
 						?>
 						<div class="payment_options">

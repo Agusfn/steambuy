@@ -77,6 +77,7 @@ $steam_sales_featured_items = 9;
      				</div>
       				<div class="modal-body" style="transition:height 0.7s ease-out;">
                         <input type="hidden" value="<?php echo $_SERVER["REMOTE_ADDR"]; ?>" id="client_ip">
+                        <div class='alert alert-warning' style="margin-bottom:15px;">Por tareas de mantenimiento, los pedidos generados hasta el 16 de marzo tomarán entre 1 y 48 horas en ser enviados una vez acreditado su pago.</div>
                         <div id="gf_first_form">
                             <div style="font-size: 13px;margin: 0px 0px 14px;color: #148335;font-weight: bold;">Hacé <a href="faq/#5" target="_blank">click aquí</a> para saber cómo usar este formulario y qué completar en los campos.</div>
                             <div class="form_row">

@@ -180,9 +180,8 @@ $steam_sales_featured_items = 9;
                         <div id="gf_third_form">
                         	<h4>El pedido se ha generado</h4>
                             
-                            <div class="alert alert-warning" style="font-size: 14px;margin:15px 0; text-align:justify">
-                            	Guarda estos datos para poder informar el pago luego, revisar los detalles de tu pedido, o para soporte:<br/>
-                            	ID de pedido: <strong><span id="gf_tf_orderid"></span></strong>&nbsp;&nbsp;&nbsp;clave: <strong><span id="gf_tf_orderpass"></span></strong>
+                            <div class="alert alert-info" style="font-size: 14px;margin:15px 0; text-align:justify">
+                            	Guarda estos datos para poder informar el pago luego, revisar los detalles de tu pedido, o para soporte. ID de pedido: <strong><span id="gf_tf_orderid"></span></strong>&nbsp;&nbsp;&nbsp;clave: <strong><span id="gf_tf_orderpass"></span></strong>
                             </div>
                             
                             <div class="gf_tf_ticketinstructions">Se ha generado tu pedido de <strong><span class="gf_tf_gamearsprice">$0 ARS</span></strong> por el juego <span class="gf_tf_gamename">x</span>, el siguiente paso es imprimir y abonar el cupón de pago en cualquier sucursal de <strong>Rapipago</strong>,

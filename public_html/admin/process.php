@@ -212,7 +212,13 @@ switch($action) {
 				while($oData = mysqli_fetch_assoc($res2)) {
 					$key_used_msg .= "<strong>ID:</strong> ".$oData["order_id"]."<br/><strong>Keys:</strong><br/> ".nl2br($oData["order_sentkeys"])."<br/><br/>";
 				}
-			} else $listed_keys .= $split[0].": <strong>".$split[1]."</strong><br/>";	
+			} else {
+				if(substr($split[1],0,4) === "http" || substr($split[1],0,22) === "store.steampowered.com") {
+					$listed_keys .= $split[0].": <strong><a href='".$split[1]."' target='_blank'>".$split[1]."</a></strong><br/>";
+				} else {
+					$listed_keys .= $split[0].": <strong>".$split[1]."</strong><br/>";
+				}
+			}
 		}
 			
 		if($key_used_msg == "") {

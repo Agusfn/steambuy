@@ -397,7 +397,7 @@ if(isset($_POST["gameid"]))
 							?>
                             <div class="purchase_instructions">
                                 <h4 class="pi_title">El pedido se ha generado</h4>
-                                <div class="alert alert-warning" style="font-size: 14px;margin-top:30px; text-align:justify">
+                                <div class="alert alert-info" style="font-size: 14px;margin-top:30px; text-align:justify">
                                 	Guarda estos datos para poder informar el pago luego, revisar los detalles de tu pedido, o para soporte:<br/>
                                     ID de pedido: <strong><?php echo $orderinfo["order_id"]; ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clave de pedido: <strong><?php echo $orderinfo["order_password"]; ?></strong> <br/>
                                 </div>

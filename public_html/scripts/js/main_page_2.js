@@ -246,11 +246,12 @@ $(document).ready(function(e) {
 							$("#game_form_modal .modal-dialog").animate({width:"700px"}, "slow");
 							if(gf_validation_response[2] == 2) {
 								$("#gf_sf_repeatwarning").slideDown("slow");
-								$("#game_form_modal .modal-body").animate({height:"473px"}, "slow");
+								$("#game_form_modal .modal-body").animate({height:"413px"}, "slow");
 							} else {
-								$("#game_form_modal .modal-body").animate({height:"385px"}, "slow");
+								$("#game_form_modal .modal-body").animate({height:"325px"}, "slow");
 							}
-
+							
+							
 							$("#gf_button_confirm").html("Generar cupón&nbsp;&nbsp;<span class='glyphicon glyphicon-barcode'></span>");
 							$("#gf_button_cancel").text("Cancelar compra");
 							$("#gf_order_price").show();
@@ -336,7 +337,7 @@ $(document).ready(function(e) {
 							$("#gf_third_form").fadeIn("slow"); 
 							$("#game_form_modal").data('bs.modal').isShown = true;
 						});
-						$("#game_form_modal .modal-body").animate({height:$("#gf_third_form").height() + 40 + 70}, "slow");
+						$("#game_form_modal .modal-body").animate({height:$("#gf_third_form").height() + 40}, "slow");
 
 					} else {
 						game_form_status = 1;

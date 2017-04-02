@@ -76,6 +76,11 @@ a:hover{
 	margin-bottom:0;
 }
 
+.alert-dismissable .close {
+	top: 0px;
+	right: -5px;	
+}
+
 .alert-warning
 {
 	background-color: rgba(251, 246, 221, 1);

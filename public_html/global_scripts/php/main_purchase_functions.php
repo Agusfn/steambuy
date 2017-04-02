@@ -1,9 +1,5 @@
 <?php 
-
-
-// *** CLASE DE GENERACIÓN DE PEDIDOS *** //
-/*  (Crea un pedido con ID y Pass y lo inserta en la base de datos)
-
+/*
 índice de errores:
 
 1: tipo de orden, medio de pago, o precio inválido
@@ -17,22 +13,132 @@
 
 $CD_ID = array ("1"=>"545364","2"=>"584204","3"=>"545437"); // IDs de cuentas CuentaDigital
 
-/*$cuenta = 1; // CuentaDigital: 1=cuenta agusfn, 3=cuenta rfn07
-if($cuenta == 1) $accId = "545364";
-else if($cuenta == 2) $accId = "584204";
-else if($cuenta == 3) $accId = "545437";	*/
 
-class order
+
+/*
+Clase de compras
+
+Métodos:
+
+checkProductPurchasable:
+revisa si el producto se puede comprar (si existe, si esta habilitado, y si no está fuera de stock)
+
+calcProductFinalArsPrices:
+<se debe revisar si el producto se puede comprar primero>
+calcula y devuelve el precio final en pesos por boleta (ppal) y por transferencia del producto revisado anteriormente
+
+createGameOrder:
+crea un nuevo pedido de compra (maneja stock, genera boleta, ingresa en db, y envía e-mail)
+
+checkCouponValidity:
+Revisa la validez de un cupón de descuento aplicado al producto analizado inicialmente con checkProductPurchasable
+*/
+class Purchase
 {
 	public $con;
-	public $orderInfo = array('order_id' => '','order_password' => '','order_purchaseticket' => '');
-	public $error;
 	
+	public $orderInfo = array('order_id' => '','order_password' => '','order_purchaseticket' => '');
+	public $productData; // Si el producto puede venderse, acá se almacena información necesaria para la compra del producto. 
+	public $couponData;
+	
+	public $error;
+	public $couponCheckError;
+		
 	public function __construct($mysql) {
-		$this->con = $mysql;	
+		$this->con = $mysql;
+	}
+
+	public function checkProductPurchasable($product_id) {
+		
+		if(!is_numeric($product_id)) return false;
+		$sql = "SELECT * FROM `products` WHERE `product_id` = ".mysqli_real_escape_string($this->con, $product_id)." AND product_enabled = 1 
+		AND NOT (product_has_limited_units = 1 AND product_limited_units = 0)";
+		$query = mysqli_query($this->con, $sql);
+		if(mysqli_num_rows($query) == 1) {
+			$this->productData = mysqli_fetch_assoc($query);
+			return true;
+		} else return false;
 	}
 	
-	function createGameOrder($order_paymethod, $product_name, $product_id_catalog, $product_sellingsite, $product_siteurl, $product_limitedoffer, $product_usdprice, 
+	public function calcProductFinalArsPrices() {
+		
+		if($this->productData["product_has_customprice"] == 1 && $this->productData["product_customprice_currency"] == "ars") {
+			$ticketPrice = $this->productData["product_finalprice"];
+			$transferPrice =  $this->productData["product_finalprice"] - ($this->productData["product_finalprice"] * 0.0484 + 1.5125);
+			$transferPrice = round(1.015 * $transferPrice, 1);
+		} else {
+			$ticketPrice = quickCalcGame(1, $this->productData["product_finalprice"]);	
+			$transferPrice = quickCalcGame(2, $this->productData["product_finalprice"]);
+		}
+		if(is_numeric($ticketPrice) && is_numeric($transferPrice)) {
+			return array("ticket_price"=>$ticketPrice, "transfer_price"=>$transferPrice);
+		} else return false;
+			
+	}
+	
+	public function checkCouponValidity($coupon_code) {
+		
+		if(!preg_match("/^[a-zA-Z0-9%$#@]*$/", $coupon_code)) {
+			$this->couponCheckError = 1;
+			return false;
+		}
+		
+		$sql = "SELECT * FROM `discount_coupons` WHERE `coupon_code` = '".mysqli_real_escape_string($this->con, $coupon_code)."' AND `coupon_start_date` < NOW() AND `coupon_end_date` > NOW()";
+		$query = mysqli_query($this->con, $sql);
+		if(mysqli_num_rows($query) == 1) {
+			
+			$this->couponData = mysqli_fetch_assoc($query);
+			
+			$excludedProducts = explode(",", $this->couponData["coupon_excluded_products"]);
+			if(in_array($this->productData["product_id"], $excludedProducts)) {
+				$this->couponCheckError = 2;
+				return false;	
+			}
+			
+			$includedProducts = explode(",", $this->couponData["coupon_included_products"]);
+			if(in_array($this->productData["product_id"], $includedProducts)) {
+				return true;	
+			}
+			
+			
+			$productCriteria = explode(",", $this->couponData["coupon_discount_criteria"]);
+			
+			foreach($productCriteria as $criterion) {
+				if($this->productInCouponCriterion($criterion)) return true;	
+			}
+			$this->couponCheckError = 2;
+			return false;
+
+		} else {
+			$this->couponCheckError = 1;
+			return false;	
+		}
+	}
+	
+	/*
+	Función para verificar si un producto pertenece a un criterio, para determinar a qué productos afecta un cupón.
+	
+	params - $criterion: palabra clave de criterio individual, que engloba a cierto tipo de producto. Los criterios están determinados en esta función.
+	return - true si pertenece, false si no pertenece
+	*/
+	private function productInCouponCriterion($criterion) {
+				
+		if($criterion == "stock") {
+			
+			if($this->productData["product_has_customprice"] == 1 && $this->productData["product_customprice_currency"] == "usd" && $this->productData["product_has_limited_units"] == 1
+			&& $this->productData["product_external_limited_offer"] == 0) {
+				return true;
+			} return false;
+			
+			
+		} else return false;
+		
+		
+	}
+	
+	
+	
+	public function createGameOrder($order_paymethod, $product_name, $product_id_catalog, $product_sellingsite, $product_siteurl, $product_limitedoffer, $product_usdprice, 
 	$product_arsprice, $client_name, $client_email, $client_ip) 
 	{
 		global $CD_ID;
@@ -136,42 +242,6 @@ class order
 			return false;	
 		}
 		
-	}
-
-	function createPayPalOrder($order_paymethod, $product_usdprice, $product_arsprice, $client_name, $client_email, $client_ip) 
-	{
-		global $CD_ID;
-		
-		if(($order_paymethod != 1 && $order_paymethod != 2) || !is_numeric($product_usdprice) || !is_numeric($product_arsprice)) { $this->error = "1. pmethod:". $order_paymethod.", usdprice: ".$product_usdprice. ", arsprice: ". $product_arsprice; return false; }
-		
-		// Crear una contraseña
-		$orderPassword = randomPassword();
-		$this->orderInfo["order_password"] = $orderPassword;
-
-		// Obtener ID
-		$query = mysqli_query($this->con, "SHOW TABLE STATUS LIKE 'orders'");
-		$res = mysqli_fetch_assoc($query);
-		$autoIncrement = $res['Auto_increment'];
-		$orderId = "P".$autoIncrement;
-		$this->orderInfo["order_id"] = $orderId;
-
-		// Generar boleta de pago
-		if($order_paymethod == 1) {
-			$paymentTicketLink = get_url("https://www.cuentadigital.com/api.php?id=".$CD_ID[3]."&precio=".$product_arsprice."&venc=5&codigo=ID-".$orderId."-".$product_usdprice."USD-".$product_arsprice."ARS&hacia=".$client_email."&concepto=Venta+de+productos+digitales");		
-			if(strpos($paymentTicketLink, "https://www.cuentadigital.com/verfactura.php?id=") === false) { $this->error=$paymentTicketLink; return false; }
-		} else $paymentTicketLink = "";
-		$this->orderInfo["order_purchaseticket"] = $paymentTicketLink;
-		
-		// Realizar consulta
-		$sql = "INSERT INTO `orders` (`order_number`, `order_type`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`,
-		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `product_usdprice`, `product_arsprice`, 
-		`product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
-		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`) 
-		VALUES (NULL, '2', '".$orderId."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '".$paymentTicketLink."', 0, '', 0, ".$order_paymethod.", 
-		'".$product_usdprice."', '".$product_arsprice."', 'Envío de saldo PayPal', 0, 'http://paypal.com', 0, 0, '0000-00-00 00:00:00', '', 0, '', 
-		'".$client_name."', '".$client_email."', '".$client_ip."');";	
-		
-		return mysqli_query($this->con, $sql);
 	}
 	
 	

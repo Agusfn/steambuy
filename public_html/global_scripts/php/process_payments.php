@@ -6,7 +6,7 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 require_once("mysql_connection.php");
 require_once("admlogin_functions.php");
 
-$MAX_FACTURACION = array(1=>42000,2=>10500); // 1: agustin, 2: tomas
+$MAX_FACTURACION = array(1=>42000,2=>28000); // 1: agustin, 2: tomas
 
 $forbidden = false;
 

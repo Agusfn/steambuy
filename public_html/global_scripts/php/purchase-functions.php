@@ -363,6 +363,27 @@ mysql_query("SET NAMES 'utf8'",$connection);*/
 
 
 
+/*
+Funcion para obtener las cotizaciones de MXN y BRL con respecto al USD
+*/
+function obtener_cotiz_mxbr($con) {
+	$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'brl_quote'");
+	$brl_quote = mysqli_fetch_row($query);						
+	$query = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'mxn_quote'");
+	$mxn_quote = mysqli_fetch_row($query);	
+	return array("br"=>$brl_quote[0], "mx"=>$mxn_quote[0]);
+}
+
+/*
+Funcion para obtener las alicuotas de ganancia con los precios de región MXN y BRL
+*/
+function obtener_alicuotas_dto_region($con) {
+	$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_menor32'");
+	$alicuota_menor32 = mysqli_fetch_row($res);
+	$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_mayor32'");
+	$alicuota_mayor32 = mysqli_fetch_row($res);
+	return array("menor_32_usd"=>$alicuota_menor32[0], "mayor_32_usd"=>$alicuota_mayor32[0]);
+}
 
 
 function getDollarQuote()

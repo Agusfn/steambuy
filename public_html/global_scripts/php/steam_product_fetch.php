@@ -20,8 +20,8 @@ function ssf_getpriceinfo($producturl, $region = "ar") {
 			$data = json_decode($response, true);
 			//var_dump($data);
 			if($data[$steamid]["success"] == true && isset($data[$steamid]["data"]["price".($type=="app"?"_overview":"")])) {
-				$result["firstprice"] = intval($data[$steamid]["data"]["price".($type=="app"?"_overview":"")]["initial"]) / 100;
-				$result["finalprice"] = intval($data[$steamid]["data"]["price".($type=="app"?"_overview":"")]["final"]) / 100;
+				$result["firstprice"] = roundfunc(intval($data[$steamid]["data"]["price".($type=="app"?"_overview":"")]["initial"]) / 100);
+				$result["finalprice"] = roundfunc(intval($data[$steamid]["data"]["price".($type=="app"?"_overview":"")]["final"]) / 100);
 				$result["currency"] = $data[$steamid]["data"]["price".($type=="app"?"_overview":"")]["currency"];
 			} else $result["error"] = 3;
 		} else $result["error"] = 2;

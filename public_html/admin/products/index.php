@@ -10,21 +10,23 @@ require_once("../../global_scripts/php/admlogin_functions.php");
 require_once("../../global_scripts/php/purchase-functions.php");
 
 
-
-
 $admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-} else {
-	header("Location: index.php?redir=".urlencode($_SERVER["REQUEST_URI"]));	
-}
+if(!isAdminLoggedIn()) {
+	header("Location: index.php?redir=".urlencode($_SERVER["REQUEST_URI"]));
+	exit;	
+} else $admin = true;
 
 
+// Obtener todos los productos
 $sql = "SELECT * FROM products ORDER BY product_rating DESC";
 $query = mysqli_query($con, $sql);
 
 $gameCount = mysqli_num_rows($query);
+
+
+// Obtener cotiz. mx y br, y alicuotas de ganancia, para poner en el JS.
+$mxbr_quote = obtener_cotiz_mxbr($con);
+$alicuotas = obtener_alicuotas_dto_region($con);
 
 ?>
 <!DOCTYPE html>
@@ -63,23 +65,13 @@ $gameCount = mysqli_num_rows($query);
 		<script type="text/javascript" src="../../global_scripts/js/global_scripts.js?2"></script>
         <script type="text/javascript" src="scripts/js/cat_manager_js.js?2"></script>
         <?php
-		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'brl_quote'");
-		$brl_quote = mysqli_fetch_row($res);
-								
-		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name` = 'mxn_quote'");
-		$mxn_quote = mysqli_fetch_row($res);
-		
-		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_menor32'");
-		$alicuota_menor32 = mysqli_fetch_row($res);
-		
-		$res = mysqli_query($con, "SELECT `value` FROM `settings` WHERE `name`='alicuota_mayor32'");
-		$alicuota_mayor32 = mysqli_fetch_row($res);
+
 		?>
         <script type="text/javascript">
-			var brl_quote = <?php echo $brl_quote[0]; ?>;
-			var mxn_quote = <?php echo $mxn_quote[0]; ?>;
-			var alicuota_mayor32 = <?php echo $alicuota_mayor32[0]; ?>;
-			var alicuota_menor32 = <?php echo $alicuota_menor32[0]; ?>;
+			var brl_quote = <?php echo $mxbr_quote["br"]; ?>;
+			var mxn_quote = <?php echo $mxbr_quote["mx"]; ?>;
+			var alicuota_menor32 = <?php echo $alicuotas["menor_32_usd"]; ?>;
+			var alicuota_mayor32 = <?php echo $alicuotas["mayor_32_usd"]; ?>;
 		</script>
     </head>
     

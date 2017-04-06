@@ -4,7 +4,7 @@ if(isset($_POST["product_type"]) && isset($_POST["client_email"]))
 {
 	
 	require_once("../../global_scripts/php/mysql_connection.php");
-	require_once("../../global_scripts/php/main_purchase_functions.php");
+	require_once("../../global_scripts/php/purchase-functions.php");
 
 	
 	if($_POST["product_type"] == 1 && isset($_POST["product_url"]) && isset($_POST["product_price"]))

@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+
+/* Cuadro de información de compra (una vez hecho el pedido) */
+
+.purchase_instructions
+{
+	margin: 25px 80px;
+}
+
+.pi_title
+{
+	color: rgba(56, 121, 186, 1);
+	margin-left: 10px;
+}
+
+.pi_instructions
+{
+	margin-top:15px;
+	text-align:justify;	
+}
+
+.pi_transferdata
+{
+	margin: 25px 0px 20px 225px;
+	background-color: #F0F0F0;
+	padding: 8px;
+	width: 360px;
+	-webkit-box-shadow: 2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+	-moz-box-shadow:    2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+	box-shadow:         2px 2px 2px 0px rgba(50, 50, 50, 0.2);
+}
+
+.pi_offerwarning
+{
+	margin-top:20px;
+}
+
+.pi_return
+{
+	margin-top: 25px;
+	font-size: 17px;
+	text-align: center;
+	background-color: #EAEAEA;
+	padding:3px 0;
+}

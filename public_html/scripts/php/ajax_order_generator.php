@@ -2,7 +2,7 @@
 if(isset($_POST["type"])) {
 
 	require_once("../../global_scripts/php/mysql_connection.php");
-	require_once("../../global_scripts/php/main_purchase_functions.php");
+	require_once("../../global_scripts/php/purchase-functions.php");
 	require_once("../../global_scripts/email/mailer.php");
 	
 	$config = include("../../global_scripts/config.php");
@@ -92,14 +92,13 @@ if(isset($_POST["type"])) {
 		}
 		
 		// ****** Crear orden *******
-		$order = new order($con);
+		$purchase = new Purchase($con);
 		
-		if($order->createGameOrder($payment_method, mysqli_real_escape_string($con, $gameName), "", mysqli_real_escape_string($con, $gameSellingSite), 
-		mysqli_real_escape_string($con, $gameSiteUrl), mysqli_real_escape_string($con, $gameDiscount), $gameUsdPrice, $gameArsPrice, mysqli_real_escape_string($con, $clientName), 
-		mysqli_real_escape_string($con, $clientEmail), mysqli_real_escape_string($con, $_POST["client_ip"]))) 
+		if($purchase->createGameOrder($payment_method, $gameName, "", $gameSellingSite, $gameSiteUrl, $gameDiscount, $gameUsdPrice, $gameArsPrice, $clientName, 
+		$clientEmail, $_POST["client_ip"], "", 0)) 
 		{
 				
-			$orderInfo = $order->orderInfo;
+			$orderInfo = $purchase->orderInfo;
 			
 			if($payment_method == 2) {
 				$orderInfo["bank_account"] = "Caja de ahorro $ 0849/01118545/07 ";
@@ -132,7 +131,7 @@ if(isset($_POST["type"])) {
 			
 			echo json_encode($orderInfo);
 
-		} else echo "Error: ". $order->error; 	
+		} else echo "Error: ". $purchase->error; 	
 			
 	}
 

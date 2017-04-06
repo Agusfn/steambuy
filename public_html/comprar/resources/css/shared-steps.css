@@ -1,0 +1,134 @@
+@charset "utf-8";
+
+/* barra de pasos de compra */
+
+.purchase_steps
+{
+	height: 34px;
+	margin: 10px 195px 0 195px;
+}
+
+.step
+{
+	padding:7px 12px;
+	float:left;
+}
+
+.current_step
+{
+	background-color: #333;
+	color: #EEE;
+	border-radius: 2px;
+}
+
+.previous_step
+{
+	background-color: #DDD;
+	border-radius:2px;
+}
+
+.spacer
+{
+	float:left;
+	background-image:url(checkout_spacer.png);
+	background-repeat:no-repeat;
+	width:4px;
+	height:8px;
+	margin: 13px;
+}
+
+/* columna de detalle de compra */
+
+
+.purchase-detail {
+	float:left;
+	padding:15px 0 30px 0;
+	width: 457px;
+}
+
+.purchase-product
+{
+	margin-bottom:20px;
+}
+
+.pp-img, .pp-img > img
+{
+	width: 138px;
+	height: 65px;
+}
+
+.pp-img
+{
+	float:left;
+}
+
+.pp-name
+{
+	margin-top:10px;
+	font-size:17px;
+	max-width:240px;
+	max-height: 40px;
+	overflow: hidden;
+}
+
+.pp-drm
+{
+	font-size:12px;
+	margin-left: 5px;
+	color: #555;
+}
+
+
+.pp-price
+{
+	float: right;
+	margin-top: 19px;
+	font-size: 15px;
+}
+
+.pp-listprice {
+	font-size:11px;
+	color:#666;
+	text-decoration:line-through;
+}
+
+
+#transfer-discount-ammount, #subtotal-ammount, #coupon-discount-ammount, #total-ammount {
+	float:right;	
+}
+
+
+#row-subtotal {
+	font-weight:bold;
+	margin-bottom:10px;	
+}
+
+.row-total {
+	font-weight:bold;
+	margin-top:10px;
+	font-size:16px;
+}
+
+/* divisor */
+
+.divide_bar{
+    position:absolute;
+	left: 51%;
+	top: 10px;
+	bottom: 10px;
+    border-left:1px solid #DDD;
+}
+
+
+
+/* Footer */
+
+.purchase_footer
+{
+	margin: 18px 30px 23px;
+}
+
+#proceed-btn
+{
+	float:right;
+}

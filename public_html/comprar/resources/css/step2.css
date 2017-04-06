@@ -1,0 +1,73 @@
+@charset "utf-8";
+
+
+
+.purchase-form-box {
+	float:right;
+	margin: 40px 44px 0px 0;
+	width:360px;
+}
+
+#buyer-name, #buyer-email {
+	width:250px;	
+}
+
+
+
+/* Formulario de compra final */
+
+#final_form
+{
+	margin: 0px 164px;
+}
+
+.form_title
+{
+	float:right;
+	text-align: center;
+	font-size: 19px;
+	color: rgba(42, 107, 170, 1);
+	margin-right: 406px;
+	
+}
+
+.pay_method
+{
+	float:left;
+	margin-left:99px;
+	font-size:16px;
+	color: rgba(60, 168, 44, 1);
+}
+
+#purchase_name
+{
+	width:250px;
+}
+
+#purchase_email
+{
+	width:250px;
+}
+
+#error_list
+{
+	margin-top: 19px;
+	display:none;
+}
+
+#error_list li
+{
+	margin-left:20px;
+}
+
+.offer_warning
+{
+	margin: 30px 20px 0 20px;
+}
+
+.tos_warning
+{
+	color: #444;
+	float:left;
+	width:600px;
+}

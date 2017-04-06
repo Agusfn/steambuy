@@ -1,0 +1,62 @@
+@charset "utf-8";
+/* CSS Document */
+
+#row-transfer-discount, #row-subtotal {
+	display:none;	
+}
+
+
+/* selector de medio de pago */
+
+.payment-options-column
+{
+	float:right;
+}
+
+.payment-options
+{
+	width:440px;
+	text-align:center;
+}
+
+.payment-options h4 {
+	font-size:16px;	
+}
+
+.payment-options p {
+	font-size:14px;	
+}
+
+.payment-options > .list-group {
+		
+}
+
+.payment-options > .list-group > a
+{
+	text-align:left;
+}
+
+.banktransfer-discount-tag {
+	position:absolute;
+	top:3px;
+	right: 27px;
+	border-radius: 3px;
+	background-color: #478645;
+	padding: 3px;
+	color: #EEE;
+	font-size: 14px;	
+}
+
+
+/* cuadro de cupon de descuento */
+
+.discount-coupon-options {
+	width: 233px;
+	margin:45px auto 25px auto;
+}
+
+#coupon-input {
+	display:inline-block;
+	width:200px;
+	margin-right:4px;	
+}

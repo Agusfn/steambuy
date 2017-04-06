@@ -13,7 +13,7 @@ if(!isset($_GET["id"])) {
 
 require_once("../global_scripts/php/client_page_preload.php");
 require_once("../global_scripts/php/admlogin_functions.php");
-require_once("../global_scripts/php/main_purchase_functions.php");
+require_once("../global_scripts/php/purchase-functions.php");
 
 
 
@@ -183,8 +183,8 @@ if(is_numeric($_GET["id"])){
 										echo "<div class='out_of_stock'>Disculpa, este producto está fuera de stock.</div>";
 									} else {
 										?>
-                                        <form action="../comprar/" method="post">
-                                        	<input type="hidden" name="gameid" value="<?php echo htmlspecialchars($_GET["id"]); ?>"/>
+                                        <form action="../../comprar/pago.php" method="post">
+                                        	<input type="hidden" name="product_id" value="<?php echo htmlspecialchars($_GET["id"]); ?>"/>
                                             <button type="submit" class="btn btn-success btn_purchase">Comprar juego <span class="glyphicon glyphicon-shopping-cart"></span></button>
                                         </form>
                                     

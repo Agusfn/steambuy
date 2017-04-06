@@ -272,7 +272,17 @@ if($count[0] > 0) {
 										if($order["product_limited_discount"] == 0) echo "No";
 										else if($order["product_limited_discount"] == 1) echo "<strong>SI</strong>";
 									} ?></td>
-									<td><?php echo $order["product_arsprice"]; ?></td>
+									<td><?php 
+									if($order["order_discount_coupon"] != "") {
+										//Calc. porcent. dto.
+										$precio_orig = $order["coupon_discount_amt"] + $order["product_arsprice"];
+										$porcentaje = round( (100*$order["coupon_discount_amt"]) / $precio_orig);
+										echo "<span style='border-bottom: 1px dotted;' data-toggle='tooltip' data-placement='top' title='Dto. cupón ".$order["order_discount_coupon"]." ".$porcentaje."%. Precio orig: &#36;".$precio_orig."'>".$order["product_arsprice"]."</span>";
+									} else {
+										echo $order["product_arsprice"]; 
+									}
+									
+									?></td>
 									<td style="font-size:13px;"><span class="order_email"><?php echo $order["buyer_email"]; ?></span></td>
 									<td align="center" style="font-size:15px;"><?php 
 									if(($order["order_type"] == 1 && ($order["product_limited_discount"] == 1 || $order["order_paymentmethod"] == 2)) || 

@@ -15,11 +15,11 @@ $(document).ready(function(e) {
 			$("#row-subtotal").hide();
 			
 			var coupon_discount_ammount = num_round(final_price*(coupon_disc_percent/100));
-			$("#coupon-discount-ammount").text("-$" + coupon_discount_ammount + " ARS");
+			$("#coupon-discount-ammount").text("-$" + coupon_discount_ammount);
 			
 			final_price = num_round(final_price - coupon_discount_ammount);
 		}
-		$("#final-price-ars").text("$" + final_price + " ARS");
+		$("#total-ammount").text("$" + final_price + " ARS");
     });
 	
 	
@@ -33,32 +33,24 @@ $(document).ready(function(e) {
 		var final_price = num_round(product_price - transfer_discount);
 		
 		$("#row-transfer-discount").show();
-		$("#transfer-discount-ammount").text("-$"+transfer_discount);
 		
 		if(discount_coupon) {
 			$("#row-subtotal").show();
 			$("#subtotal-ammount").text("$"+final_price);
 			
 			var coupon_discount_ammount = num_round(final_price*(coupon_disc_percent/100));
-			$("#coupon-discount-ammount").text("-$" + coupon_discount_ammount + " ARS");
+			$("#coupon-discount-ammount").text("-$" + coupon_discount_ammount);
 			
 			final_price = num_round(final_price - coupon_discount_ammount);
 			
 		}
-		$("#final-price-ars").text("$" + final_price + " ARS");
+		$("#total-ammount").text("$" + final_price + " ARS");
 		
     });
 });
 
 
-function validateEmail(email) { 
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-} 
 
-function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-}
 
 function num_round(num) {
 	return Math.round(num * 10) / 10;	

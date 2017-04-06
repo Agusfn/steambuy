@@ -7,7 +7,7 @@ header("Content-Type: text/html; charset=UTF-8");
 
 require_once("../../global_scripts/php/client_page_preload.php");
 require_once("../../global_scripts/php/admlogin_functions.php");
-require_once("../../global_scripts/php/main_purchase_functions.php");
+require_once("../../global_scripts/php/purchase-functions.php");
 
 
 

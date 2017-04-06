@@ -139,12 +139,16 @@ class Purchase
 	
 	
 	public function createGameOrder($order_paymethod, $product_name, $product_id_catalog, $product_sellingsite, $product_siteurl, $product_limitedoffer, $product_usdprice, 
-	$product_arsprice, $client_name, $client_email, $client_ip) 
+	$product_arsprice, $client_name, $client_email, $client_ip, $discount_coupon, $coupon_discounted_ammount) 
 	{
 		global $CD_ID;
 		global $config;
 		
-		if(($order_paymethod != 1 && $order_paymethod != 2) || !is_numeric($product_usdprice) || !is_numeric($product_arsprice)) { $this->error = 1; return false; }
+		if(($order_paymethod != 1 && $order_paymethod != 2) || !is_numeric($product_usdprice) || !is_numeric($product_arsprice) || 
+		($coupon_discounted_ammount != "" && !is_numeric($coupon_discounted_ammount))) { 
+			$this->error = 1; 
+			return false; 
+		}
 		
 		// Crear una contraseña
 		$orderPassword = randomPassword();
@@ -203,13 +207,14 @@ class Purchase
 		
 		// Realizar consulta
 		$sql = "INSERT INTO `orders` (`order_number`, `order_type`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`,
-		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `product_usdprice`, `product_arsprice`, `product_cur_steam_price`, 
-		`product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
+		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
+		`product_arsprice`, `product_cur_steam_price`, `product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
 		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`) 
-		VALUES (NULL, '1', '".$orderId."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '', ".$product_fromcatalog.", 
-		'".$product_id_catalog."', ".$product_limited_unit.", ".$order_paymethod.", '".$product_usdprice."', '".$product_arsprice."', '".$current_steam_price."', '".$product_name."', 
-		".$product_sellingsite.", '".$product_siteurl."', ".$product_limitedoffer.", 0, '0000-00-00 00:00:00', '', 0, '', '".$client_name."', '".$client_email."', 
-		'".$client_ip."');";	
+		VALUES (NULL, '1', '".$orderId."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '', ".$product_fromcatalog.", '".$product_id_catalog."', ".$product_limited_unit.", 
+		".$order_paymethod.", '".$this->scp_str($discount_coupon)."', ".$coupon_discounted_ammount.", '".$product_usdprice."', '".$product_arsprice."', '".$current_steam_price."', 
+		'".$this->scp_str($product_name)."', ".$this->scp_str($product_sellingsite).", '".$this->scp_str($product_siteurl)."', ".$this->scp_str($product_limitedoffer).", 0, 
+		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."');";	
+		
 		
 		$query = mysqli_query($this->con, $sql);
 		if($query) {
@@ -242,6 +247,10 @@ class Purchase
 			return false;	
 		}
 		
+	}
+	
+	private function scp_str($string) {
+		return mysqli_real_escape_string($this->con, $string);	
 	}
 	
 	

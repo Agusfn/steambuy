@@ -9,7 +9,7 @@ if($_POST["key"] != "v4d87s3nb12k8f2c7f21b4u1rff8s1yh3") return;
 
 
 require_once("../../../global_scripts/php/mysql_connection.php");
-require_once("../../../global_scripts/php/main_purchase_functions.php");
+require_once("../../../global_scripts/php/purchase-functions.php");
 require_once("../../../global_scripts/email/mailer.php");
 
 $orders = json_decode($_POST["orders"]);

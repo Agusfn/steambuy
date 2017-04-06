@@ -7,7 +7,7 @@
 }
 
 
-.search_tooltip
+.search-toolbar
 {
 	background-color:#FFF;
 	height: 40px;
@@ -17,7 +17,7 @@
 	box-shadow:         1px 1px 2px 0px rgba(0, 0, 0, 0.28);
 }
 
-.search_tooltip > div { float:left; }
+.search-toolbar > div { float:left; }
 
 
 .order_label
@@ -26,24 +26,36 @@
 	font-size:14px;
 }
 
-.filter_label
-{
-	margin: 10px 0px 0px 85px;
-	font-size:14px;
+.filter-prices-btn {
+	margin: 6px 0 0 214px;
 }
 
-.filter_button_group
-{
-	margin: 6px 0 0 13px;
+.filter-prices-btn .dropdown-menu {
+	width: 290px;
+    z-index: 20000;
+    padding: 14px;
 }
 
-.filter_button_group .btn
+.filter-prices-btn .checkbox {
+	margin-bottom:5px;
+}
+
+#apply-discount-filter {
+	float:right;	
+}
+
+#filter_gamemode_buttons
+{
+	margin: 6px 0 0 60px;
+}
+
+#filter_gamemode_buttons .btn
 {
 	padding: 0px 6px;
 	font-size: 13px;
 }
 
-.filter_button_group img
+#filter_gamemode_buttons img
 {
 	margin-top:3px;
 	height:20px;

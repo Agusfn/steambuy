@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 
 require_once("mysql_connection.php");
 require_once("admlogin_functions.php");
-require_once("main_purchase_functions.php");
+require_once("purchase-functions.php");
 require_once("steam_product_fetch.php");
 
 

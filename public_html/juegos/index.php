@@ -7,7 +7,7 @@ header("Content-Type: text/html; charset=UTF-8");
 
 require_once("../global_scripts/php/client_page_preload.php");
 require_once("../global_scripts/php/admlogin_functions.php");
-require_once("../global_scripts/php/main_purchase_functions.php");
+require_once("../global_scripts/php/purchase-functions.php");
 
 $admin = false;
 if(isAdminLoggedIn())
@@ -15,41 +15,60 @@ if(isAdminLoggedIn())
 	$admin = true;
 }
 
+/*
+Busqueda de juegos
+
+
+Parámetros get:
+
+order: orden (1: relevancia, 2: menor precio, 3: mayor precio)
+
+int_stock: ofertas internas de stock
+int_tmpo: ofertas internas de tiempo limitado
+int_undef: ofertas internas indefinidas
+oft_ext: ofertas externas
+sin_oft: sin oferta
+
+gm: game mode. (1: Singleplayer, 2: multiplayer, 3: coop)
+
+pg: paginación
+q: término de búsqueda
+*/
+
+
 if(isset($_GET["order"])) {
 	if(is_numeric($_GET["order"]) && $_GET["order"] >= 1 && $_GET["order"] <= 3) {
 		$filter_order = $_GET["order"];
 	} else $filter_order = 1;
 } else $filter_order = 1;
 
-if(isset($_GET["st"])) {
-	if($_GET["st"] == 0) {
-		$filter_showSteam = 0;
-	} else $filter_showSteam = 1;
-} else $filter_showSteam = 1;
-					
-if(isset($_GET["stb"])) {
-	if($_GET["stb"] == 0) {
-		$filter_showSteambuy = 0;
-	} else $filter_showSteambuy = 1;
-} else $filter_showSteambuy = 1;
 
-if(isset($_GET["amz"])) {
-	if($_GET["amz"] == 0) {
-		$filter_showAmazon = 0;
-	} else $filter_showAmazon = 1;
-} else $filter_showAmazon = 1;
+if(isset($_GET["int_stock"])) {
+	if($_GET["int_stock"] == 1) $oferta_interna_stock = 1;
+	else $oferta_interna_stock = 0;
+} else $oferta_interna_stock = 1;
 
-if(isset($_GET["hb"])) {
-	if($_GET["hb"] == 0) {
-		$filter_showHumble = 0;
-	} else $filter_showHumble = 1;
-} else $filter_showHumble = 1;
+if(isset($_GET["int_tmpo"])) {
+	if($_GET["int_tmpo"] == 1) $oferta_int_tiempo_lim = 1;
+	else $oferta_int_tiempo_lim = 0;
+} else $oferta_int_tiempo_lim = 1;
 
-if(isset($_GET["bs"])) {
-	if($_GET["bs"] == 0) {
-		$filter_showBundlestars = 0;
-	} else $filter_showBundlestars = 1;
-} else $filter_showBundlestars = 1;
+if(isset($_GET["int_undef"])) {
+	if($_GET["int_undef"] == 1) $oferta_interna_indef = 1;
+	else $oferta_interna_indef = 0;
+} else $oferta_interna_indef = 1;
+
+if(isset($_GET["oft_ext"])) {
+	if($_GET["oft_ext"] == 1) $oferta_externa = 1;
+	else $oferta_externa = 0;
+} else $oferta_externa = 1;
+
+if(isset($_GET["sin_oft"])) {
+	if($_GET["sin_oft"] == 1) $sin_oferta = 1;
+	else $sin_oferta = 0;
+} else $sin_oferta = 1;
+
+
 
 if(isset($_GET["gm"])) {
 	if(is_numeric($_GET["gm"]) && $_GET["gm"] >= 0 && $_GET["gm"] <= 3) {
@@ -57,19 +76,88 @@ if(isset($_GET["gm"])) {
 	} else $filter_gameMode = 0;
 } else $filter_gameMode = 0;
 
+
 if(isset($_GET["pg"])) {
-	if(is_int($_GET["pg"] / 20)) {
-		$current_page = $_GET["pg"];
-	} else {
-		$current_page = 0;	
-	}
-} else $current_page = 0;	
+	if(is_numeric($_GET["pg"])) {
+		if(is_int($_GET["pg"] / 20)) {
+			$current_page = $_GET["pg"];
+		} else $current_page = 0;	
+	} else $current_page = 0;
+} else $current_page = 0;
+
 
 $searching = 0; // 0 = no se busca, 1 = busqueda por nombre/tags/etc, 2 = busqueda por tags exclusivamente
 if(isset($_GET["q"])) {
 	if($_GET["q"] != "") $searching = 1;	
 } else if(isset($_GET["tag"])) {
 	if($_GET["tag"] != "") $searching = 2;	
+}
+
+
+/********** Armar query ************/
+// 0, acción a realizar (obtener sólo cantidad, u obtener todos los datos)
+$sql0a = "SELECT COUNT(*)";
+$sql0b = "SELECT *";
+			
+// 1, estructura fundamental
+$sql1 = " FROM `products` WHERE `product_enabled` = 1 AND NOT (`product_has_limited_units` = 1 AND `product_limited_units` = 0) AND `product_update_error` = 0";
+				
+// 2, filtros
+$sql2 = "";
+if($oferta_interna_stock == 0) $sql2 .= " AND NOT (`product_has_customprice` = 1 AND `product_has_limited_units` = 1)";
+if($oferta_int_tiempo_lim == 0) $sql2 .= " AND NOT (`product_has_customprice` = 1 AND `product_external_limited_offer` = 1)";
+if($oferta_interna_indef == 0) $sql2 .= " AND NOT (`product_has_customprice` = 1 AND `product_external_limited_offer` = 0 AND `product_has_limited_units` = 0)";
+if($oferta_externa == 0) $sql2 .= " AND NOT (`product_has_customprice` = 0 AND `product_external_limited_offer` = 1)";
+if($sin_oferta == 0) $sql2 .= " AND NOT (`product_has_customprice` = 0 AND `product_external_limited_offer` = 0)";
+				
+switch($filter_gameMode) {
+	case 1: $sql2 .= " AND `product_singleplayer` = 1"; break;
+	case 2: $sql2 .= " AND `product_multiplayer` = 1"; break;
+	case 3: $sql2 .= " AND `product_cooperative` = 1"; break;	
+}
+				
+//3, texto de búsqueda
+$sql3 = "";
+if($searching == 1) {
+					
+	$split_search = explode(" ", mysqli_real_escape_string($con, $_GET["q"]));
+	
+	$sql3a = "";
+	for($i=0;$i<sizeof($split_search);$i++) {
+		if($i>0) $sql3a .= " AND ";
+		$sql3a .= "`product_name` LIKE '%".$split_search[$i]."%'";	
+	}
+	$sql3 = " AND ((".$sql3a.") OR `product_tags` LIKE '%".mysqli_real_escape_string($con, $_GET["q"])."%')";	
+} else if($searching == 2) {
+		
+	$sql3 = " AND `product_tags` LIKE '%".mysqli_real_escape_string($con, $_GET["tag"])."%'";
+}
+				
+//4, orden de los productos
+$sql4 = "";
+switch($filter_order) {
+	case 1: $sql4 .= " ORDER BY `product_rating` DESC"; break;
+	case 2: $sql4 .= " ORDER BY (CASE WHEN product_has_customprice = 1 AND product_customprice_currency = 'ars' THEN product_finalprice ELSE product_finalprice * ".getDollarQuote()*1.8." END) ASC"; break;
+	case 3: $sql4 .= " ORDER BY (CASE WHEN product_has_customprice = 1 AND product_customprice_currency = 'ars' THEN product_finalprice ELSE product_finalprice * ".getDollarQuote()*1.8." END) DESC"; break;
+}
+//5, paginación
+$sql5 = " LIMIT ".$current_page.", 20";
+
+				
+// Obtener cantidad total de resultados
+$count_query = mysqli_query($con,$sql0a.$sql1.$sql2.$sql3);
+			
+				
+$count = mysqli_fetch_row($count_query);
+$results = $count[0];
+
+$totalpages = floor($results / 20);
+if(($results % 20) > 0) $totalpages += 1;
+
+// Ejecutar query principal
+if($results > 0) {
+	$sql = $sql0b.$sql1.$sql2.$sql3.$sql4.$sql5;
+	$query = mysqli_query($con, $sql);
 }
 
 ?>
@@ -126,20 +214,20 @@ if(isset($_GET["q"])) {
 			
 		echo "var so_order = '&order=".$filter_order."';\n";
 		
-		if($filter_showSteam == 1) echo "var so_f_st = '';\n";
-		else if($filter_showSteam == 0) echo "var so_f_st = '&st=0';\n";
+		if($oferta_interna_stock == 1) echo "var int_stock = '';\n";
+		else if($oferta_interna_stock == 0) echo "var int_stock = '&int_stock=0';\n";
 		
-		if($filter_showSteambuy == 1) echo "var so_f_stb = '';\n";
-		else if($filter_showSteambuy == 0) echo "var so_f_stb = '&stb=0';\n";
+		if($oferta_int_tiempo_lim == 1) echo "var int_tmpo = '';\n";
+		else if($oferta_int_tiempo_lim == 0) echo "var int_tmpo = '&int_tmpo=0';\n";
 		
-		if($filter_showAmazon == 1) echo "var so_f_amz = '';\n";
-		else if($filter_showAmazon == 0) echo "var so_f_amz = '&amz=0';\n";
+		if($oferta_interna_indef == 1) echo "var int_undef = '';\n";
+		else if($oferta_interna_indef == 0) echo "var int_undef = '&int_undef=0';\n";
 		
-		if($filter_showHumble == 1) echo "var so_f_hb = '';\n";
-		else if($filter_showHumble == 0) echo "var so_f_hb = '&hb=0';\n";
+		if($oferta_externa == 1) echo "var oft_ext = '';\n";
+		else if($oferta_externa == 0) echo "var oft_ext = '&oft_ext=0';\n";
 		
-		if($filter_showBundlestars == 1) echo "var so_f_bs = '';\n";
-		else if($filter_showBundlestars == 0) echo "var so_f_bs = '&bs=0';\n";
+		if($sin_oferta == 1) echo "var sin_oft = '';\n";
+		else if($sin_oferta == 0) echo "var sin_oft = '&sin_oft=0';\n";
 		
 		echo "var so_f_gm = '&gm=".$filter_gameMode."';\n
 		
@@ -157,76 +245,13 @@ if(isset($_GET["q"])) {
         <div class="wrapper">
         	
             <div class="main_content">
-                
                 <?php
-				
-				
-				/********** Armar query ************/
-				// 0, acción a realizar (obtener sólo cantidad, u obtener todos los datos)
-				$sql0a = "SELECT count(*)";
-				$sql0b = "SELECT *";
-				// 1, estructura fundamental
-				$sql1 = " FROM products WHERE (product_has_limited_units = 0 OR (product_has_limited_units = 1 AND product_limited_units > 0)) AND product_enabled = 1 AND product_update_error = 0";
-				// 2, filtros
-				$sql2 = "";
-				if($filter_showSteam == 0) $sql2 .= " AND NOT (product_sellingsite = 1 AND product_has_customprice = 0)";
-				if($filter_showSteambuy == 0) $sql2 .= " AND NOT (product_has_customprice = 1 AND product_sellingsite != 3 AND product_sellingsite != 4)";
-				if($filter_showAmazon == 0) $sql2 .= " AND NOT product_sellingsite = 2";
-				if($filter_showHumble == 0) $sql2 .= " AND NOT product_sellingsite = 3";
-				if($filter_showBundlestars == 0) $sql2 .= " AND NOT product_sellingsite = 4";
-				switch($filter_gameMode) {
-					case 1: $sql2 .= " AND product_singleplayer = 1"; break;
-					case 2: $sql2 .= " AND product_multiplayer = 1"; break;
-					case 3: $sql2 .= " AND product_cooperative = 1"; break;	
-				}
-				//3, texto de búsqueda
-				$sql3 = "";
-				if($searching == 1) {
-					
-					$split_search = explode(" ", mysqli_real_escape_string($con, $_GET["q"]));
-
-					$sql3a = "";
-					for($i=0;$i<sizeof($split_search);$i++) {
-						if($i>0) $sql3a .= " AND ";
-						$sql3a .= "`product_name` LIKE '%".$split_search[$i]."%'";	
-					}
-					$sql3 = " AND ((".$sql3a.") OR product_tags LIKE '%".mysqli_real_escape_string($con, $_GET["q"])."%')";	
-				} else if($searching == 2) {
-					
-					$sql3 = " AND `product_tags` LIKE '%".mysqli_real_escape_string($con, $_GET["tag"])."%'";
-				}
-				
-				//4, orden de los productos
-				$sql4 = "";
-				switch($filter_order) {
-					case 1: $sql4 .= " ORDER BY product_rating DESC"; break;
-					case 2: $sql4 .= " ORDER BY (CASE WHEN product_has_customprice = 1 AND product_customprice_currency = 'ars' THEN product_finalprice ELSE product_finalprice * ".getDollarQuote()*1.8." END) ASC"; break;
-					case 3: $sql4 .= " ORDER BY (CASE WHEN product_has_customprice = 1 AND product_customprice_currency = 'ars' THEN product_finalprice ELSE product_finalprice * ".getDollarQuote()*1.8." END) DESC"; break;
-				}
-				//5, paginación
-				$sql5 = " LIMIT ".$current_page.", 20";
-
-				
-				// Obtener cantidad total de resultados
-				$count_query = mysqli_query($con,$sql0a.$sql1.$sql2.$sql3);
-				$count = mysqli_fetch_row($count_query);
-				$results = $count[0];
-				
-				$totalpages = floor($results / 20);
-				if(($results % 20) > 0) $totalpages += 1;
-				
-				
 				if($results > 0) {
 					if($searching == 1) echo "<div style='font-size:14px;text-align:center;'>Se encontraron ".$results." resultados, mostrando página ".(($current_page / 20) + 1)." de ".$totalpages."</div>";	
 					else if($searching == 2) echo "<div style='font-size:14px;text-align:center;'>Categoría '".htmlspecialchars($_GET["tag"])."', se encontraron ".$results." resultados</div>";
-					$sql = $sql0b.$sql1.$sql2.$sql3.$sql4.$sql5;
-					$query = mysqli_query($con, $sql);
 				}
-
 				?>
-                
-                
-                <div class="search_tooltip">
+                <div class="search-toolbar">
                 	<div class="order_label">Ordenar:</div>
          			
                     <div class="btn-group btn-group-sm" id="filter_order_buttons" style="margin: 6px 0 0 13px;">
@@ -235,17 +260,21 @@ if(isset($_GET["q"])) {
                       	<button type="button" class="btn btn-default <?php if($filter_order == 3) echo "active"; ?>">Mayor precio</button>  
 					</div>
                     
-                    <div class="filter_label">Incluir:</div>
-
-					<div class="btn-group filter_button_group" id="filter_site_buttons">
-						<button type="button" class="btn btn-default w_tooltip <?php if($filter_showSteam == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" title="Tienda de Steam" data-container="body"><img src="../global_design/img/icons/steam_20x20.png" alt="steam" /></button>
-                        <button type="button" class="btn btn-default w_tooltip <?php if($filter_showSteambuy == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" title="Ofertas de SteamBuy" data-container="body"><img src="../global_design/img/icons/steambuy_25x25.png" alt="steambuy" /></button>
-                        <button type="button" class="btn btn-default w_tooltip <?php if($filter_showAmazon == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" title="Tienda de Amazon" data-container="body"><img src="../global_design/img/icons/amazon_transparent_22x22.png" alt="amazon" /></button>
-                        <button type="button" class="btn btn-default w_tooltip <?php if($filter_showHumble == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" title="Packs Humble Bundle" data-container="body"><img src="../global_design/img/icons/humblebundle_22x22.png" alt="humble" /></button>
-                      	<button type="button" class="btn btn-default w_tooltip <?php if($filter_showBundlestars == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" title="Packs Bundlestars" data-container="body"><img src="../global_design/img/icons/bundlestars_24x24.png" alt="bundlestars" /></button>  
-					</div>
+                    <div class="btn-group filter-prices-btn">
+						<button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Filtrar ofertas <span class="caret"></span>
+                      	</button>
+						<ul class="dropdown-menu">
+							<div class="checkbox"><label><input type="checkbox" id="filter-limited-stock" <?php if($oferta_interna_stock) echo "checked"; ?>> Ofertas propias de stock limitado</label></div>
+                            <div class="checkbox"><label><input type="checkbox" id="filter-limited-time" <?php if($oferta_int_tiempo_lim) echo "checked"; ?>> Ofertas propias de tiempo limitado</label></div>
+                            <div class="checkbox"><label><input type="checkbox" id="filter-undefined" <?php if($oferta_interna_indef) echo "checked"; ?>> Ofertas propias indefinidas</label></div>
+                            <div class="checkbox"><label><input type="checkbox" id="filter-external-discount" <?php if($oferta_externa) echo "checked"; ?>> Ofertas externas</label></div>
+                            <div class="checkbox"><label><input type="checkbox" id="filter-no-discount" <?php if($sin_oferta) echo "checked"; ?>> Sin oferta</label></div>
+                            <div class="clearfix"><button class="btn btn-primary btn-sm" id="apply-discount-filter">Aplicar</button></div>
+                      	</ul>
+                    </div>
 					
-                    <div class="btn-group filter_button_group" id="filter_gamemode_buttons">
+                    <div class="btn-group" id="filter_gamemode_buttons">
 						<button type="button" class="btn btn-default w_tooltip <?php if($filter_gameMode == 1) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" <?php if($filter_gameMode == 1) echo "title='Mostrando sólo con singleplayer'"; else echo "title='Un jugador'"; ?> data-container="body"><img src="../global_design/img/icons/game_properties/singleplayer.png" alt="single player"/></button>
                         <button type="button" class="btn btn-default w_tooltip <?php if($filter_gameMode == 2) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" <?php if($filter_gameMode == 2) echo "title='Mostrando sólo con multijugador'"; else echo "title='Multijugador'"; ?> data-container="body"><img src="../global_design/img/icons/game_properties/multiplayer.png" alt="multijugador"/></button>
                         <button type="button" class="btn btn-default w_tooltip <?php if($filter_gameMode == 3) echo "active"; ?>" data-toggle="tooltip" data-placement="bottom" <?php if($filter_gameMode == 3) echo "title='Mostrando sólo con cooperativo'"; else echo "title='Cooperativo'"; ?> data-container="body"><img src="../global_design/img/icons/game_properties/multiplayer.png" alt="cooperativo"/></button> 
@@ -326,7 +355,7 @@ if(isset($_GET["q"])) {
 						$q = "";
 						if($searching == 1) $q = "q=".urlencode($_GET["q"])."&";
 						else if($searching == 2) $q = "tag=".urlencode($_GET["tag"])."&";
-						$current_filters = "?".$q."order=".$filter_order."&st=".$filter_showSteam."&stb=".$filter_showSteambuy."&amz=".$filter_showAmazon."&hb=".$filter_showHumble."&bs=".$filter_showBundlestars."&gm=".$filter_gameMode;
+						$current_filters = "?".$q."order=".$filter_order."&int_stock=".$oferta_interna_stock."&int_tmpo=".$oferta_int_tiempo_lim."&int_undef=".$oferta_interna_indef."&oft_ext=".$oferta_externa."&sin_oft=".$sin_oferta."&gm=".$filter_gameMode;
 						
 						if($totalpages > 5) {
 							

@@ -13,7 +13,7 @@ if(!isset($_GET["id"])) {
 
 require_once("../global_scripts/php/client_page_preload.php");
 require_once("../global_scripts/php/admlogin_functions.php");
-require_once("../global_scripts/php/main_purchase_functions.php");
+require_once("../global_scripts/php/purchase-functions.php");
 
 
 

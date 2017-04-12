@@ -77,3 +77,9 @@
 	color:#C00;
 	cursor:pointer;
 }
+
+
+.underln {
+	text-decoration:underline;
+	text-decoration-style: dotted;
+}

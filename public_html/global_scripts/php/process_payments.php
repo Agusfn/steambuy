@@ -28,7 +28,7 @@ $config = include("../config.php");
 require_once("../AfipWs/AfipWs.php");
 
 
-// Si se carga el archivo desde el servidor local, y si no existe el argumento pasado por consola (no es cron), se establece testing=true para NO facturar.
+// Si se carga el script desde el servidor local, y si no existe el argumento pasado por consola (no es cron), se establece testing=true para NO facturar.
 $TESTING = false;
 if($_SERVER["REMOTE_ADDR"] == "::1" && !isset($argv[1])) {
 	$TESTING = true;
@@ -37,11 +37,13 @@ if($_SERVER["REMOTE_ADDR"] == "::1" && !isset($argv[1])) {
 
 echo date("d-m-Y")."<br/><br/>";
 
-//$paymentlist[1] = file_get_contents("cd_api_test3.txt"); 
+//$paymentlist[1] = file_get_contents("cd_api_test1.txt"); 
+
+
+
 $paymentlist[1] = file_get_contents("https://www.cuentadigital.com/exportacion.php?control=ef67b67798e79b6ebd0250074755b12d"); // Cuenta 1: agusfn
 $paymentlist[2] = file_get_contents("https://www.cuentadigital.com/exportacion.php?control=19d5f8f483c7a433a3ffcad2e6823ac8"); // Cuenta 2: tomasfn 
 $paymentlist[3] = file_get_contents("https://www.cuentadigital.com/exportacion.php?control=59905e7725bfaedb84d1e55f210c962c"); // Cuenta 3: rfn07
-
 
 
 
@@ -116,26 +118,40 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 	$count = 0;
 	for($i=$payment_number[0];$i<sizeof($payments);$i++) {
 		
-		$payment_info = explode("|", $payments[$i]);
-		if(sizeof($payment_info) == 6) {
-			if($payment_info[0] == date("dmY")) {
+		$pInfo = explode("|", $payments[$i]);
+		
+		if(sizeof($pInfo) == 7) {
+			
+			$paymentInfo = array(
+				"fecha"=>$pInfo[0], 
+				"hora"=>$pInfo[1], 
+				"monto_abonado"=>$pInfo[2], 
+				"monto_recibido"=>$pInfo[3], 
+				"cod_boleta"=>$pInfo[4], 
+				"cod_interno"=>$pInfo[5], 
+				"n_pago"=>$pInfo[6]
+			);
+			
+			if($paymentInfo["fecha"] == date("dmY")) {
 				
 				$count += 1;
 				$price_warning = 0;
 				$pedido_facturado = false;
 				
-				if(preg_match("#^ID-([JP][0-9]{5,6})-.*USD-(.*)ARS$#", $payment_info[4], $matches)) {  // Identificar si pertenece al sitio o no 
+				if(preg_match("#^ID-([JP][0-9]{5,6})-.*USD-(.*)ARS$#", $paymentInfo["cod_interno"], $matches)) {  // Identificar si pertenece al sitio o no 
 
-					$query2 = mysqli_query($con, "SELECT * FROM `orders` WHERE `order_purchaseticket` LIKE '%".$payment_info[3]."' AND `order_id`='".$matches[1]."'");
+					$query2 = mysqli_query($con, "SELECT * FROM `orders` WHERE `order_purchaseticket` LIKE '%".$paymentInfo["cod_boleta"]."' AND `order_id`='".$matches[1]."'");
 					if(mysqli_num_rows($query2) == 1) {
 						
 						$pData = mysqli_fetch_assoc($query2);
 						$log_product_name = $pData["product_name"];
 						if($pData["order_confirmed_payment"] == 0) {
 							
+							$date = date_create_from_format('dmYHis', $paymentInfo["fecha"].$paymentInfo["hora"]);
+							$datetime = date_format($date, 'Y-m-d H:i:s');
 							
 							// Actualizar pedido marcar como 'acreditado'
-							mysqli_query($con, "UPDATE `orders` SET `order_confirmed_payment`=1 WHERE `order_id`='".$pData["order_id"]."'");
+							mysqli_query($con, "UPDATE `orders` SET `order_confirmed_payment`=1, `order_payment_time`='".$datetime."' WHERE `order_id`='".$pData["order_id"]."'");
 							$log_recipient = $matches[1];
 
 							// Facturación
@@ -165,23 +181,23 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 					}
 					
 					$orig_ammount = floatval($matches[2]);
-					$paid_ammount = floatval($payment_info[1]);	
+					$paid_ammount = floatval($paymentInfo["monto_abonado"]);	
 					$price_warning = ($paid_ammount < ($orig_ammount - 3) || $paid_ammount > ($orig_ammount + 3)) ? 1 : 0;
 					$sql = "INSERT INTO `cd_payments` (`number`, `cd_account`, `date`, `net_ammount`, `invoice_number`, `site_payment`, `order_id`, `description`, `price_warning`) 
-					VALUES (NULL, ".$e.", NOW(), ".floatval($payment_info[2]).", '".$payment_info[3]."', 1, '".$matches[1]."', '', ".$price_warning.")";
+					VALUES (NULL, ".$e.", NOW(), ".floatval($paymentInfo["monto_recibido"]).", '".$paymentInfo["cod_boleta"]."', 1, '".$matches[1]."', '', ".$price_warning.")";
 				} else {
 					$log_product_name = "&nbsp;";
-					$log_recipient = $payment_info[4];
+					$log_recipient = $paymentInfo["cod_interno"];
 
 					$sql = "INSERT INTO `cd_payments` (`number`, `cd_account`, `date`, `net_ammount`, `invoice_number`, `site_payment`, `order_id`, `description`, `price_warning`) 
-					VALUES (NULL, ".$e.", NOW(), ".floatval($payment_info[2]).", '".$payment_info[3]."', 0, '', '".$payment_info[4]."', 0)";
+					VALUES (NULL, ".$e.", NOW(), ".floatval($paymentInfo["monto_recibido"]).", '".$paymentInfo["cod_boleta"]."', 0, '', '".$log_recipient."', 0)";
 				}
 				
 				mysqli_query($con, $sql);
-				$config["cd".$e."_balance"] += floatval($payment_info[2]);
+				$config["cd".$e."_balance"] += floatval($paymentInfo["monto_recibido"]);
 
 				$namesTable .= '<tr><td><span style="font-size:15px;">'.$log_product_name.($price_warning ? " [Revisar precio!]" : "").'</span></td></tr>';
-				$paymentsTable .= '<tr><td><span style="font-size:15px;">'.$log_recipient.'</span></td><td><span style="font-size:15px;text-align:center;">'.date("d/m/Y").'</span></td><td><span style="font-size:15px;text-align:center;">'.$e.'</span></td><td><span style="font-size:15px;text-align:center;">'.($pedido_facturado ? "x" : "&nbsp;").'&nbsp;</span></td><td><span style="background-color:#DAEEF3;font-size:15px;text-align:center;">'.str_replace(".",",",floatval($payment_info[2])).'</span></td></tr>';
+				$paymentsTable .= '<tr><td><span style="font-size:15px;">'.$log_recipient.'</span></td><td><span style="font-size:15px;text-align:center;">'.date("d/m/Y").'</span></td><td><span style="font-size:15px;text-align:center;">'.$e.'</span></td><td><span style="font-size:15px;text-align:center;">'.($pedido_facturado ? "x" : "&nbsp;").'&nbsp;</span></td><td><span style="background-color:#DAEEF3;font-size:15px;text-align:center;">'.str_replace(".",",",floatval($paymentInfo["monto_recibido"])).'</span></td></tr>';
 			}
 		}
 	}

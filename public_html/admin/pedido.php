@@ -39,8 +39,9 @@ if(isset($_GET["orderid"])) {
 
         <meta name="robots" content="noindex, nofollow" />
         
-        <title><?php if($orderFound) echo "Pedido ".$_GET["orderid"]." - Panel Admin";
-		else echo "Pedido no encontrado - Panel Admin"; ?></title>
+        <title>
+        <?php if($orderFound) echo "Pedido ".$_GET["orderid"]." - Panel Admin";		else echo "Pedido no encontrado - Panel Admin"; ?>
+        </title>
         
         <link rel="shortcut icon" href="../favicon.ico?2"> 
         
@@ -178,7 +179,7 @@ if(isset($_GET["orderid"])) {
                               	</ul>
                            	</div>
                             <?php if($orderData["product_limited_discount"] == 1 && $orderData["order_reserved_game"] == 0) echo "<button class='btn btn-primary' style='margin-left: 40px;' id='opt_reserveorder'>Marcar como reservado</button>"; ?>
-							<button class="btn btn-primary active w_tooltip" id="opt_toggle_notify" data-toggle="tooltip" data-placement="bottom" title="Informar por e-mail: Activo"><span class="glyphicon glyphicon-envelope"></span></button>                            
+							<button class="btn btn-primary active" id="opt_toggle_notify" data-toggle="tooltip" data-placement="bottom" title="Informar por e-mail: Activo"><span class="glyphicon glyphicon-envelope"></span></button>                            
                             <div class="btn-group" style="float:right;margin-right: 30px;">
                                 <button class="btn btn-success" id="opt_concreteorder">Concretar pedido</button>
                                 <button class='btn btn-success' data-toggle='modal' data-target='#send_keys_modal'>Keys/Link</button>
@@ -210,24 +211,31 @@ if(isset($_GET["orderid"])) {
 
                     	<tr>
                         	<td style="font-size:16px">
-                            <button class="btn btn-success w_tooltip" id="copy_order_data" data-toggle="tooltip" data-placement="top" title="Copiar datos"><i class="fa fa-clipboard"></i></button>
+                            <button class="btn btn-success" id="copy_order_data" data-toggle="tooltip" data-placement="top" title="Copiar datos"><i class="fa fa-clipboard"></i></button>
                             <strong>Pedido ID:</strong> <span id="order_id"><?php echo $orderData["order_id"]; ?></span></td>
                             <td style="font-size:16px;"><strong>Clave:</strong> <?php echo $orderData["order_password"]; ?></td>
                             <td style="font-size:16px;"><strong>Estado:</strong> <?php 
 							if($orderData["order_status"] == 1) {
 								echo "<span style='color: rgba(43, 112, 191, 1);'>Activo</span>";	
 							} else if($orderData["order_status"] == 2) {
-								echo "<span style='color:rgba(30, 156, 22, 1);; text-decoration:underline;text-decoration-style: dotted;' class='w_tooltip' data-toggle='tooltip' data-placement='top' title='".date("d/m/Y H:i:s",strtotime($orderData["order_status_change"]))."'>Concretado</span>";	
+								echo "<span style='color:rgba(30, 156, 22, 1);' class='underln' data-toggle='tooltip' data-placement='top' title='".date("d/m/Y H:i:s",strtotime($orderData["order_status_change"]))."'>Concretado</span>";	
 							} else if($orderData["order_status"] == 3) {
-								echo "<span style='color: rgba(198, 67, 67, 1);text-decoration:underline;text-decoration-style: dotted;' class='w_tooltip' data-toggle='tooltip' data-placement='top' title='".date("d/m/Y H:i:s",strtotime($orderData["order_status_change"]))."'>Cancelado</span>";	
+								echo "<span style='color: rgba(198, 67, 67, 1);' class='underln' data-toggle='tooltip' data-placement='top' title='".date("d/m/Y H:i:s",strtotime($orderData["order_status_change"]))."'>Cancelado</span>";	
 							} 
-							if($orderData["order_confirmed_payment"] == 1) echo "&nbsp;<span style='color: #118709;font-size: 13px;'>[ACREDITADO]</span>";
-							
 							?></td>
                             <td><strong>Forma pago:</strong> <?php
 							$split2 = explode("?id=",$orderData["order_purchaseticket"]);
                             if($orderData["order_paymentmethod"] == 1) echo "<a target='_blank' href='".$orderData["order_purchaseticket"]."'>Boleta de pago</a>&nbsp;<span style='font-size:13px'>(<a href='https://www.cuentadigital.com/area.php?name=Search&query=".$split2[1]."' target='_blank'>R</a>)</span>";
-							else if($orderData["order_paymentmethod"] == 2) echo "Transferencia bancaria"; ?></td>
+							else if($orderData["order_paymentmethod"] == 2) echo "Transferencia bancaria";
+
+							if($orderData["order_confirmed_payment"] == 1) {
+								$paymentDate = "";
+								if($orderData["order_payment_time"] != "0000-00-00 00:00:00") {
+									$paymentDate = "class='underln' data-toggle='tooltip' data-placement='top' title='".date("d/m/y H:i:s", strtotime($orderData["order_payment_time"]))."'";
+								}
+								echo "<br/><span style='color: #118709;font-size: 13px;'".$paymentDate.">[ACREDITADO]</span>";
+							}
+							?></td>
                         </tr>
                         <tr>
                             <td><strong>Fecha y hora:</strong> <?php echo date("d/m/y H:i:s", strtotime($orderData["order_date"])); ?></td>
@@ -282,14 +290,14 @@ if(isset($_GET["orderid"])) {
                         <tr>
                         	<?php $split = explode(" ", $orderData["buyer_name"], 2); ?>
                         	<td>
-                            	<button class="btn btn-success w_tooltip" id="copy_name_btn" data-toggle="tooltip" data-placement="top" title="Copiar nombre"><i class="fa fa-clipboard"></i></button>
+                            	<button class="btn btn-success" id="copy_name_btn" data-toggle="tooltip" data-placement="top" title="Copiar nombre"><i class="fa fa-clipboard"></i></button>
                             	<strong>Nombre comprador:</strong> 
                                 <input type="hidden" id="client_first_name" value="<?php echo $split[0]; ?>"/>
                             	<div><?php echo $orderData["buyer_name"]; ?></div>
                             </td>
                             
                             <td colspan="2">
-                                <button class="btn btn-success w_tooltip" id="copy_email_btn" data-toggle="tooltip" data-placement="top" title="Copiar e-mail"><i class="fa fa-clipboard"></i></button>
+                                <button class="btn btn-success" id="copy_email_btn" data-toggle="tooltip" data-placement="top" title="Copiar e-mail"><i class="fa fa-clipboard"></i></button>
                             	<strong>Email comprador:</strong>&nbsp;&nbsp;&nbsp;<div id="client_email"><?php echo $orderData["buyer_email"]; ?></div>
                             </td>
                             <td><strong>IP Comprador:</strong> <?php echo $orderData["buyer_ip"]; ?></td>

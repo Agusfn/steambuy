@@ -34,11 +34,16 @@
 			</div>
 		</div>
         
-        <div class="nav-search-form">
-            <form action="<?php echo ROOT_LEVEL . "juegos/" ?>" method="get">
-                <input type="text" name="q" class="form-control" placeholder="Buscar juegos..." <?php if(isset($_GET["q"])) { ?> value="<?php echo htmlspecialchars($_GET["q"]); ?>" <?php } ?> />	
-                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button>
+        <div class="nav-search-form form-group has-feedback">
+            <form action="<?php echo ROOT_LEVEL . "juegos/" ?>" name="searchform" method="get">
+                <input type="text" name="q" class="form-control" id="search-products-input" placeholder="Buscar juegos..." autocomplete="off" spellcheck="false" <?php 
+				if(isset($_GET["q"])) { ?> value="<?php echo htmlspecialchars($_GET["q"]); ?>" <?php } ?> />
+                <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true" onclick="document.searchform.submit();"></span>	
             </form>
+            <div id="search-autocomplete-box">
+            	<span id="search-autocomplete-spinner"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i></span>
+                <div></div>
+            </div>
         </div>
         
         <div class="nav-toolbtn">

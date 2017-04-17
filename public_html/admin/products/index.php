@@ -62,7 +62,7 @@ $alicuotas = obtener_alicuotas_dto_region($con);
         <script type="text/javascript" src="../../global_design/jquery-ui-1.11.0/jquery-ui.min.js"></script>
         <script type="text/javascript" src="scripts/js/datetime_scripts.js"></script>  
         <script type="text/javascript" src="../../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../../global_scripts/js/global_scripts.js?2"></script>
+		<script type="text/javascript" src="../../resources/js/global-scripts.js?2"></script>
         <script type="text/javascript" src="scripts/js/cat_manager_js.js?2"></script>
         <?php
 

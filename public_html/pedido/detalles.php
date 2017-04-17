@@ -78,7 +78,7 @@ if(mysqli_num_rows($query) == 1) {
         
 		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>     
         <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../global_scripts/js/global_scripts.js"></script>
+		<script type="text/javascript" src="../resources/js/global-scripts.js"></script>
     </head>
     
     <body>

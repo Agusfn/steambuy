@@ -59,10 +59,11 @@ $steam_sales_featured_items = 9;
         <link rel="stylesheet" href="global_design/css/main.css?2.01" type="text/css">
         <link rel="stylesheet" href="design/css/main_page.css?2" type="text/css">
 
-		<script type="text/javascript" src="global_scripts/js/jquery-1.8.3.min.js"></script>     
-        <script type="text/javascript" src="global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>      
-		<script type="text/javascript" src="global_scripts/js/global_scripts.js"></script>
-        <script type="text/javascript" src="scripts/js/main_page_2.js"></script>
+		<script type="text/javascript" src="global_scripts/js/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="resources/js/global-scripts.js"></script>
+		<script type="text/javascript" src="resources/js/main-page.js"></script>
+		<script type="text/javascript" src="resources/js/price-inpt-fnc.js"></script>
 
     </head>
     
@@ -73,7 +74,7 @@ $steam_sales_featured_items = 9;
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        				<h4 class="modal-title" id="ModalLabel">Formulario de compra de juegos <span style="margin-left:20px;"><i class="fa fa-question question_info w_tooltip" data-toggle="tooltip" data-placement="bottom" title="Con este formulario podés generar boletas de pago para comprar juegos de las tiendas Steam o Amazon que no se encuentren en nuestro catálogo."></i></span></h4>
+        				<h4 class="modal-title" id="ModalLabel">Formulario de compra de juegos <span style="margin-left:20px;"><i class="fa fa-question question_info" data-toggle="tooltip" data-placement="bottom" title="Con este formulario podés generar boletas de pago para comprar juegos de las tiendas Steam o Amazon que no se encuentren en nuestro catálogo."></i></span></h4>
      				</div>
       				<div class="modal-body" style="transition:height 0.7s ease-out;">
                         <input type="hidden" value="<?php echo $_SERVER["REMOTE_ADDR"]; ?>" id="client_ip">
@@ -535,7 +536,7 @@ $steam_sales_featured_items = 9;
                         </div></a>
                         
                         <div class="panel panel-default panel_normal">
-                            <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info w_tooltip" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
+                            <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
                             <div class="panel-body">
                                 <div class="calcbox_form">
                                     U$S<input type="text" class="form-control" id="calcbox_input" placeholder="Monto" onfocus="$(this).val('');" onkeypress="return limitInputChars(event, this);" onblur="applyFormat(this);" />

@@ -1,19 +1,10 @@
 <?php
-session_start();
+require_once("../../config.php");
+require_once(ROOT."app/lib/user-page-preload.php");
 
-define("ROOT_LEVEL", "../");
-
-header("Content-Type: text/html; charset=UTF-8");
-
-require_once("../global_scripts/php/client_page_preload.php");
-require_once("../global_scripts/php/admlogin_functions.php");
 require_once("../global_scripts/php/purchase-functions.php");
 
-$admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-}
+
 
 /*
 Busqueda de juegos
@@ -240,7 +231,7 @@ if($results > 0) {
     
     <body>
 
-		<?php require_once("../global_scripts/php/header.php"); ?>
+		<?php require_once(ROOT."app/template/header.php"); ?>
         
         <div class="wrapper">
         	
@@ -408,7 +399,7 @@ if($results > 0) {
             
         	<?php 
 			
-			require_once("../global_scripts/php/footer.php"); 
+			require_once(ROOT."app/template/footer.php");
 			//echo $sql1.$sql2.$sql3.$sql4.$sql5;?>
         	
         </div><!-- End container -->

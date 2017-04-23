@@ -1,21 +1,8 @@
 <?php
-session_start();
+require_once("../../../config.php");
+require_once(ROOT."app/lib/user-page-preload.php");
 
-define("ROOT_LEVEL", "../../");
-
-header("Content-Type: text/html; charset=UTF-8");
-
-require_once("../../global_scripts/php/client_page_preload.php");
-require_once("../../global_scripts/php/admlogin_functions.php");
 require_once("../../global_scripts/php/purchase-functions.php");
-
-
-$admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-}
-
 
 ?>
 <!DOCTYPE html>
@@ -69,7 +56,7 @@ if(isAdminLoggedIn())
     
     <body>
 
-		<?php require_once("../../global_scripts/php/header.php"); ?>
+		<?php require_once(ROOT."app/template/header.php"); ?>
         
         <div class="wrapper">
         	
@@ -86,7 +73,7 @@ if(isAdminLoggedIn())
 				
             </div><!-- End main content -->
             
-        	<?php require_once("../../global_scripts/php/footer.php"); ?>
+        	<?php require_once(ROOT."app/template/footer.php"); ?>
         	
         </div><!-- End container -->
     </body>

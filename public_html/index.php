@@ -1,21 +1,11 @@
 <?php
-session_start();
+require_once("../config.php");
 
-define("ROOT_LEVEL", "");
+require_once(ROOT."app/lib/user-page-preload.php");
 
-header("Content-Type: text/html; charset=UTF-8");
-
-require_once("global_scripts/php/client_page_preload.php");
-require_once("global_scripts/php/admlogin_functions.php");
 require_once("global_scripts/php/purchase-functions.php");
 require_once("resources/php/catalog_functions.php");
 
-
-$admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-}
 
 
 // si hay un evento de ofertas de steam, esto lo que hace es agregar un expositor de juegos en la página ppal
@@ -229,7 +219,7 @@ $steam_sales_featured_items = 9;
           	</div>
         </div>
 
-		<?php require_once("global_scripts/php/header.php"); ?>
+		<?php require_once(ROOT."app/template/header.php"); ?>
         
         <div class="wrapper">
         	
@@ -562,7 +552,7 @@ $steam_sales_featured_items = 9;
             
             </div><!-- End main content -->
             
-        	<?php require_once("global_scripts/php/footer.php"); ?>
+        	<?php require_once(ROOT."app/template/footer.php"); ?>
         	
         </div><!-- End container -->
     </body>

@@ -124,7 +124,7 @@ if(isset($_POST["order_id"]) && isset($_POST["order_password"]))
     
     <body>
 
-		<?php require_once("../global_scripts/php/header.php"); ?>
+		<?php require_once("../resources/php/header.php"); ?>
         
         <div class="wrapper">
         	

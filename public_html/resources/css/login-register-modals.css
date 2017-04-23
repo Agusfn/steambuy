@@ -1,0 +1,141 @@
+@charset "utf-8";
+
+/* Modals login y registro */
+
+.form-group {
+	margin-bottom:20px;	
+}
+
+.input-has-error {
+	border-color: #a94442;	
+}
+
+#register-error, #login-error {
+	margin-top:15px;
+	display:none;	
+}
+
+
+/* LOGIN */
+
+
+#login-modal .modal-dialog
+{
+	width:450px;
+}
+
+
+#login-form
+{
+	margin: 0px 75px 35px;
+}
+
+
+#login-form .popover {
+	background-color: #a42e2e;
+	color: #dbdbdb;	
+	width:203px !important;
+}
+
+#login-form .popover .arrow:after {
+	border-right-color: #a42e2e;
+}
+
+#login-submit
+{
+	margin: 17px auto 0;
+	padding: 8px 25px;
+	display: block;
+}
+
+#login-loading {
+	display: none;
+	position: absolute;
+	font-size: 7px;
+	bottom: 83px;
+	right: 100px;
+	cursor: default;
+}
+
+
+.login-recover-form
+{
+	margin: 0px 75px 35px;
+	display:none;
+}
+
+.recover-instructions
+{
+	margin: 0 -29px 25px;
+	color:#555;
+	text-align:justify;
+}
+
+#recover-submit
+{
+	margin: 7px 0px 0px 57px;
+}
+
+#ml_recover_error_list
+{
+	margin: 14px -35px 0;
+	display:none;
+}
+
+.recover-success
+{
+	margin: 10px 10px 22px 10px;
+	text-align: justify;
+	display:none;
+}
+
+/* REGISTRO */
+
+
+
+#register-modal .modal-dialog
+{
+	width:420px;
+}
+
+.register-form
+{
+	margin: 0 55px 35px;
+}
+
+.register-form .popover {
+	background-color: #a42e2e;
+	color: #dbdbdb;	
+	width:700px !important;
+}
+
+.register-form .popover .arrow:after {
+	border-right-color: #a42e2e;
+}
+
+
+#register-name, #register-lastname {
+	width:130px;	
+}
+
+#register-submit
+{
+	margin: 17px auto 0;
+	padding: 8px 25px;
+	display:block;
+}
+
+#register-loading {
+	display:none;
+	position: absolute;
+	font-size: 7px;
+	bottom: 64px;
+	right: 75px;
+	cursor:default;
+}
+
+.register-success-text
+{
+	margin:10px 10px 23px;
+	display:none;
+}

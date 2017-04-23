@@ -1,4 +1,11 @@
+var root_abs_path;
+
 $(document).ready(function() {  
+	
+	// Directorio raíz absoluto
+	if(location.hostname === "localhost") root_abs_path = document.location.origin + "/steambuy/public_html/";
+	else root_abs_path = document.location.origin + "/";
+	
 	
 	$(".button").on('dragstart', function(event) { event.preventDefault(); });
 	
@@ -38,9 +45,7 @@ $(document).ready(function() {
 	var autoCompleteSearching = false;
 	
 	
-	// Guardar directorio raíz para la solicitud Ajax
-	if(location.hostname === "localhost") root_abs_path = document.location.origin + "/steambuy/public_html/";
-	else root_abs_path = document.location.origin + "/";
+
 	
 	$("#search-products-input").on("input", function(e) {
 		if(!$(this).is(":focus")) return;
@@ -107,7 +112,21 @@ $(document).ready(function() {
 		$("#search-autocomplete-box > div").append("<a href='" + url + "'><div class='search-autocomplete-result'>" + product_name + "</div></a>");	
 	}
 	
+	
+	
+	
+	
 
 }); 
 
+
+function parseJSON(json) {
+	var parsed;
+	try {
+		parsed = JSON.parse(json);
+	} catch (e) {
+		return false;
+	}
+	return parsed; // Could be undefined!
+}
 

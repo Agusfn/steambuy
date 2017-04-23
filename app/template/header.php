@@ -1,11 +1,28 @@
 	<?php 
 	
-	require_once("g_analytics.php"); 
+	require_once(ROOT_PUBLIC.G_ANALYTICS);
 	
-	function endsWith($haystack, $needle)
-	{ return $needle === "" || substr($haystack, -strlen($needle)) === $needle; }
+	
+	if(!$loggedIn)
+	{
+		echo "<link rel='stylesheet' href='".PUBLIC_URL."resources/css/login-register-modals.css' type='text/css'/>";
+		echo "<script type='text/javascript' language='javascript' src='".PUBLIC_URL."resources/js/login-register.js'></script>";
+		
+		require_once(ROOT."app/template/login-modal.php");
+		require_once(ROOT."app/template/register-modal.php");
+	}
+	
+	
+ 	/*function endsWith($haystack, $needle)
+	{ return $needle === "" || substr($haystack, -strlen($needle)) === $needle; }*/
+	
+	
+	
 	?>
-    
+
+	
+
+
 	<div class="nav_bar">
         
         <div class="btn-group nav-explore-dropdown">
@@ -17,7 +34,7 @@
 						<?php
                         $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 0,20");
                         while($category = mysqli_fetch_assoc($tag_query)) {
-                            echo "<a href='".ROOT_LEVEL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                            echo "<a href='".PUBLIC_URL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
                         }
                         ?>
                     </div>
@@ -25,7 +42,7 @@
 						<?php
                         $tag_query = mysqli_query($con, "SELECT * FROM `game_categories` ORDER BY `product_count` DESC LIMIT 20,20");
                         while($category = mysqli_fetch_assoc($tag_query)) {
-                            echo "<a href='".ROOT_LEVEL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
+                            echo "<a href='".PUBLIC_URL."juegos/?tag=".$category["tag_name"]."'>".ucfirst($category["tag_name"])."</a> <span style='color:#666'>(".$category["product_count"].")</span><br/>";
                         }
                         ?>
                     </div>
@@ -35,7 +52,7 @@
 		</div>
         
         <div class="nav-search-form form-group has-feedback">
-            <form action="<?php echo ROOT_LEVEL . "juegos/" ?>" name="searchform" method="get">
+            <form action="<?php echo PUBLIC_URL . "juegos/" ?>" name="searchform" method="get">
                 <input type="text" name="q" class="form-control" id="search-products-input" placeholder="Buscar juegos..." autocomplete="off" spellcheck="false" <?php 
 				if(isset($_GET["q"])) { ?> value="<?php echo htmlspecialchars($_GET["q"]); ?>" <?php } ?> />
                 <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true" onclick="document.searchform.submit();"></span>	
@@ -46,6 +63,41 @@
             </div>
         </div>
         
+        <?php
+		if(!$loggedIn) {
+			?>
+            <div class="nav-login-options">
+                <a href="javascript:void(0);" id="nav-login-btn" data-toggle="modal" data-target="#login-modal">Iniciar sesión</a>&nbsp;&nbsp;ó&nbsp;
+                <button type="button" class="btn btn-default btn-primary" id="nav-register-btn" data-toggle="modal" data-target="#register-modal">Registrarse</button>
+            </div>
+            <?php	
+		} else {
+			?>
+			<div class="nav-user-options">
+				<div class="btn-group">
+					<a href="<?php echo PUBLIC_URL . "cuenta/pedidos/"; ?>" class="btn btn-primary">Mis pedidos</a>
+					<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Dropdown</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+                       	<div class="user_dropdown_email"><?php echo $userData["email"]; ?></div>
+                        <li><a href="<?php echo PUBLIC_URL."cuenta/libreria/"; ?>">Mi librería</a></li>
+						<li><a href="<?php echo PUBLIC_URL."cuenta/configuracion/"; ?>">Mi cuenta</a></li>
+						<li class="divider"></li>
+						<li><a href="<?php echo PUBLIC_URL . "cuenta/logout.php?redir=".urlencode($_SERVER["REQUEST_URI"]); ?>">Cerrar sesión</a></li>
+					</ul>
+				</div> 
+			</div>
+            <?php
+		}
+		?>
+
+		
+		
+		
+		<?php
+		/*
         <div class="nav-toolbtn">
 			<?php 
             if($admin == true) {
@@ -84,12 +136,14 @@
             }
 			?>
         </div>
+		*/
+		?>
 
     </div>
 
 
     <div class="header">
-		<a href="<?php echo ROOT_LEVEL; ?>"><img class="mainlogo" src="<?php echo ROOT_LEVEL; ?>global_design/img/header-logo.png" alt="steambuy logo" /></a>
+		<a href="<?php echo PUBLIC_URL; ?>"><img class="mainlogo" src="<?php echo PUBLIC_URL; ?>global_design/img/header-logo.png" alt="steambuy logo" /></a>
         <div style="float:right">
             <div class="header_socialbtns">
                 <a href="http://facebook.com/steambuy" target="_blank"><i class="fa fa-facebook-square"></i></a><a href="http://twitter.com/steambuy" target="_blank"><i class="fa fa-twitter-square"></i></a><a href="http://plus.google.com/+SteamBuyAR" target="_blank"><i class="fa fa-google-plus-square"></i></a>

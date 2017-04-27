@@ -57,6 +57,10 @@
 	cursor: default;
 }
 
+.login-captcha {
+	display:none;
+	margin: 20px -21px 0 -24px;
+}
 
 .login-recover-form
 {
@@ -88,6 +92,8 @@
 	text-align: justify;
 	display:none;
 }
+
+
 
 /* REGISTRO */
 

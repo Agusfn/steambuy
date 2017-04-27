@@ -1,5 +1,5 @@
 var loginrecover = 0;
-
+var login_captcha_loaded = false, need_login_captcha = false;
 
 $(document).ready(function(e) {
 
@@ -27,6 +27,7 @@ $(document).ready(function(e) {
 
 	
 	$("#login-submit").click(function(e) {
+
 		datos = validateLoginForm();
 		if(datos !== false) {
 			
@@ -40,34 +41,35 @@ $(document).ready(function(e) {
 
 					console.log(response);
 					result = parseJSON(response);
+					var error = false;
 					
 					if(result != false) {
 						
-						if(result["error"] == 0) {
-							$("#login-form").submit();	
+						if(result["success"] == true) {
+							$("#login-form").submit();
 						} else {
-							$("#login-error > span").text(result["error_text"]);
-							$("#login-error").show();
-							set_login_loading_state(false);	
+							if(result["needs_captcha"] == true) {
+								set_login_loading_state(false);	
+								need_login_captcha = true;
+								displayLoginCaptcha();
+							} else {
+								error = result["error_text"];
+							}
 						}
 						
-					} else {
-						$("#login-error > span").text("Ocurrió un error realizando la solicitud, intenta nuevamente más tarde.");
-						$("#login-error").show();
+					} else error = "Ocurrió un error realizando la solicitud, intenta nuevamente más tarde.";
+
+					if(error != false) {
 						set_login_loading_state(false);	
+						$("#login-error > span").text(error);
+						$("#login-error").show();
+						resetLoginCaptcha();
 					}
-									
+				
 				}
 			});
-		
 		}
     });
-	
-
-
-
-
-
 
 	/* REGISTER */
 
@@ -135,6 +137,9 @@ function set_login_loading_state(state) {
 }
 
 function validateLoginForm() {
+	
+	$("#login-error").hide();
+	
 	var error = false;
 	
 	var email = $("#login-email").val();
@@ -150,13 +155,61 @@ function validateLoginForm() {
 		error = true;
 	}
 	
-	if(error) return false;
-	else {
+	if(need_login_captcha) {
+		var captchaKey = grecaptcha.getResponse(loginCaptcha);
+		if(captchaKey.length == 0) {
+			error = true;
+			alert("Completa el captcha para continuar");
+		}
+	}
+	
+	if($("#login-keep-logged").is(":checked")) keep_loggedin = 1;
+	else keep_loggedin = 0;
+	
+	if(error) {
+		return false;
+	} else {
 		$("#login-form input").removeClass("input-has-error").popover("hide");
-		return {email:email, password:password};	
+		if(need_login_captcha) {
+			return {email:email, password:password, keep_loggedin:keep_loggedin, captcha_key:captchaKey};
+		} else {
+			return {email:email, password:password, keep_loggedin:keep_loggedin};
+		}
+			
 	}
 
 }
+
+function displayLoginCaptcha() {
+	$(".login-captcha").show();
+	if(!login_captcha_loaded) {
+		set_login_loading_state(true);
+		$.getScript("https://www.google.com/recaptcha/api.js?onload=captchaCallback&render=explicit", function() {
+			set_login_loading_state(false);
+			login_captcha_loaded = true;
+		});	
+	}
+}
+
+var captchaCallback = function() {
+	loginCaptcha = grecaptcha.render('g-recaptcha', {
+          'sitekey' : '6LcaKx4UAAAAAMYRtPdxbMOT1JkGeDywhnB8lYko'
+    });
+}
+
+function resetLoginCaptcha() {
+	
+	// Sólo si se viene de enviar un formulario que necesitó uso de captcha se resetea, sino no.
+	
+	if(need_login_captcha) {
+		need_login_captcha = false;
+		$(".login-captcha").hide();
+		if(login_captcha_loaded) {
+			grecaptcha.reset(loginCaptcha) 
+		}
+	}
+}
+
 
 
 function swapLoginRecover() {
@@ -180,6 +233,8 @@ function swapLoginRecover() {
 		});
 	}
 }
+
+
 
 
 /* REGISTER */

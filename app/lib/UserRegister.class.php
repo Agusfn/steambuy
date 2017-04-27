@@ -1,8 +1,11 @@
 <?php
-require_once("Password.class.php");
+require_once "UserPassword.class.php";
 require_once("Mail.class.php");
 
-class User {
+
+class UserRegister {
+	
+	const VERIF_KEY_LENGTH = 25;
 	
 	private $con;
 	
@@ -43,12 +46,11 @@ class User {
 			return false;
 		}
 		
+		$pwd = new UserPassword;
+		$hashed_pw = $pwd->hash_password($password);
 		
-		$pass = new Password;
-		$salt = $pass->generate_salt();
-		$hashed_pw = $pass->hash_password($password, $salt);
+		$validation_key = $this->generate_validation_key(self::VERIF_KEY_LENGTH);
 		
-		$validation_key = $this->generate_validation_key();
 		
 		if(!$this->send_validation_email($name." ".$lastname, $email, $validation_key)) {
 			$this->register_error = "Hubo un problema enviando el e-mail de verificación de cuenta, la cuenta no se registró, intenta nuevamente más tarde.";
@@ -56,10 +58,10 @@ class User {
 		}
 		
 		$sql = "INSERT INTO `users` 
-		(`id`, `register_date`, `email`, `name`, `lastname`, `birthdate`, `admin_level`, `verified_email`, `verified_email_key`, `verified_email_date`, `password_hash`, `password_salt`, `banned`, 
+		(`id`, `register_date`, `email`, `name`, `lastname`, `birthdate`, `admin_level`, `verified_email`, `verified_email_key`, `verified_email_date`, `password_hash`, `banned`, 
 		`fullname_history`, `last_visit_ips`, `last_visit_date`, `register_ip`) 
 		VALUES (NULL, NOW(), '".$this->escape_str($email)."', '".$this->escape_str($name)."', '".$this->escape_str($lastname)."', '0000-00-00', '0', '0', '".$validation_key."', '0000-00-00 00:00:00', 
-		'".$hashed_pw."', '".$salt."', '0', '".$this->escape_str($name)." ".$this->escape_str($lastname)."', '', '0000-00-00 00:00:00', '".$this->escape_str($register_ip)."');";
+		'".$hashed_pw."', '0', '".$this->escape_str($name)." ".$this->escape_str($lastname)."', '', '0000-00-00 00:00:00', '".$this->escape_str($register_ip)."');";
 		
 		if(mysqli_query($this->con, $sql)) {
 			return true;	
@@ -87,6 +89,20 @@ class User {
 	}
 	
 	
+	/* Func. para validar el e-mail de una cuenta a partir de la key.
+	*/
+	public function validate_account_email($validation_key) {
+		
+		if(!preg_match("/^[A-Z0-9]{25,35}$/", $validation_key)) return false;
+		$sql = "UPDATE `users` SET `verified_email` = 1, `verified_email_date` = NOW() WHERE `verified_email_key`='".$this->escape_str($validation_key)."' AND `verified_email` = 0";
+		
+		if(!mysqli_query($this->con, $sql)) return false;
+		
+		if(mysqli_affected_rows($this->con) == 1) return true;
+		else return false;
+			
+	}	
+	
 	
 	/* Método para ver si existe un usuario con un e-mail dado
 	   Devuelve False si hay un error, o un array con 1 o 0 en la posicion [0]
@@ -107,18 +123,19 @@ class User {
 	
 	/* Método para generar una clave de validación de cuenta
 	*/
-	private function generate_validation_key() {
+	private function generate_validation_key($length) {
 		$alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		$pass = array();
 		$alphaLength = strlen($alphabet) - 1;
-		for ($i = 0; $i < 25; $i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$n = rand(0, $alphaLength);
 			$pass[] = $alphabet[$n];
 		}
 		$key = implode($pass).(time() - 1490000000);
 		return $key;
 	}
-		
+
+	
 	private function send_validation_email($name, $email, $validation_key) {
 		$mail = new Mail;
 		$data = array("fullname" => $name, "validation_key" => $validation_key);

@@ -12,11 +12,15 @@
                         <div class="form-group"><input type="text" name="email" maxlength="60" class="form-control" id="login-email" data-trigger="manual" data-content="Ingresa un e-mail válido" /></div>
                         Contraseña
                         <div class="form-group"><input type="password" name="password" maxlength="40" class="form-control" id="login-password" data-trigger="manual" data-content="Ingresa la contraseña" /></div>
-                        <label><input type="checkbox" name="save-credentials"> No cerrar sesión</label>
+                        <label><input type="checkbox" id="login-keep-logged"> No cerrar sesión</label>
                         <input type="hidden" name="redir" value="<?php echo $_SERVER["REQUEST_URI"]; ?>" />
 						<div class="alert alert-danger" role="alert" id="login-error">
                             <button type="button" class="close" aria-label="Close" onclick="$(this).parent('.alert').hide();"><span aria-hidden="true">&times;</span></button>
                             <span></span>
+                        </div>
+                        <div class="login-captcha">
+                        	<div style='text-align:center;margin-bottom:4px;'>Haz click en el captcha para continuar</div>
+                        	<div id="g-recaptcha" data-sitekey="6LcaKx4UAAAAAMYRtPdxbMOT1JkGeDywhnB8lYko"></div>
                         </div>
                         <input type="button" class="btn btn-primary btn-lg" value="Ingresar" id="login-submit" />
                         <div id="login-loading"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i></div>

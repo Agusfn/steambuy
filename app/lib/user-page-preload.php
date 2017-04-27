@@ -15,19 +15,6 @@ if (!$con) {
 }
 
 $login = new UserLogin($con);
-$loggedIn = $login->is_user_logged_in();
-
-if($loggedIn) {
-	if($user = new User($con, $login->logged_userid)) {
-		$userData = $user->userData;
-	} else $loggedIn = false;
-}
-
-
-
-
-
-
-
+$user = $login->user_logged_in();
 
 ?>

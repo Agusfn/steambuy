@@ -3,7 +3,7 @@
 
 class MysqlHelp {
 	
-	private $con;
+	public $con;
 		
 	public function __construct($con) {
 		$this->con = $con;
@@ -38,7 +38,9 @@ class MysqlHelp {
 	
 	
 	public function update_table($sql) {
-		return mysqli_query($this->con, $sql);	
+		if(!mysqli_query($this->con, $sql)) return false;
+		if(mysqli_affected_rows($this->con) >= 1) return true;
+		else return false;
 	}
 
 	public function insert_into_table($sql) {
@@ -49,6 +51,10 @@ class MysqlHelp {
 		return mysqli_real_escape_string($this->con, $str);
 	}
 	
+	
+	public function error() {
+		return mysqli_error($this->con);	
+	}
 	
 	
 }

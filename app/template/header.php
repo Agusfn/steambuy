@@ -3,10 +3,12 @@
 	require_once(ROOT_PUBLIC.G_ANALYTICS);
 	
 	
-	if(!$loggedIn)
+	if(!$user)
 	{
 		echo "<link rel='stylesheet' href='".PUBLIC_URL."resources/css/login-register-modals.css' type='text/css'/>";
 		echo "<script type='text/javascript' language='javascript' src='".PUBLIC_URL."resources/js/login-register.js'></script>";
+		/*echo "<script src=''></script>";*/
+		
 		
 		require_once(ROOT."app/template/login-modal.php");
 		require_once(ROOT."app/template/register-modal.php");
@@ -64,7 +66,7 @@
         </div>
         
         <?php
-		if(!$loggedIn) {
+		if(!$user) {
 			?>
             <div class="nav-login-options">
                 <a href="javascript:void(0);" id="nav-login-btn" data-toggle="modal" data-target="#login-modal">Iniciar sesión</a>&nbsp;&nbsp;ó&nbsp;
@@ -81,7 +83,7 @@
 						<span class="sr-only">Toggle Dropdown</span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-                       	<div class="user_dropdown_email"><?php echo $userData["email"]; ?></div>
+                       	<div class="user_dropdown_email"><?php echo $user->userData["email"]; ?></div>
                         <li><a href="<?php echo PUBLIC_URL."cuenta/libreria/"; ?>">Mi librería</a></li>
 						<li><a href="<?php echo PUBLIC_URL."cuenta/configuracion/"; ?>">Mi cuenta</a></li>
 						<li class="divider"></li>

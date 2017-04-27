@@ -5,62 +5,97 @@ Para estar logueado se debe tener 2
 */
 
 
-require_once "Password.class.php";
+require_once "UserPassword.class.php";
 require_once "MysqlHelp.class.php";
-/*requirdde_once "User.class.php";
-*/
+require_once "User.class.php";
+
 
 class UserLogin {
 	
+	const AUTH_EXPIRES = 30; // Cantidad de días que duran las cookies y la auth. de "no cerrar sesion"
+	
 	private $mysql;
-	
-	public $logged_userid;
-	
+		
 	public function __construct($con) {
 		$this->mysql = new MysqlHelp($con);
 	}
 
-
+	/* Método para determinar si un usuario (client) está logueado o no, en base a sus variables de sesion y cookies
+	 * Devuelve una instancia de la clase User si está logueado, y FALSE si no																	*/
+	public function user_logged_in() {
+				
+		if(isset($_SESSION["login_userid"])) {
+			$userid = $_SESSION["login_userid"];
+		} else {		
+			if($userid = $this->check_cookie_login()) {
+				$_SESSION["login_userid"] = $userid;
+			} else return false;
+		}
+		
+		if(!isset($userid)) {
+			return false;
+		}
+		
+		$user = new User($this->mysql->con, $userid);
+		
+		if(!$user->exists()) {
+			$this->logout();
+			return false;
+		}
+		
+		$user->get_data();
+		
+		if($user->userData["banned"] == 1) {
+			$this->logout();
+			return false;
+		}
+		
+		$user->update_last_visit_log($_SERVER["REMOTE_ADDR"]);
+		
+		return $user;
+	}
+	
+	
+	
+	
+	/* Método para iniciar la sesión del cliente con un usuario. Se llama sólo desde ajax-login, donde se verifica previamente si el usuario existe
+		$user_email: e-mail de la cuenta que se desea loguear
+		$keep_login: no cerrar sesión
+	*/
+	public function create_login_session($user_id, $keep_login) {	
+		$_SESSION["login_userid"] = $user_id;
+		if($keep_login) {
+			$this->save_auth_cookies($user_id);	
+		}
+	}
+	
+	
+	public function logout() {
+		unset($_SESSION["login_userid"]);
+		session_destroy();
+		$this->destroy_login_cookies();
+	}
+	
+	
 	/* Funcion para verificar si una combinacion de email y pass dada son válidas
 	*/
 	public function verify_credentials($email, $password) {
 		
-		if(!$this->user_exists("email", $email)) return false;
+		$user = new User($this->mysql->con, "email", $email);
 		
-		if(!$salt = $this->get_user_salt($email)) return false;
+		if(!$user->exists()) return false;
 		
-		$pwd = new Password;
-		$passwordhash = $pwd->hash_password($password, $salt);
+		$user->get_data();
+
+		$password_hash = $user->userData["password_hash"];
 		
-		$sql = "SELECT COUNT(*) FROM `users` WHERE `email` = '".$this->mysql->escape_str($email)."' AND `password_hash` = '".$this->mysql->escape_str($passwordhash)."'";
-		$count = $this->mysql->fetch_value($sql);
-		
-		if($count == 1) {
+		$pwd = new UserPassword;
+		if($pwd->verify_password($password, $password_hash)) {
 			return true;	
 		} else {
-			return false; // La cuenta no tiene ese password hash
-		}
-		
-		
-	}
-	
-	
-	/* Método para determinar si un usuario (client) está logueado o no, en base a sus variables de sesion y cookies
-	 * Devuelve TRUE si está logueado, y FALSE si no																	*/
-	public function is_user_logged_in() {
-				
-		if(!isset($_SESSION["login_userid"])) return false;
-		
-		if($this->user_exists("userid", $_SESSION["login_userid"])) {
-			$this->logged_userid = $_SESSION["login_userid"];
-			return true;
-		} else {
-			$this->logout();
 			return false;
-		}// agregar algo para chequear si esta baneado
-		
+		}	
 	}
-	
 	
 	/* Método para verificar si un intento de inicio de sesión: 1) puede hacerse sin más, 2) se puede hacer pero necesita captcha, o 3) no puede hacerse.
 	
@@ -86,26 +121,9 @@ class UserLogin {
 		else return 1;		
 	
 	}
+
 	
-	/* Método para iniciar la sesión del cliente con un usuario
-	*/
-	public function login_user($user_email) {
-		
-		if($this->user_exists("email", $user_email)) {
-			
-			$sql = "SELECT `id` FROM `users` WHERE `email`='".$this->mysql->escape_str($user_email)."'";
-			$userid = $this->mysql->fetch_value($sql);
-			if($userid === false) return false;
-			
-			$_SESSION["login_userid"] = $userid;
-			return true;
-			
-		} else return false;
-	}
-	
-	public function logout() {
-		session_destroy();	
-	}
+
 	
 	public function add_login_failed_attempt($ip, $acc_email) {
 		$sql = "INSERT INTO `login_attempts_failed` (`id`,`date`,`ip`,`email`) VALUES (NULL, NOW(), '".$this->mysql->escape_str($ip)."', '".$this->mysql->escape_str($acc_email)."');";
@@ -120,35 +138,120 @@ class UserLogin {
 		return $this->mysql->fetch_value($sql);
 	}
 	
-
-
-	/* Método para saber si existe un usuario con un user id dado.
-	*  Usado para determinar si existe el usuario del que se está logueado.
-		$data_type: tipo de dato que se busca (email/userid)
-		$value: valor
+	
+	/* Método para chequear si el usuario posee una sesión vigente de recordar login.
+	Devuelve el id del user que se esta logueado o FALSE.
 	*/
-	private function user_exists($data_type, $value) {
+	private function check_cookie_login() {
+	
+		if(!isset($_COOKIE["s"]) || !isset($_COOKIE["v"])) return false;
 		
-		if($data_type == "email") {
-			$sql = "SELECT COUNT(*) FROM `users` WHERE `email` = '".$this->mysql->escape_str($value)."'";
-		} else if($data_type == "userid") {
-			if(!is_numeric($value)) return false;
-			$sql = "SELECT COUNT(*) FROM `users` WHERE `id` = ".$value;
-		} else return false;
+		$selector = $_COOKIE["s"]; $validator = $_COOKIE["v"];
 		
-		$ammount = $this->mysql->fetch_value($sql);
-		if($ammount == 1) return true;
-		else return false;	
+		if(!$this->valid_auth_selector($selector) || !$this->valid_auth_validator($validator)) {
+			$this->destroy_login_cookies();
+			return false;
+		}
+		
+		$sql = "SELECT * FROM `user_auth_tokens` WHERE `selector` = '".$this->mysql->escape_str($selector)."' AND `expires` > NOW()";
+		
+		if($authData = $this->mysql->fetch_row($sql)) {
+			
+			$token = $this->hash_auth_validator($validator);
+			
+			if(hash_equals($authData["token"], $token)) {
+				return $authData["user_id"];
+			} else {
+				$this->destroy_login_cookies();
+				return false;
+			}
+			
+		} else {
+			$this->destroy_login_cookies();
+			return false;	
+		}
+		
 	}
 	
 	
-	/* Funcion para obtener la SAL
-	*/
-	private function get_user_salt($email) {
-		$sql = "SELECT `password_salt` FROM `users` WHERE `email` = '".$this->mysql->escape_str($email)."'";
-		return $this->mysql->fetch_value($sql);
+	public function save_auth_cookies($user_id) {
+		
+		$selector = $this->generate_auth_selector();
+		$validator = $this->generate_auth_validator();
+		$token = $this->hash_auth_validator($validator);
+		
+		$this->insert_auth_entry($selector, $token, $user_id);
+		
+		setcookie("s", $selector,  strtotime("+".self::AUTH_EXPIRES." days"), "/");
+		setcookie("v", $validator,  strtotime("+".self::AUTH_EXPIRES." days"), "/");
+			
 	}
 	
+	/* Método para insertar (si no existe) o actualizar la fila de tokens de auth.
+	 * Se utiliza en el método save_auth_cookies() únicamente		*/
+	private function insert_auth_entry($selector, $token, $userid) {
+		
+		$expires = date('Y-m-d H:i:s', strtotime("+".self::AUTH_EXPIRES." days"));
+		$selector = $this->mysql->escape_str($selector);
+		$token = $this->mysql->escape_str($token);
+		$expires = $this->mysql->escape_str($expires);
+		
+		$sql = "UPDATE `user_auth_tokens` SET `selector`='".$selector."', `token`='".$token."', `expires`='".$expires."' WHERE `user_id`=".$userid;
+		if($this->mysql->update_table($sql)) {
+			return true;	
+		} else {
+			$sql = "INSERT INTO `user_auth_tokens` (`id`,`selector`,`token`,`user_id`,`expires`) VALUES (NULL, '".$selector."', '".$token."', ".$userid.", '".$expires."')";
+			if($this->mysql->insert_into_table($sql)) return true;
+			else return false;
+		}	
+	}
+	
+	
+	
+	/* Metodo para generar un codigo selector único para las cookies.
+		Es un hex de 7 caracteres
+	*/
+	public function generate_auth_selector() {
+		$selector = substr(bin2hex(openssl_random_pseudo_bytes(16)), 10, 7);
+		if(!$this->auth_selector_already_exists($selector)) {
+			return $selector;
+		} else return $this->generate_auth_selector();
+	}
+	
+	/* Funcion que se usa en generate_auth_selector() unicamente
+	*/
+	private function auth_selector_already_exists($selector) {
+		$sql = "SELECT COUNT(*) FROM `user_auth_tokens` WHERE `selector`=".$this->mysql->escape_str($selector);
+		if($this->mysql->fetch_row($sql) == 0) return false;
+		else return true;
+	}
+	
+	private function generate_auth_validator() {
+		return bin2hex(openssl_random_pseudo_bytes(20));	
+	}
+	
+	/* Hashea una validator de auth (guardada en cookies), en un token que se guarda en DB
+	*/
+	private function hash_auth_validator($validator) {
+		return hash('sha256', $validator);
+	}
+
+	
+	private function destroy_login_cookies() {
+		setcookie("s", "", 1, "/");
+		setcookie("v", "", 1, "/");
+		unset($_COOKIE["s"]);
+		unset($_COOKIE["v"]);	
+	}
+	
+	private function valid_auth_selector($str) {
+		if(preg_match("/^[a-f0-9]{7}$/", $str)) return true;
+		else return false;
+	}
+	private function valid_auth_validator($str) {
+		if(preg_match("/^[a-f0-9]{40}$/", $str)) return true;
+		else return false;
+	}
 
 	
 }

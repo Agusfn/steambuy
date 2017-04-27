@@ -1,5 +1,6 @@
 <?php
 require_once "MysqlHelp.class.php";
+require_once "UserPassword.class.php";
 
 class User {
 	
@@ -7,8 +8,8 @@ class User {
 	
 	private $mysql;
 	
-	private $userId;
-	private $userEmail;
+	public $userId;
+	public $userEmail;
 	
 	public $ban_reason;
 	
@@ -23,8 +24,9 @@ class User {
 		}	
 	}
 	
-	/*
 	
+	/*  Función para determinar si un usuario existe. Si existe llama a get_data() y guarda los datos del user en userData
+	 * 	Devuelve TRUE si existe, FALSE si no.
 	*/
 	public function exists() {
 		
@@ -33,22 +35,41 @@ class User {
 			if(!is_numeric($this->userId)) return false;
 			$sql = "SELECT COUNT(*) FROM `users` WHERE `id` = ".$this->userId;
 			$count = $this->mysql->fetch_value($sql);
-			if($count == 1) return true;
-			else return false;
+			if($count == 1) {
+				$this->get_data();
+				return true;
+			} else return false;
 		
 		} else {
 			
 			$sql = "SELECT `id` FROM `users` WHERE `email` = ".$this->mysql->escape_str($this->userEmail);
 			if($userid = $this->mysql->fetch_value($sql)) {
 				$this->userId = $userid;
+				$this->get_data();
 				return true;
 			} else return false;
 		}
+		
 
 			
 	}
 	
-	public function get_data() {
+	/* Funcion para verificar si la contraseña del usuario es válida.
+	*/
+	public function verify_password($password) {
+
+		$password_hash = $this->userData["password_hash"];
+		
+		$pwd = new UserPassword;
+		if($pwd->verify_password($password, $password_hash)) {
+			return true;	
+		} else {
+			return false;
+		}	
+	}
+		
+	
+	private function get_data() {
 		$sql = "SELECT * FROM `users` WHERE `id` = ".$this->userId;
 		$data = $this->mysql->fetch_row($sql);
 		if($data != false) {
@@ -56,6 +77,10 @@ class User {
 			return true;
 		} else return false;
 	}
+
+
+
+
 
 	public function email_verified() {
 		if($this->userData["verified_email"] == 1) return true;

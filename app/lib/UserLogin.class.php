@@ -8,6 +8,7 @@ Para estar logueado se debe tener 2
 require_once "UserPassword.class.php";
 require_once "MysqlHelp.class.php";
 require_once "User.class.php";
+require_once "gReCaptcha.class.php";
 
 
 class UserLogin {
@@ -15,10 +16,81 @@ class UserLogin {
 	const AUTH_EXPIRES = 30; // Cantidad de días que duran las cookies y la auth. de "no cerrar sesion"
 	
 	private $mysql;
+	
+	public $loginError;
+	public $needsCaptcha = false;
 		
 	public function __construct($con) {
 		$this->mysql = new MysqlHelp($con);
 	}
+	
+	/* Función para solicitar login. Verifica que el cliente no este logueado, que esté apto para loguear, solicitando captcha si es necesario, 
+	 * verifique si la combinación de user/pass es correcta, y verifique que la cuenta esté verificada y no baneada. 
+	 * Si se cumple, realiza login, recordando en cookies si lo solicita.
+	 * Return: TRUE si se loguea exitosamente. FALSE si no pudo loguearse. Si needsCaptcha = true, se debe enviar el captcha key.
+	
+	*/
+	public function attempt_user_login($email, $password, $remember, $client_ip, $captcha_key = false) {
+	
+		// Ver si ya está logueado
+		if($this->user_logged_in()) {
+			$this->loginError = "Ya tienes una sesión iniciada, recarga la página.";
+			return false;
+		}
+				
+		// Verificar si el ip/cuenta está apta intentar loguear
+		$allowed = $this->verify_login_allowed($client_ip, $email);
+		
+		
+		if($allowed == 0)  { // Si está bloqueado
+		
+			$this->loginError = "Alcanzaste la cantidad máxima de intentos, espera un momento para volver a hacerlo.";
+			return false;
+			
+		} else if($allowed == 2) { // Si necesita captcha
+		
+			if($captcha_key) {
+				
+				$captcha = new gReCaptcha;
+				if($captcha->verify_captcha($captcha_key) == false) {
+					$this->loginError = "No se validó el captcha.";
+					return false;
+				} 
+				
+			} else {
+				$this->needsCaptcha = true;
+				return false;
+			}
+		}
+		
+		$user = new User($this->mysql->con, "email", $email);
+		
+		// Verificar si la combinación de usuario y contraseña son válidos.
+		if($user->exists() && $user->verify_password($password)) {
+					
+			if($user->is_banned()) {
+				$this->loginError = "La cuenta está bloqueada. Motivo: ".$user->ban_reason;
+				return false;
+			}
+			if(!$user->email_verified()) {
+				$this->loginError = "El e-mail de la cuenta no está verificado, veríficalo desde el mensaje enviado a tu casilla de correo al momento de registrar la cuenta.";
+				return false;
+			}
+			
+			// Logueamos
+			$this->create_login_session($user->userId, $remember);
+				
+			return true;
+
+		} else {
+	
+			$this->add_login_failed_attempt($client_ip, $email);
+			$this->loginError = "La combinación de usuario y contraseña es inválida.";
+			return false;			
+			
+		}
+	}
+	
 
 	/* Método para determinar si un usuario (client) está logueado o no, en base a sus variables de sesion y cookies
 	 * Devuelve una instancia de la clase User si está logueado, y FALSE si no																	*/
@@ -36,15 +108,13 @@ class UserLogin {
 			return false;
 		}
 		
-		$user = new User($this->mysql->con, $userid);
+		$user = new User($this->mysql->con, "userid", $userid);
 		
 		if(!$user->exists()) {
 			$this->logout();
 			return false;
 		}
-		
-		$user->get_data();
-		
+
 		if($user->userData["banned"] == 1) {
 			$this->logout();
 			return false;

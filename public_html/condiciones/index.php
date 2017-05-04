@@ -2,9 +2,6 @@
 require_once("../../config.php");
 require_once(ROOT."app/lib/user-page-preload.php");
 
-require_once("../global_scripts/php/purchase-functions.php");
-
-
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" itemscope itemtype="http://schema.org/Article">
@@ -35,36 +32,27 @@ require_once("../global_scripts/php/purchase-functions.php");
         <meta itemprop="image" content="http://steambuy.com.ar/global_design/img/logo-complete-meta.jpg">
         
         
-        <link rel="shortcut icon" href="../favicon.ico?2"> 
-        
-        <link rel="stylesheet" href="../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/css/main.css?2" type="text/css">
+		<?php require_once ROOT."app/template/essential-page-includes.php"; ?>
         
         <style type="text/css">
-		.main_title
-		{
+		.main_title {
 			text-align:center;
 			margin: 10px 0 20px 0;
 			color: rgba(38, 116, 183, 1);
 			font-size:20px;
 		}
-		h4
-		{
+		h4 {
 			margin:15px 0 15px 15px;
 		}
 		
-		.tosbox
-		{
+		.tosbox {
 			margin:25px auto 35px;
 			width:90%;
 			font-size:15px;
 		}
 		</style>
         
-		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>     
-        <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../resources/js/global-scripts.js?2"></script>
+
 
     </head>
     

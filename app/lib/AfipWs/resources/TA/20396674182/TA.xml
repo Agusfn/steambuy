@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<loginTicketResponse version="1">
+    <header>
+        <source>CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239</source>
+        <destination>C=ar, O=steambuy, SERIALNUMBER=CUIT 20396674182, CN=agustin</destination>
+        <uniqueId>3958174401</uniqueId>
+        <generationTime>2016-04-07T21:00:08.090-03:00</generationTime>
+        <expirationTime>2016-04-08T09:00:08.090-03:00</expirationTime>
+    </header>
+    <credentials>
+        <token>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8c3NvIHZlcnNpb249IjIuMCI+CiAgICA8aWQgdW5pcXVlX2lkPSI5ODE4OTI4MjQiIHNyYz0iQ049d3NhYSwgTz1BRklQLCBDPUFSLCBTRVJJQUxOVU1CRVI9Q1VJVCAzMzY5MzQ1MDIzOSIgZ2VuX3RpbWU9IjE0NjAwNzM1NDgiIGV4cF90aW1lPSIxNDYwMTE2ODA4IiBkc3Q9IkNOPXdzZmUsIE89QUZJUCwgQz1BUiIvPgogICAgPG9wZXJhdGlvbiB2YWx1ZT0iZ3JhbnRlZCIgdHlwZT0ibG9naW4iPgogICAgICAgIDxsb2dpbiB1aWQ9IkM9YXIsIE89c3RlYW1idXksIFNFUklBTE5VTUJFUj1DVUlUIDIwMzk2Njc0MTgyLCBDTj1hZ3VzdGluIiBzZXJ2aWNlPSJ3c2ZlIiByZWdtZXRob2Q9IjIyIiBlbnRpdHk9IjMzNjkzNDUwMjM5IiBhdXRobWV0aG9kPSJjbXMiPgogICAgICAgICAgICA8cmVsYXRpb25zPgogICAgICAgICAgICAgICAgPHJlbGF0aW9uIHJlbHR5cGU9IjQiIGtleT0iMjAzOTY2NzQxODIiLz4KICAgICAgICAgICAgPC9yZWxhdGlvbnM+CiAgICAgICAgPC9sb2dpbj4KICAgIDwvb3BlcmF0aW9uPgo8L3Nzbz4KCg==</token>
+        <sign>P+WnPeetJcWfdDFYFVW5VMpkFj1UDkwsinIFNdTTrZfmwGrVNR/6RQTPbaBL80aHQA73gzvhK9DeIjFqRR1Ypjvmnb+OBa7SD8qoyjN8wm4ViZrHGH9+qqkU1UdhjdVE7rifl/z7bkqWIRfggmDYWTKziYEvgVrwH7VoPjgrZE4=</sign>
+    </credentials>
+</loginTicketResponse>
+

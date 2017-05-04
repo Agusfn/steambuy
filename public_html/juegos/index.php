@@ -2,8 +2,7 @@
 require_once("../../config.php");
 require_once(ROOT."app/lib/user-page-preload.php");
 
-require_once("../global_scripts/php/purchase-functions.php");
-
+require_once(ROOT."app/lib/purchase-functions.php");
 
 
 /*
@@ -183,18 +182,9 @@ if($results > 0) {
         <meta itemprop="description" content="Encuentra los juegos que buscas en el catálogo de juegos.">
         <meta itemprop="image" content="http://steambuy.com.ar/global_design/img/logo-complete-meta.jpg">
         
-        
-        <link rel="shortcut icon" href="../favicon.ico?2"> 
-        
-        <link rel="stylesheet" href="../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/css/main.css?2" type="text/css">
+        <?php require_once ROOT."app/template/essential-page-includes.php"; ?>
+
         <link rel="stylesheet" href="design/css/catalog_search_page.css?2" type="text/css">
-        
-        
-		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>     
-        <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../resources/js/global-scripts.js?2"></script>
         <script type="text/javascript" src="scripts/js/catalog_scripts.js?2"></script>
         
         <script type="text/javascript">

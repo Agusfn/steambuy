@@ -1,0 +1,9 @@
+@charset "utf-8";
+
+.main_content {
+	padding: 65px 0px 10px;
+}
+
+#main-tab-panel .tab-content {
+	padding:50px;	
+}

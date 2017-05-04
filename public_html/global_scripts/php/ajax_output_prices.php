@@ -1,8 +1,7 @@
 <?php
-
-require_once("mysql_connection.php");
-require_once("purchase-functions.php");
-
+require_once("../../../config.php");
+require_once(ROOT."app/lib/mysql-connection.php");
+require_once(ROOT."app/lib/purchase-functions.php");
 
 
 if(isset($_POST["price"]) && isset($_POST["pay_method"]))

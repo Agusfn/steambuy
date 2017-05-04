@@ -10,24 +10,12 @@ coupon_code: cupon de descuento (opcional)
 <a futuro puede ser id de carrito, o un array de id's de productos>
 
 */
+require_once("../../config.php");
+require_once(ROOT."app/lib/user-page-preload.php");
 
-session_start();
+require_once(ROOT."app/lib/purchase-functions.php");
 
-define("ROOT_LEVEL", "../");
-
-header("Content-Type: text/html; charset=UTF-8");
-
-require_once("../global_scripts/php/client_page_preload.php");
-require_once("../global_scripts/php/admlogin_functions.php");
-require_once("../global_scripts/php/purchase-functions.php");
-$config = include("../global_scripts/config.php");
-
-
-$admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-}
+$login->restricted_page($loggedUser, 0);
 
 
 // Obtenemos el ID del producto de post o sesión
@@ -93,25 +81,17 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 		else echo "Error de compra - SteamBuy";	
 		?></title>
         
+		<?php require_once ROOT."app/template/essential-page-includes.php"; ?>
         
-        <link rel="shortcut icon" href="../favicon.ico">
-        
-        <link rel="stylesheet" href="../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/css/main.css" type="text/css">
         <link rel="stylesheet" href="resources/css/step1.css" type="text/css">
         <link rel="stylesheet" href="resources/css/shared-steps.css" type="text/css">
-        
-		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>
-        <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="../resources/js/global-scripts.js"></script>
 		<script type="text/javascript" src="resources/js/step1.js"></script>
 
     </head>
     
     <body>
 
-		<?php require_once("../global_scripts/php/header.php"); ?>
+		<?php require_once(ROOT."app/template/header.php"); ?>
         
         <div class="wrapper">
         	
@@ -128,7 +108,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                         <div class="purchase_steps">
 							<div class="step current_step">Elegir medio de pago</div>
 							<div class="spacer"></div>
-							<div class="step">Ingresar datos</div>
+							<div class="step">Confirmar datos</div>
 							<div class="spacer"></div>
 							<div class="step">Instrucciones de pago</div>
 						</div>
@@ -205,7 +185,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 
 						<div class="purchase_footer clearfix">
 							
-							<form action="datos.php" method="post" id="buyform">
+							<form action="confirmar.php" method="post" id="buyform">
                             	<input type="hidden" name="product_id" value="<?php echo $product_id; ?>"/>
                                 <input type="hidden" name="payment_method" id="payment_method" value="1" />
                                 <?php
@@ -230,7 +210,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 		?>
             </div><!-- End main content -->
             
-        	<?php require_once("../global_scripts/php/footer.php"); ?>
+        	<?php require_once(ROOT."app/template/footer.php"); ?>
         	
         </div><!-- End container -->
     </body>

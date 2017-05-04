@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+
+#recover-form {
+	width: 234px;
+	margin: 35px auto;
+}
+
+#submit-btn {
+	margin: 15px auto 0;
+	display: block;	
+}
+
+.title {
+	text-align:center;
+	margin: 10px 0 20px 0;
+	color: rgba(38, 116, 183, 1);
+	font-size:20px;
+}

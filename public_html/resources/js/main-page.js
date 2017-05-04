@@ -202,7 +202,7 @@ $(document).ready(function(e) {
 				var parametros = {"product_type": "1", "client_email": gf_client_email, "product_url": gf_product_siteurl, "product_price" : gf_product_price};
 				$.ajax({
 					data:  parametros,
-					url:   'scripts/php/ajax_order_validation.php',
+					url:   'resources/php/ajax_order_validation.php',
 					type:  'post',
 														
 					beforeSend: function () {
@@ -281,7 +281,7 @@ $(document).ready(function(e) {
 				"product_sellingsite":gf_product_sellingsite, "product_siteurl":gf_product_siteurl, "product_usdprice":gf_product_price, 
 				"product_discount":gf_product_discount, "payment_method":gf_payment_method, "remember_data":gf_remember_data},
 				
-				url:"scripts/php/ajax_order_generator.php",
+				url:"resources/php/ajax_order_generator.php",
 				type:"POST",
 				
 				beforeSend: function() {

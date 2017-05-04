@@ -8,47 +8,6 @@
 	width:360px;
 }
 
-#buyer-name, #buyer-email {
-	width:250px;	
-}
-
-
-
-/* Formulario de compra final */
-
-#final_form
-{
-	margin: 0px 164px;
-}
-
-.form_title
-{
-	float:right;
-	text-align: center;
-	font-size: 19px;
-	color: rgba(42, 107, 170, 1);
-	margin-right: 406px;
-	
-}
-
-.pay_method
-{
-	float:left;
-	margin-left:99px;
-	font-size:16px;
-	color: rgba(60, 168, 44, 1);
-}
-
-#purchase_name
-{
-	width:250px;
-}
-
-#purchase_email
-{
-	width:250px;
-}
-
 #error_list
 {
 	margin-top: 19px;

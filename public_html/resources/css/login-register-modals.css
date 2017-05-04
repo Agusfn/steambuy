@@ -77,7 +77,8 @@
 
 #recover-submit
 {
-	margin: 7px 0px 0px 57px;
+	margin: 15px auto 0;
+	display:block;
 }
 
 #ml_recover_error_list

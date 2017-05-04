@@ -5,36 +5,24 @@ Página de 3er paso de compra de productos.
 datos por $_post: product_id, payment_method, coupon_code (opcional), buyer_name, buyer_email, remember_data (opcional)
 dato por $_session: purchase_pending = 1
 */
+require_once("../../config.php");
+require_once(ROOT."app/lib/user-page-preload.php");
 
-session_start();
-
-define("ROOT_LEVEL", "../");
-
-header("Content-Type: text/html; charset=UTF-8");
-
-require_once("../global_scripts/php/client_page_preload.php");
-require_once("../global_scripts/php/admlogin_functions.php");
-require_once("../global_scripts/php/purchase-functions.php");
-require_once("../global_scripts/email/mailer.php");
-require_once("resources/php/order-validation-tools.php");
+require_once(ROOT."app/lib/purchase-functions.php");
+require_once(ROOT."app/lib/Mail.class.php");
 $config = include("../global_scripts/config.php");
 
 
-$admin = false;
-if(isAdminLoggedIn())
-{
-	$admin = true;
-}
+$login->restricted_page($loggedUser, 0);
+
 
 
 // Obtenemos el ID del producto y medio de pago
 
-if(isset($_POST["product_id"]) && isset($_POST["payment_method"]) && isset($_POST["buyer_name"]) && isset($_POST["buyer_email"])) {
+if(isset($_POST["product_id"]) && isset($_POST["payment_method"])) {
 	
 	$product_id = $_POST["product_id"];
 	$payment_method = $_POST["payment_method"];
-	$buyer_name = $_POST["buyer_name"];
-	$buyer_email = $_POST["buyer_email"];
 	
 } else {
 	header("Location: ../");
@@ -42,8 +30,11 @@ if(isset($_POST["product_id"]) && isset($_POST["payment_method"]) && isset($_POS
 }
 
 
-// Validar nombre, email, mail (si no cumple muestra error y termina script)
-validateInitialData($buyer_name, $buyer_email, $payment_method);
+// forma pago
+if($payment_method != 1 && $payment_method != 2) {
+	echo "Error de datos: medio de pago inválido. Reintenta la operación.";
+	exit;	
+}
 
 
 // Validar var de sesión (permite que sólo se puedan generar pedidos si se lo hizo vía pasos de compra, y evita pedidos repetidos al refreshear
@@ -116,17 +107,14 @@ $error = 1;
 if($session_auth && $product_exists && $productArsPrices != false && !$priceChange && (!$sentCoupon || ($sentCoupon && $validCoupon))) {
 	$error = 0;
 	
-	// Chequear si se quieren guardar los datos del comprador
-	checkRememberBuyerData($buyer_name, $buyer_email);
-
+	
 	// Generar orden
-	if($purchase->createGameOrder($payment_method, $productData["product_name"], $product_id, $productData["product_sellingsite"], $productData["product_site_url"], 
-	$productData["product_external_limited_offer"], $usdPriceRef, $productFinalArsPrice, $buyer_name, $buyer_email, $_SERVER["REMOTE_ADDR"], $couponCode, $couponDiscount))
+	if($purchase->createGameOrder($loggedUser->userId, $payment_method, $productData["product_name"], $product_id, $productData["product_sellingsite"], $productData["product_site_url"], 
+	$productData["product_external_limited_offer"], $usdPriceRef, $productFinalArsPrice, $loggedUser->fullname(), $loggedUser->userData["email"], $_SERVER["REMOTE_ADDR"], $couponCode, $couponDiscount))
 	{
 		$mail_data = array(
-			"receiver_name"=>$buyer_name,
+			"receiver_name"=>$loggedUser->fullname(),
 			"order_id"=>$purchase->orderInfo["order_id"],
-			"order_password"=>$purchase->orderInfo["order_password"],
 			"product_name"=>$productData["product_name"],
 			"order_ars_price"=>$productFinalArsPrice,
 			"payment_method"=>$payment_method,
@@ -144,7 +132,7 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
 						
 		$mail = new Mail;
 		$mail->prepare_email("pedido_juego_generado", $mail_data);
-		$mail->add_address($buyer_email, $buyer_name);
+		$mail->add_address($loggedUser->userData["email"], $loggedUser->fullname());
 					
 		if(!@$mail->send()) $mailError = true;
 		else $mailError = false;
@@ -170,28 +158,18 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
         <meta name="robots" content="noindex, nofollow" />
         
         <title><?php if($error) echo "Pedido - SteamBuy"; else echo "Pedido generado - SteamBuy"; ?></title>
-        
-        
-        <link rel="shortcut icon" href="../favicon.ico">
-        
-        <link rel="stylesheet" href="../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/css/main.css" type="text/css">
+
+        <?php require_once ROOT."app/template/essential-page-includes.php"; ?>
+
         <link rel="stylesheet" href="resources/css/shared-steps.css" type="text/css">
 		<link rel="stylesheet" href="resources/css/step3.css" type="text/css">
-        
-        
-		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>
-        <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="../resources/js/global-scripts.js"></script>
-        
 
     </head>
     
     
     <body>
 
-		<?php require_once("../global_scripts/php/header.php"); ?>
+		<?php require_once(ROOT."app/template/header.php"); ?>
         
         <div class="wrapper">
         	
@@ -219,21 +197,17 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
                         <div class="purchase_steps">
                             <div class="step previous_step">Elegir medio de pago</div>
                             <div class="spacer"></div>
-                            <div class="step previous_step">Ingresar datos</div>
+                            <div class="step previous_step">Confirmar datos</div>
                             <div class="spacer"></div>
                             <div class="step current_step">Instrucciones de pago</div>
                         </div>
                         
                             <div class="purchase_instructions">
                                 <h4 class="pi_title">El pedido se ha generado</h4>
-                                <div class="alert alert-info" style="font-size: 14px;margin-top:30px; text-align:justify">
-                                	Guarda estos datos para poder informar el pago luego, revisar los detalles de tu pedido, o para soporte:<br/>
-                                    ID de pedido: <strong><?php echo $orderinfo["order_id"]; ?></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clave de pedido: <strong><?php echo $orderinfo["order_password"]; ?></strong> <br/>
-                                </div>
                                 <?php
 								if($payment_method == 1) {
 									?>
-									<div class="pi_instructions">Se ha generado tu pedido de <strong>$<?php echo $productFinalArsPrice; ?> ARS</strong> por el juego <strong><?php echo $productData["product_name"]; ?></strong>, el siguiente paso es imprimir y abonar el cupón de pago en cualquier sucursal de <strong>Rapipago</strong>,
+									<div class="pi_instructions">Se ha generado tu pedido ID <strong><?php echo $orderinfo["order_id"]; ?></strong> de <strong>$<?php echo $productFinalArsPrice; ?> ARS</strong> por el juego <strong><?php echo $productData["product_name"]; ?></strong>, el siguiente paso es imprimir y abonar el cupón de pago en cualquier sucursal de <strong>Rapipago</strong>,
                                     <strong>Pago Fácil</strong>, <strong>Ripsa</strong>, <strong>Cobroexpress</strong>, <strong>Bapropagos</strong>, u otras cadenas de pago especficadas en la boleta o cupón de pago.<br></div>
                                                                             
                                     <div style="text-align:center; margin:25px 0;">
@@ -288,7 +262,7 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
 
 								if($mailError) {
 									?>
-                                    <div class="alert alert-danger" style="font-size: 14px;margin-top:30px; text-align:justify">Ha ocurrido un error intentando enviar el e-mail con los datos de pedido, tomá nota del <strong>ID</strong> y <strong>clave de pedido</strong> de esta página ya que <strong>no se pudieron enviar por e-mail</strong>, disculpa las molestias.</div>
+                                    <div class="alert alert-warning" style="font-size: 14px;margin-top:30px; text-align:justify">Ha ocurrido un error enviando el e-mail con los datos de pago. Puedes revisar <a href="<?php echo ROOT_PUBLIC."cuenta/pedidos/"; ?>">mis pedidos</a> para ver la información de tu pedido.</div>
                                 	<?php	
 								}
 								?>
@@ -304,7 +278,7 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
 
 			</div>
             
-            <?php require_once("../global_scripts/php/footer.php"); ?>
+            <?php require_once(ROOT."app/template/footer.php"); ?>
             
 		</div>
 	</body>

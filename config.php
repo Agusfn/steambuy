@@ -25,4 +25,7 @@ if($_SERVER["SERVER_NAME"] == "localhost") {
 	define("PUBLIC_URL", "http://steambuy.com.ar/");
 	
 }
+
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+
 ?>

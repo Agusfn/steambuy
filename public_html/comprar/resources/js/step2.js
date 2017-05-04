@@ -1,20 +1,6 @@
 $(document).ready(function(e) {
 	$("#proceed-btn").click(function(e) {
 		var error_text = "";
-						
-		var buyer_name = $("#buyer-name").val();
-		var buyer_email = $("#buyer-email").val();
-		
-		$("#buyer-name").val(toTitleCase(buyer_name.trim().replace(/\s+/g, " ")));
-		if(buyer_name == 0 || buyer_name.length < 4) {
-			error_text += "- Ingresa tu nombre y apellido<br/>";
-		} else if(!/^[a-z\sñáéíóú]*$/i.test(buyer_name)) {
-			error_text += "- Ingresa un nombre y apellido válido<br/>";
-		}
-		
-		if(!validateEmail(buyer_email)) {
-			error_text += "- Ingresa un correo electrónico válido<br/>";
-		}
 		
 		if($("#tos_checkbox").length) {
 			if(!$("#tos_checkbox").is(":checked")) {
@@ -25,7 +11,7 @@ $(document).ready(function(e) {
 		if(error_text == "") {
 			$("#error_list").slideUp("fast");
 			$.ajax({
-				data: {email: buyer_email, product_id: $("#product-id").val()},
+				data: {product_id: $("#product-id").val()},
 				url:"resources/php/ajax-dup-order-check.php",
 				type:"post",
 				

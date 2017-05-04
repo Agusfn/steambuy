@@ -9,7 +9,7 @@ $(document).ready(function() {
 	
 	$(".button").on('dragstart', function(event) { event.preventDefault(); });
 	
-	$('[data-toggle="tooltip"]').tooltip()
+	$('[data-toggle="tooltip"]').tooltip();
 	
 	var stickyNavTop = $('.nav_bar').offset().top;  
       

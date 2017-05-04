@@ -1,0 +1,25 @@
+@charset "utf-8";
+
+.main_content
+{
+	padding: 65px 0 0;
+}
+
+.nav-tabs
+{
+	padding:0 30px;
+}
+
+.nav-tabs > li:nth-child(3), .nav-tabs > li:nth-child(4), .nav-tabs > li:nth-child(5) {
+	float:right;	
+}
+
+.nav-tabs > li:nth-child(2), .nav-tabs > li:nth-child(3), .nav-tabs > li:nth-child(4) {
+	margin-left:15px;
+}
+
+.tab_content
+{
+	background-color:#FFF;
+	padding:15px;
+}

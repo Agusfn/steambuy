@@ -3,22 +3,15 @@
 	require_once(ROOT_PUBLIC.G_ANALYTICS);
 	
 	
-	if(!$user)
+	if(!$loggedUser)
 	{
 		echo "<link rel='stylesheet' href='".PUBLIC_URL."resources/css/login-register-modals.css' type='text/css'/>";
 		echo "<script type='text/javascript' language='javascript' src='".PUBLIC_URL."resources/js/login-register.js'></script>";
-		/*echo "<script src=''></script>";*/
-		
-		
+
 		require_once(ROOT."app/template/login-modal.php");
 		require_once(ROOT."app/template/register-modal.php");
 	}
-	
-	
- 	/*function endsWith($haystack, $needle)
-	{ return $needle === "" || substr($haystack, -strlen($needle)) === $needle; }*/
-	
-	
+
 	
 	?>
 
@@ -66,7 +59,7 @@
         </div>
         
         <?php
-		if(!$user) {
+		if(!$loggedUser) {
 			?>
             <div class="nav-login-options">
                 <a href="javascript:void(0);" id="nav-login-btn" data-toggle="modal" data-target="#login-modal">Iniciar sesión</a>&nbsp;&nbsp;ó&nbsp;
@@ -83,7 +76,7 @@
 						<span class="sr-only">Toggle Dropdown</span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-                       	<div class="user_dropdown_email"><?php echo $user->userData["email"]; ?></div>
+                       	<div class="user_dropdown_email"><?php echo $loggedUser->userData["email"]; ?></div>
                         <li><a href="<?php echo PUBLIC_URL."cuenta/libreria/"; ?>">Mi librería</a></li>
 						<li><a href="<?php echo PUBLIC_URL."cuenta/configuracion/"; ?>">Mi cuenta</a></li>
 						<li class="divider"></li>
@@ -145,7 +138,7 @@
 
 
     <div class="header">
-		<a href="<?php echo PUBLIC_URL; ?>"><img class="mainlogo" src="<?php echo PUBLIC_URL; ?>global_design/img/header-logo.png" alt="steambuy logo" /></a>
+		<a href="<?php echo PUBLIC_URL; ?>"><img class="mainlogo" src="<?php echo PUBLIC_URL; ?>resources/img/header-logo.png" alt="steambuy logo" /></a>
         <div style="float:right">
             <div class="header_socialbtns">
                 <a href="http://facebook.com/steambuy" target="_blank"><i class="fa fa-facebook-square"></i></a><a href="http://twitter.com/steambuy" target="_blank"><i class="fa fa-twitter-square"></i></a><a href="http://plus.google.com/+SteamBuyAR" target="_blank"><i class="fa fa-google-plus-square"></i></a>

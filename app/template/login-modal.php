@@ -30,7 +30,7 @@
                     <div class="login-recover-form">
                     	<div class="recover-instructions">Ingresa la dirección e-mail de tu cuenta de SteamBuy y recibirás un mensaje con las instrucciones para recuperarla.</div>
                     	Correo electrónico
-                        <input type="text" name="email" class="form-control" id="login-recover-email" style="margin-bottom:7px;" />
+                        <input type="text" class="form-control" name="email" id="login-recover-email" maxlength="60" style="margin-bottom:7px;" />
 						<input type="button" class="btn btn-success" value="Recuperar cuenta" id="recover-submit" />
                         <!--div class="alert alert-danger error_list" id="ml_recover_error_list"><span class="glyphicon glyphicon-remove" onClick="$(this).parent('.error_list').slideUp('slow');"></span><span></span></div-->
                     </div>

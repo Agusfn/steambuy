@@ -10,7 +10,7 @@ if(!isset($_GET["id"])) {
 	header("Location: index.php");	
 }
 
-require_once("../global_scripts/php/purchase-functions.php");
+require_once(ROOT."app/lib/purchase-functions.php");
 
 
 $gameFound = false;
@@ -66,17 +66,11 @@ if(is_numeric($_GET["id"])){
             <?php
 		}
 		?>
+		
+        <?php require_once ROOT."app/template/essential-page-includes.php"; ?>
 
-        <link rel="shortcut icon" href="../../favicon.ico?2">
-        
-        <link rel="stylesheet" href="../../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../../global_design/css/main.css?2" type="text/css">
         <link rel="stylesheet" href="../design/css/product_info_page.css?2" type="text/css">
         
-		<script type="text/javascript" src="../../global_scripts/js/jquery-1.8.3.min.js"></script>     
-        <script type="text/javascript" src="../../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../../resources/js/global-scripts.js?2"></script>
 		
         <?php
 		if($gameFound == true) 

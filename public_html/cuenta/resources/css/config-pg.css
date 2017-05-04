@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* CSS Document */
+
+#change-name-modal .modal-dialog, #change-password-modal .modal-dialog
+{
+	width:430px;
+}
+
+.form-container {
+	width: 240px;
+	margin: 27px auto;	
+}
+
+
+
+
+.data_table
+{
+    table-layout: fixed;
+	font-size:16px;
+	margin:60px 0 60px 170px;
+	border-collapse:separate; 
+	border-spacing:1em;
+}
+
+.data_table > tr > td:nth-child(2) {
+	font-size:15px;	
+}
+
+#user-email, #user-name, #user-password
+{
+	font-size:15px;
+}

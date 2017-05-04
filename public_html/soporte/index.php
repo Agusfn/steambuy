@@ -131,17 +131,11 @@ function displaySupportTree() {
         <meta itemprop="description" content="¿Tienes alguna consulta? Revisa en esta página los temas de ayuda o contáctanos.">
         <meta itemprop="image" content="http://steambuy.com.ar/global_design/img/logo-complete-meta.jpg">
 
+		<?php require_once ROOT."app/template/essential-page-includes.php"; ?>
 
-        <link rel="shortcut icon" href="../favicon.ico"> 
-        
-        <link rel="stylesheet" href="../global_design/font-awesome-4.1.0/css/font-awesome.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/bootstrap-3.1.1/css/bootstrap.min.css" type="text/css">
-        <link rel="stylesheet" href="../global_design/css/main.css" type="text/css">
         <link rel="stylesheet" href="resources/css/support.css" type="text/css">
 
-		<script type="text/javascript" src="../global_scripts/js/jquery-1.8.3.min.js"></script>     
-        <script type="text/javascript" src="../global_design/bootstrap-3.1.1/js/bootstrap.min.js"></script>       
-		<script type="text/javascript" src="../resources/js/global-scripts.js"></script>
+
         
     </head>
     

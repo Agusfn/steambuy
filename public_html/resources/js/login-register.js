@@ -70,6 +70,45 @@ $(document).ready(function(e) {
 			});
 		}
     });
+	
+	/* RECOVER */
+	
+	
+	$("#recover-submit").click(function(e) {
+        var email = $("#login-recover-email").val();
+		if(email.length > 60 || !valid_email(email)) {
+			alert("Ingresa una dirección e-mail válida");
+			return;	
+		}
+		
+		$("#login-recover-email, #recover-submit").prop("disabled", true);
+		$("#login-modal").css("cursor", "wait");
+		
+		$.ajax({
+			data: {user_email:email},
+			url: root_abs_path + "resources/php/ajax-recover-user.php",
+			type: "POST",
+			success: function(response) {
+				
+				console.log(response);
+				
+				$("#login-recover-email, #recover-submit").prop("disabled", false);
+				$("#login-modal").css("cursor", "default");
+				
+				result = parseJSON(response);
+				if(result != false) {
+					if(result["success"] == true) {
+						alert("Se ha enviado un e-mail con las instrucciones de recuperación al correo electrónico indicado.");
+					} else {
+						alert(result["error_text"]);
+					}
+				} else {
+					alert("Ocurrió un error realizando la solicitud, intenta nuevamente más tarde.");
+				}
+			}
+		});
+		
+    });
 
 	/* REGISTER */
 

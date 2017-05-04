@@ -9,7 +9,7 @@ require_once "UserPassword.class.php";
 require_once "MysqlHelp.class.php";
 require_once "User.class.php";
 require_once "gReCaptcha.class.php";
-
+require_once "DisplayTemplate.class.php";
 
 class UserLogin {
 	
@@ -95,7 +95,7 @@ class UserLogin {
 	/* Método para determinar si un usuario (client) está logueado o no, en base a sus variables de sesion y cookies
 	 * Devuelve una instancia de la clase User si está logueado, y FALSE si no																	*/
 	public function user_logged_in() {
-				
+					
 		if(isset($_SESSION["login_userid"])) {
 			$userid = $_SESSION["login_userid"];
 		} else {		
@@ -124,8 +124,6 @@ class UserLogin {
 		
 		return $user;
 	}
-	
-	
 	
 	
 	/* Método para iniciar la sesión del cliente con un usuario. Se llama sólo desde ajax-login, donde se verifica previamente si el usuario existe
@@ -191,8 +189,6 @@ class UserLogin {
 		else return 1;		
 	
 	}
-
-	
 
 	
 	public function add_login_failed_attempt($ip, $acc_email) {
@@ -322,8 +318,39 @@ class UserLogin {
 		if(preg_match("/^[a-f0-9]{40}$/", $str)) return true;
 		else return false;
 	}
-
 	
+	/* Función para registringir acceso a una página. $admin_level = 0: se debe estar logueado.
+	*/
+	public function restricted_page($loggedUser, $admin_level = 0, $redirect_home = false) {
+
+		if($loggedUser) {
+			if($loggedUser->userData["admin_level"] >= $admin_level) {
+				$restrict = false;
+			} else $restrict = true;
+		} else $restrict = true;
+		
+		if($restrict) {
+			if($redirect_home) {
+				header("Location: ".PUBLIC_URL);
+			} else {
+				$template = new DisplayTemplate;
+				
+				if($admin_level == 0) {
+					$title = "Inicia sesión - SteamBuy";
+					$message = "<div class='alert alert-warning page-message'>Debes iniciar sesión para acceder a esta página.</alert>";	
+				} else {
+					$title = "Error - SteamBuy";
+					$message = "<div class='alert alert-warning page-message'>No es posible acceder a esta página.</alert>";
+				}
+				
+				$template->insert_content($message, $title);
+				$template->display_rendered_html();
+								
+			}
+			exit;
+		}	
+	}
+
 }
 
 

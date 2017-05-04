@@ -1,0 +1,38 @@
+@charset "utf-8";
+
+#inform-payment-modal .modal-dialog {
+	width:460px;	
+}
+
+#inform-form {
+	padding: 10px 15px 25px 15px;
+}
+
+#inform-order-id {
+	font-weight:bold;	
+}
+
+#input-file-inform {
+	max-width: 370px;
+}
+
+#submit-inform {
+	margin: 20px auto 0;
+	display: block;	
+}
+
+.orders-table tr th {
+	font-weight:bold;
+}
+
+#results {
+	position:relative;	
+}
+
+
+#orders-loading {
+	position: absolute;
+	bottom: -62px;
+	font-size: 11px;
+	right: 31px;
+}

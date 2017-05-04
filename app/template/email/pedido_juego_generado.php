@@ -1,6 +1,6 @@
 <?php
 /*
-$data: receiver_name, order_id, order_password, product_name, order_ars_price, payment_method, product_external_discount, product_sellingsite, product_site_url, order_fromcatalog
+$data: receiver_name, order_id, product_name, order_ars_price, payment_method, product_external_discount, product_sellingsite, product_site_url, order_fromcatalog
 
 si payment_method=1: order_purchaseticket_url
 si order_fromcatalog = 1 y product_external_discount = 1: product_external_offer_endtime
@@ -12,8 +12,8 @@ if(!isset($data)) return false;
 $subject = "Se ha generado tu pedido por el juego ".$data["product_name"];
 
 
-echo "Estimado/a ".$data["receiver_name"].", se ha generado tu pedido por el juego <strong>".$data["product_name"]."</strong> por <strong>&#36;".$data["order_ars_price"]." 
-pesos argentinos</strong>. El ID del pedido es <strong>".$data["order_id"]."</strong> y la clave es <strong>".$data["order_password"]."</strong>.<br/>
+echo "Estimado/a ".$data["receiver_name"].", se ha generado tu pedido ID <strong>".$data["order_id"]."</strong> por el juego <strong>".$data["product_name"]."</strong> por <strong>&#36;".$data["order_ars_price"]." 
+pesos argentinos</strong>.<br/>
 El siguiente paso para recibir el juego es";
 if($data["payment_method"] == 1) {
 	echo " imprimir y abonar en cualquier sucursal de pago la boleta de pago que puedes encontrar en el siguiente link: <br/>

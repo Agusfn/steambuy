@@ -157,7 +157,7 @@ for($e=1;$e<=sizeof($paymentlist);$e++) {
 							// Facturación
 							if($TESTING == false) {
 								if($afip && $e != 3) {
-									if($pData["order_type"] == 1 && $pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < $MAX_FACTURACION[$e]) {
+									if($pData["product_arsprice"] < 800 && ($facturado[$e] + $pData["product_arsprice"]) < $MAX_FACTURACION[$e]) {
 										$monto_fact = round($pData["product_arsprice"], 2);
 										if($cbte = $afipWs->generarCbte($e, 11, $monto_fact)) {
 											$facturado[$e] += $monto_fact;

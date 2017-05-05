@@ -61,11 +61,11 @@ while($pData = mysqli_fetch_array($res))
 			if($prices["product_discount"] == 0) {	
 
 				// Si no tiene oferta externa limitada, se actualiza el precio		
-				if($pData["product_has_customprice"] == 0 || ($pData["product_has_customprice"] == 1 && $pData["product_external_limited_offer"] == 1)) { 
+				//if($pData["product_has_customprice"] == 0 || ($pData["product_has_customprice"] == 1 && $pData["product_external_limited_offer"] == 1)) { 
 					$sql2 = "UPDATE `products` SET `product_has_customprice` = 0, `product_external_limited_offer` = 0, `product_external_offer_endtime` = '0000-00-00 00:00:00',
 					`product_listprice` = ".$prices["product_finalprice"].", `product_steam_discount_price`=0, `product_finalprice` = ".$prices["product_finalprice"].", `product_update_error` = 0 
 					WHERE `product_id` = ".$pData["product_id"];
-				}
+				//}
 			} else if($prices["product_discount"] == 1) {
 
 				if($prices["product_discount_endtime"] != "n/a") {
@@ -73,20 +73,20 @@ while($pData = mysqli_fetch_array($res))
 				}
 				
 				// Si no tiene oferta propia se actualiza, si tiene, se actualiza sólo si la oferta de steam es mejor
-				if($pData["product_has_customprice"] == 0) {
+				/*if($pData["product_has_customprice"] == 0) {
 					
 					$sql2 = "UPDATE `products` SET `product_external_limited_offer` = 1, `product_listprice` = ".$prices["product_firstprice"].", `product_steam_discount_price`=".$prices["product_finalprice"].",
 					`product_finalprice` = ".$prices["product_finalprice"].", `product_update_error` = 0 WHERE `product_id` = ".$pData["product_id"];
 				
 				} else if($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "usd") {
 					
-					if(($prices["product_finalprice"] < $pData["product_finalprice"]) || ($prices["product_finalprice"] > $pData["product_steam_discount_price"])) {
+					if(($prices["product_finalprice"] < $pData["product_finalprice"]) || ($prices["product_finalprice"] > $pData["product_steam_discount_price"])) {*/
 						
 						$sql2 = "UPDATE `products` SET `product_has_customprice` = 0, `product_has_limited_units` = 0, `product_external_limited_offer` = 1,
 						 `product_listprice` = ".$prices["product_firstprice"].", `product_steam_discount_price`=".$prices["product_finalprice"].", `product_finalprice` = ".$prices["product_finalprice"].", `product_update_error` = 0 
 						 WHERE `product_id` = ".$pData["product_id"];
-					}
-				} 
+					/*}
+				} */
 			}
 			
 		} else $error = 2;

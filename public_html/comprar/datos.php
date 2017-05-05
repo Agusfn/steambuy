@@ -30,8 +30,9 @@ if(isAdminLoggedIn())
 
 // Obtenemos el ID del producto y medio de pago
 
-if(isset($_POST["product_id"]) && isset($_POST["payment_method"])) {
+if(isset($_POST["product_id"]) && isset($_POST["payment_method"]) && isset($_POST["product_type"])) {
 	$product_id = $_POST["product_id"];
+	$product_type = $_POST["product_type"];
 	$payment_method = $_POST["payment_method"];
 	
 	if($payment_method != 1 && $payment_method != 2) {
@@ -48,7 +49,7 @@ if(isset($_POST["product_id"]) && isset($_POST["payment_method"])) {
 
 $purchase = new Purchase($con);
 
-if($product_exists = $purchase->checkProductPurchasable($product_id)) {
+if($product_exists = $purchase->checkProductPurchasable($product_type, $product_id)) {
 	
 	$productData = $purchase->productData;
 	if($productArsPrices = $purchase->calcProductFinalArsPrices()) {
@@ -88,6 +89,25 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 		
 	}
 }
+
+
+// Preparar datos UI
+if($product_exists && $productFinalArsPrice) {
+	
+	if($product_type == 1) {
+		
+		$product_name = $purchase->productData["product_name"];
+		$product_img_elem = "<div class='pp-img'><img src='../data/img/game_imgs/224x105/".$productData["product_mainpicture"]."' alt='".$product_name."'/></div>";
+		
+	} else if($product_type == 2) {
+		
+		$product_name = $purchase->productData["name"];
+		
+		if($purchase->productData["type"] == 1) $img = "steam";
+		$product_img_elem = "<div class='pp-gftcrd-img'><img src='../resources/css/img/giftcards/".$img.".png' alt='".$product_name."'/></div>";
+			
+	}
+}
 ?>
 
 
@@ -100,7 +120,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
         <meta name="robots" content="noindex, nofollow" />
         
         <title><?php
-        if($product_exists) echo "Comprar ".$productData["product_name"]." - SteamBuy";	
+        if($product_exists) echo "Comprar ".$product_name." - SteamBuy";	
 		else echo "Error de compra - SteamBuy";	
 		?></title>
         
@@ -146,6 +166,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                         </div>
                     	
                         <form name="goback" action="pago.php" method="post">
+                        	<input type="hidden" name="product_type" value="<?php echo $product_type; ?>" />
                         	<input type="hidden" name="product_id" value="<?php echo $product_id; ?>" />
                             <?php
 							if($validCoupon) echo "<input type='hidden' name='coupon_code' value='".$_POST["coupon_code"]."' />";
@@ -163,14 +184,22 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                         <?php
 						}
 
-						if($productData["product_external_limited_offer"] == 1) 
+						if($product_type == 1 && $productData["product_external_limited_offer"] == 1) 
 						{
 							?>
                        		<div class="alert alert-warning alert-dismissable offer_warning">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                Este juego se encuentra en oferta externa limitada, una vez pagado, deberás informar el pago en la sección de 
-                                <a href="../informar/" target="_blank">informar pago</a> antes de que termine la oferta, <strong>de lo contrario la oferta NO será aplicable</strong> y deberás cambiar tu producto.&nbsp;<?php
-                                
+                                <?php
+								if($productData["product_sellingsite"] == 1) {
+									echo "Este juego posee una oferta limitada de reventa de Steam. Como los pedidos se envían una vez acreditado el pago, y no es posible reservar juegos, es necesario que el pago se encuentre <strong>acreditado
+                                con tiempo antes de que la oferta finalice</strong>. De lo contrario deberás elegir un cambio de pedido o un reembolso. ";
+								} else {
+									?>
+                                    Este juego se encuentra en oferta externa limitada, una vez pagado, deberás informar el pago en la sección de 
+                               		<a href="../informar/" target="_blank">informar pago</a> antes de que termine la oferta, <strong>de lo contrario la oferta NO será aplicable</strong> y deberás cambiar tu producto.&nbsp;
+                                    <?php
+								}
+
                                 $end_hour = date("H:i:s", strtotime($productData["product_external_offer_endtime"]));
     
                                 if($productData["product_external_offer_endtime"] != "0000-00-00 00:00:00" && $end_hour != "00:00:00") {
@@ -180,7 +209,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                                 } else if($productData["product_sellingsite"] == 2) {
                                     echo "Te recomendamos informar el pago lo antes posible ya que Amazon no especifica la fecha de fin de oferta de este juego.";
                                 } else {
-                                    echo "Revisa la <a href='".$productData["product_site_url"]."' target='_blank'>página de venta</a> externa del producto para saber cuándo finaliza la oferta.";	
+                                    echo "Revisa la <a href='".$productData["product_site_url"]."' target='_blank'>página de venta</a> de este producto para saber cuándo finaliza la oferta.";	
                                 } ?>
                             </div>
                         <?php
@@ -198,6 +227,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                                 &nbsp;&nbsp;&nbsp;<span style="font-size:12px;">(<a href="javascript:document.goback.submit();">cambiar</a>)</span></div>
                                 
                                 <form action="generado.php" method="post" id="purchase-form">
+                                	<input type="hidden" name="product_type" value="<?php echo $product_type; ?>" />
                                 	<input type="hidden" name="product_id" id="product-id" value="<?php echo $product_id; ?>" />
                                     <input type="hidden" name="payment_method" value="<?php echo $payment_method; ?>" />
                                 	<?php
@@ -215,6 +245,17 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
                                         Dirección e-mail:
                                         <input type="text" name="buyer_email" id="buyer-email" class="form-control" maxlength="50"<?php if(isset($_COOKIE["client_email"])) echo " value = '".$_COOKIE["client_email"]."'"; ?> />
                                     </div>
+                                    <?php
+									if($product_type == 1 && $productData["product_sellingsite"] == 1 && $productData["product_has_limited_units"] == 0) 
+									{ 
+									?>
+                                        <div style="margin-top:15px">
+                                            <i class="fa fa-question question_info" data-toggle="tooltip" data-placement="top" title="URL del perfil de la cuenta de steam a la que se enviará el juego como Steam Gift. Por ejemplo: http://steamcommunity.com/profiles/76561197982003783"></i> URL cuenta de steam que recibe el juego:
+                                            <input type="text" name="buyer_steamurl" id="buyer-steamurl" class="form-control" <?php if(isset($_COOKIE["client_steam_url"])) echo " value = '".$_COOKIE["client_steam_url"]."'"; ?> />
+                                        </div>
+                                    <?php
+									}
+									?>
                                     <div style="margin-top:25px"><label><input type="checkbox" name="remember_data" <?php if(isset($_COOKIE["client_name"]) && isset($_COOKIE["client_email"])) echo "checked"; ?>> Recordar e-mail y nombre para futuras compras.</label></div>
                             	</form>
                                 
@@ -233,12 +274,16 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 						<div class="purchase_footer clearfix">
 							
                             <?php
-							if($productData["product_external_limited_offer"] == 1) {
-								?>
-								<div class="checkbox tos_warning">
-									<label><input type="checkbox" id="tos_checkbox"> Acepto los términos y condiciones, y acepto en caso de no informar el pago a tiempo, no recibir este juego, teniendo que elegir un cambio de productos.</label>
-                                </div>
-								<?php	
+							if($product_type == 1 && $productData["product_external_limited_offer"] == 1) {
+								
+								echo "<div class='checkbox tos_warning'><label><input type='checkbox' id='tos_checkbox'>";
+									if($productData["product_external_limited_offer"] == 1) {
+										echo "Acepto los términos y condiciones, y acepto, si el pago no se acredita antes de que finalice la oferta, recibir un cambio de productos o un reembolso.";
+									} else {
+										echo "Acepto los términos y condiciones, y acepto en caso de no informar el pago a tiempo, no recibir este juego, teniendo que elegir un cambio de productos.";
+									}
+								echo "</label></div>";
+	
 							} else {
 								echo "<div style='color:#444;float:left'>Al hacer click en 'continuar' das por aceptado los <a href='../condiciones/' target='_blank'>términos y condiciones</a>.</div>";
 							}

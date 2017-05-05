@@ -160,18 +160,16 @@ if(isset($_POST["order_id"]) && isset($_POST["order_password"]))
 					} else {
 						echo "<div class='alert alert-success' style='margin:0 40px 10px 40px;'>El comprobante del pedido <strong>".$_POST["order_id"]."</strong> se envió correctamente. ";
 					}
-					if($orderData["order_type"] == 1) {
-						if($orderData["product_limited_discount"] == 1) {
-							echo "Si el comprobante es válido y se envió a tiempo, el juego será reservado y lo recibirás sin problemas.";
-						}
-						if($orderData["order_paymentmethod"] == 1) {
-							
-							$split = explode("?id=", $orderData["order_purchaseticket"]);
-							
-							echo " <strong>Los pedidos se envían entre 12 y 48 hs luego de abonada la boleta de pago</strong>. Podés revisar el estado de tu pago en el siguiente <a href='https://www.cuentadigital.com/area.php?name=Search&query=".$split[1]."' target='_blank'>enlace</a>.";
-						} else if($orderData["order_paymentmethod"] == 2) {
-							echo " Los pedidos por transf./depósito se envían <strong>durante las siguientes 12 horas hábiles luego de acreditado</strong>.";
-						}
+					if($orderData["product_limited_discount"] == 1) {
+						echo "Si el comprobante es válido y se envió a tiempo, el juego será reservado y lo recibirás sin problemas.";
+					}
+					if($orderData["order_paymentmethod"] == 1) {
+						
+						$split = explode("?id=", $orderData["order_purchaseticket"]);
+						
+						echo " <strong>Los pedidos se envían entre 12 y 48 hs luego de abonada la boleta de pago</strong>. Podés revisar el estado de tu pago en el siguiente <a href='https://www.cuentadigital.com/area.php?name=Search&query=".$split[1]."' target='_blank'>enlace</a>.";
+					} else if($orderData["order_paymentmethod"] == 2) {
+						echo " Los pedidos por transf./depósito se envían <strong>durante las siguientes 12 horas hábiles luego de acreditado</strong>.";
 					}
 					echo "</div>";	
 				}
@@ -191,11 +189,7 @@ if(isset($_POST["order_id"]) && isset($_POST["order_password"]))
 								echo "<li>El pedido ID ".$_POST["order_id"]." se encuentra en estado cancelado.</li>";
 							}
                         } else if($informError == 4) {
-							if($orderData["order_type"] == 1) {
-								echo "<li>El juego no posee una oferta externa de tiempo limitado, <strong>no es necesario informar el pago</strong>, aguarda a que se acredite y/o sea enviado.</li>";
-							} else if($orderData["order_type"] == 2) {
-								echo "<li>No es necesario informar el pago para los envíos de saldo PayPal a menos que se abone por transferencia bancaria.</li>";
-							}
+							echo "<li>El juego no posee una oferta externa de tiempo limitado, <strong>no es necesario informar el pago</strong>, aguarda a que se acredite y/o sea enviado.</li>";
                         } else if($informError == 6) {
                             echo "<li>No se envió ningún archivo u ocurrió un error, reintenta por favor.</li>";
                         } else if($informError == 7) {

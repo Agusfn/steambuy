@@ -37,13 +37,28 @@ if($data["product_external_discount"] == 1) {
 
 	if($data["order_fromcatalog"] == 0) { // formulario compra
 
-		echo "<strong>El juego posee una oferta de tiempo limitado, por lo tanto deberás informar el pago en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> 
-		antes de que finalice esta oferta.</strong> Revisa en el <a href='".$data["product_site_url"]."' target='_blank'>sitio de venta</a> del juego la fecha de fin de oferta para saber si debés informar el pago o no.<br/><br/>";
+
+		if($productData["product_sellingsite"] == 1) {
+			echo "Este juego posee una oferta limitada de reventa de Steam. Es necesario que el pago se encuentre <strong>acreditado con tiempo antes de que la oferta finalice</strong>. De lo contrario deberás elegir un cambio de pedido o un reembolso. ";
+		} else {
+			echo "<strong>El juego posee una oferta externa de tiempo limitado, por lo tanto deberás informar el pago en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> 
+			antes de que finalice esta oferta.</strong> Revisa en el <a href='".$data["product_site_url"]."' target='_blank'>sitio de venta</a> del juego la fecha de fin de oferta para saber si debés informar el pago o no.<br/><br/>";	
+		}
+
+
 
 	} else if($data["order_fromcatalog"] == 1) { // catálogo
 		
-		echo "<strong>El juego posee una oferta de tiempo limitado, por lo tanto deberás informar el pago en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> 
-		antes de que finalice esta oferta para que sea reservado.</strong> ";
+		
+	
+		if($productData["product_sellingsite"] == 1) {
+			echo "Este juego posee una oferta limitada de reventa de Steam. Es necesario que el pago se encuentre <strong>acreditado con tiempo antes de que la oferta finalice</strong>. De lo contrario deberás elegir un cambio de pedido o un reembolso. ";
+		} else {
+		?>
+			Este juego posee una oferta externa de tiempo limitado, deberás <strong><a href="../informar/" target="_blank">informar el pago</a></strong> 
+			antes de que termine la oferta para que te lo reservemos.&nbsp;
+		<?php
+		}
 									
 		$end_hour = date("H:i:s", strtotime($data["product_external_offer_endtime"]));
 	

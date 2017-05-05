@@ -184,8 +184,20 @@ if(is_numeric($_GET["id"])){
 									} else {
 										?>
                                         <form action="../../comprar/pago.php" method="post">
+                                        	<input type="hidden" name="product_type" value="1"/>
                                         	<input type="hidden" name="product_id" value="<?php echo htmlspecialchars($_GET["id"]); ?>"/>
-                                            <button type="submit" class="btn btn-success btn_purchase">Comprar juego <span class="glyphicon glyphicon-shopping-cart"></span></button>
+                                            <?php
+											if($admin) {
+												?>
+                                                <button type="submit" class="btn btn-success btn_purchase">Comprar juego <span class="glyphicon glyphicon-shopping-cart"></span></button>
+                                                <?php
+											} else {
+												?>
+                                                <div style="float: left;width: 223px;color: #777;margin: 10px 0 0 37px;">Disculpa, la venta se encuentra suspendida temporalmente.</div>
+                                                <?php	
+											}
+											?>
+                                            
                                         </form>
                                     
 										<?php

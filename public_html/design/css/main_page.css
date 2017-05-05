@@ -473,7 +473,8 @@
 .cpl-gftcrd-ammount {
 	float:left;
 	margin: 20px 10px 0 12px;
-	font-size:13px	
+	font-size:13px;
+	color:#444 !important;	
 }
 
 .cpl-gftcrd-ammount span {
@@ -482,11 +483,11 @@
 
 .cpl-gftcrd-name {
 	margin: 8px 6px 0 0;
-	color:#666;
+	color:#555;
 }
 
 .cpl-gftcrd-name > div {
-	font-size:13px;
+	font-size:14px;
 	max-width:160px;
 	height:36px;
 	overflow:hidden;	
@@ -494,9 +495,9 @@
 
 .cpl-gftcrd-price {
 	float: right;
-	margin: 7px 18px 0 0;
+	margin: 5px 18px 0 0;
 	color: #535050;
-	font-size:16px;
+	font-size:17px;
 	
 }
 

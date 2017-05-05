@@ -9,29 +9,39 @@
                                 <div style="height:280px;"> <!-- espacio para productos -->
                                 
                                     <div class="purchase-product clearfix">
-                                        <div class="pp-img"><img src="../data/img/game_imgs/224x105/<?php echo $productData["product_mainpicture"]; ?>" alt="<?php echo $productData["product_name"]; ?>"/></div>
+                                        <?php echo $product_img_elem; ?>
                                         <div style="float: left;margin-left: 20px;">
-                                        	<div class="pp-name"<?php 
-                                            if(strlen($productData["product_name"]) > 28) {
-                                            	echo " style='margin-top:5px;font-size:14px;'";	
-                                            } ?>>
-                                            	<?php echo $productData["product_name"]; ?>
+                                        	<div class="pp-name"<?php if(strlen($product_name) > 28) echo " style='margin-top:5px;font-size:14px;'"; ?>>
+                                            	<?php echo $product_name; ?>
                                             </div>
-                                            <div class="pp-drm"><?php if($productData["product_platform"] == 1) echo "Activable en Steam"; else if($productData["product_platform"] == 2) echo "Activable en Origin"; ?></div>
+                                            <?php
+											if($product_type == 1) {
+												echo "<div class='pp-drm'>";
+												if($productData["product_platform"] == 1) echo "Activable en Steam"; 
+												else if($productData["product_platform"] == 2) echo "Activable en Origin";
+												echo "</div>";	
+											}
+											?>
 										</div>
                                         <?php
-                                        if($productData["product_has_customprice"] == 1 && $productData["product_customprice_currency"] == "ars") {
-                                            echo "<div class='pp-price'>&#36;".$productData["product_finalprice"]."</div>";
-                                        } else {
-											if($productData["product_has_customprice"] == 1 || $productData["product_external_limited_offer"] == 1) {
-												echo "
-												<div class='pp-price' style='margin-top:15px;'>
-													<div class='pp-listprice'>&#36;".quickCalcGame(1, $productData["product_listprice"])."</div>
-													&#36;".$productArsPrices["ticket_price"]."
-												</div>";
+										if($product_type == 1) {
+											
+											if($productData["product_has_customprice"] == 1 && $productData["product_customprice_currency"] == "ars") {
+												echo "<div class='pp-price'>&#36;".$productData["product_finalprice"]."</div>";
 											} else {
-												echo "<div class='pp-price'>&#36;".$productArsPrices["ticket_price"]."</div>";
+												if($productData["product_has_customprice"] == 1 || $productData["product_external_limited_offer"] == 1) {
+													echo "
+													<div class='pp-price' style='margin-top:15px;'>
+														<div class='pp-listprice'>&#36;".quickCalcGame(1, $productData["product_listprice"])."</div>
+														&#36;".$productArsPrices["ticket_price"]."
+													</div>";
+												} else {
+													echo "<div class='pp-price'>&#36;".$productArsPrices["ticket_price"]."</div>";
+												}
 											}
+											
+										} else if($product_type == 2) {
+											echo "<div class='pp-price'>&#36;".$productArsPrices["ticket_price"]."</div>";
 										}
                                         ?>
                                     </div>

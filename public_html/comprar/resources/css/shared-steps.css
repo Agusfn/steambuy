@@ -57,6 +57,18 @@
 	height: 65px;
 }
 
+.pp-gftcrd-img
+{
+	float:left;
+	margin: 8px 0px;
+}
+
+.pp-gftcrd-img > img
+{
+	width: 40px;
+	height: 40px;
+}
+
 .pp-img
 {
 	float:left;

@@ -30,10 +30,14 @@ if(isAdminLoggedIn())
 }
 
 
-// Obtenemos el ID del producto de post o sesión
+// Obtenemos el tipo e ID del producto de post o sesión
 
-if(isset($_POST["product_id"])) {
+if(isset($_POST["product_id"]) && isset($_POST["product_type"])) {
+	$product_type = $_POST["product_type"];
 	$product_id = $_POST["product_id"];
+} else if(isset($_GET["p_id"]) && isset($_GET["type"])) {
+	$product_type = $_GET["type"];
+	$product_id = $_GET["p_id"];
 } else {
 	header("Location: ../");
 	exit;
@@ -47,7 +51,7 @@ if(isset($_POST["product_id"])) {
 
 $purchase = new Purchase($con);
 
-if($product_exists = $purchase->checkProductPurchasable($product_id)) {
+if($product_exists = $purchase->checkProductPurchasable($product_type, $product_id)) {
 	
 	$productData = $purchase->productData;
 	
@@ -72,12 +76,29 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 		$transferDiscount = $productArsPrices["ticket_price"] - $productArsPrices["transfer_price"];
 		$productFinalArsPrice = $productArsPrices["ticket_price"] - $couponDiscount; // Precio final (para boleta, que es lo seleccionado por defecto)
 	
-	}
-	
-
-
-	
+	}	
 }
+
+// Preparar datos UI
+if($product_exists && $productFinalArsPrice) {
+	
+	if($product_type == 1) {
+		
+		$product_name = $purchase->productData["product_name"];
+		$product_img_elem = "<div class='pp-img'><img src='../data/img/game_imgs/224x105/".$productData["product_mainpicture"]."' alt='".$product_name."'/></div>";
+		
+	} else if($product_type == 2) {
+		
+		$product_name = $purchase->productData["name"];
+		
+		if($purchase->productData["type"] == 1) $img = "steam";
+		$product_img_elem = "<div class='pp-gftcrd-img'><img src='../resources/css/img/giftcards/".$img.".png' alt='".$product_name."'/></div>";
+			
+	}
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -89,7 +110,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
         <meta name="robots" content="noindex, nofollow" />
         
         <title><?php
-        if($product_exists) echo "Comprar ".$productData["product_name"]." - SteamBuy";	
+        if($product_exists) echo "Comprar ".$product_name." - SteamBuy";	
 		else echo "Error de compra - SteamBuy";	
 		?></title>
         
@@ -206,6 +227,7 @@ if($product_exists = $purchase->checkProductPurchasable($product_id)) {
 						<div class="purchase_footer clearfix">
 							
 							<form action="datos.php" method="post" id="buyform">
+                            	<input type="hidden" name="product_type" value="<?php echo $product_type ?>" />
                             	<input type="hidden" name="product_id" value="<?php echo $product_id; ?>"/>
                                 <input type="hidden" name="payment_method" id="payment_method" value="1" />
                                 <?php

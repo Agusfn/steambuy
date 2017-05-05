@@ -409,7 +409,7 @@ if($admin == false) {
                         </tr>
                         <tr>
                         	<td class="box_subtitle">
-                            Productos del catálogo en stock <div style="float:right;margin-right:20px;"><a href="products/">Modificar catálogo</a></div>
+                            Productos del catálogo en stock <div style="float:right;margin-right:20px;"><a href="products/">Modificar catálogo</a> / <a href="products/giftcards.php">Ver giftcards</a></div>
                             </td>
                             <td class="box_subtitle">
                             Configuración de la página

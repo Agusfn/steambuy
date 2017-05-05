@@ -11,7 +11,7 @@
 
 */
 
-$CD_ID = array ("1"=>"545364","2"=>"584204","3"=>"545437"); // IDs de cuentas CuentaDigital
+
 
 
 
@@ -39,44 +39,81 @@ class Purchase
 	
 	public $orderInfo = array('order_id' => '','order_password' => '','order_purchaseticket' => '');
 	public $productData; // Si el producto puede venderse, acá se almacena información necesaria para la compra del producto. 
+	public $product_type; // Tipo de producto: 1=juego, 2=gift card
 	public $couponData;
 	
 	public $error;
 	public $couponCheckError;
 		
+	
+	private $CD_ID = array ("1"=>"545364","2"=>"584204","3"=>"545437"); // IDs de cuentas CuentaDigital
+		
+		
 	public function __construct($mysql) {
 		$this->con = $mysql;
 	}
 
-	public function checkProductPurchasable($product_id) {
+	public function checkProductPurchasable($product_type, $product_id) {
 		
 		if(!is_numeric($product_id)) return false;
-		$sql = "SELECT * FROM `products` WHERE `product_id` = ".mysqli_real_escape_string($this->con, $product_id)." AND product_enabled = 1 
-		AND NOT (product_has_limited_units = 1 AND product_limited_units = 0)";
-		$query = mysqli_query($this->con, $sql);
-		if(mysqli_num_rows($query) == 1) {
-			$this->productData = mysqli_fetch_assoc($query);
-			return true;
+		
+		if($product_type == 1) { // Tipo de producto. 1=juego, 2=gift card
+			
+			$sql = "SELECT * FROM `products` WHERE `product_id` = ".mysqli_real_escape_string($this->con, $product_id)." AND product_enabled = 1 
+			AND NOT (product_has_limited_units = 1 AND product_limited_units = 0)";
+			$query = mysqli_query($this->con, $sql);
+			if(mysqli_num_rows($query) == 1) {
+				$this->productData = mysqli_fetch_assoc($query);
+				$this->product_type = $product_type;
+				return true;
+			} else return false;	
+					
+		} else if($product_type == 2) {
+			
+			$sql = "SELECT * FROM `products_giftcards` WHERE `id` = ".mysqli_real_escape_string($this->con, $product_id)." AND `stock` > 0";
+			$query = mysqli_query($this->con, $sql);
+			if(mysqli_num_rows($query) == 1) {
+				$this->productData = mysqli_fetch_assoc($query);
+				$this->product_type = $product_type;
+				return true;
+			} else return false;
+			
 		} else return false;
+		
+		
+		
+
 	}
 	
 	public function calcProductFinalArsPrices() {
 		
-		if($this->productData["product_has_customprice"] == 1 && $this->productData["product_customprice_currency"] == "ars") {
-			$ticketPrice = $this->productData["product_finalprice"];
-			$transferPrice =  $this->productData["product_finalprice"] - ($this->productData["product_finalprice"] * 0.0484 + 1.5125);
-			$transferPrice = round(1.015 * $transferPrice, 1);
-		} else {
-			$ticketPrice = quickCalcGame(1, $this->productData["product_finalprice"]);	
-			$transferPrice = quickCalcGame(2, $this->productData["product_finalprice"]);
-		}
-		if(is_numeric($ticketPrice) && is_numeric($transferPrice)) {
+		if($this->product_type == 1) { // juego
+			
+			if($this->productData["product_has_customprice"] == 1 && $this->productData["product_customprice_currency"] == "ars") {
+				$ticketPrice = $this->productData["product_finalprice"];
+				$transferPrice =  $this->productData["product_finalprice"] - ($this->productData["product_finalprice"] * 0.0484 + 1.5125);
+				$transferPrice = round(1.015 * $transferPrice, 1);
+			} else {
+				$ticketPrice = quickCalcGame(1, $this->productData["product_finalprice"]);	
+				$transferPrice = quickCalcGame(2, $this->productData["product_finalprice"]);
+			}
+			if(is_numeric($ticketPrice) && is_numeric($transferPrice)) {
+				return array("ticket_price"=>$ticketPrice, "transfer_price"=>$transferPrice);
+			} else return false;
+			
+		} else if($this->product_type == 2) { // giftcard
+			
+			$ticketPrice = quickCalcGame(1, $this->productData["selling_price_usd"]);	
+			$transferPrice = quickCalcGame(2, $this->productData["selling_price_usd"]);
 			return array("ticket_price"=>$ticketPrice, "transfer_price"=>$transferPrice);
-		} else return false;
+			
+		}
 			
 	}
 	
 	public function checkCouponValidity($coupon_code) {
+
+		if($this->product_type != 1) return false; // por ahora solo funciona para juegos.
 		
 		if(!preg_match("/^[a-zA-Z0-9%$#@]*$/", $coupon_code)) {
 			$this->couponCheckError = 1;
@@ -136,12 +173,81 @@ class Purchase
 		
 	}
 	
-	
+	public function createGiftCardOrder($order_paymethod, $product_name, $product_id, $product_arsprice, $client_name, $client_email, $client_ip, $discount_coupon, $coupon_discounted_ammount) {
+		
+		global $config;
+		
+		if(($order_paymethod != 1 && $order_paymethod != 2) || !is_numeric($product_arsprice) || ($coupon_discounted_ammount != "" && !is_numeric($coupon_discounted_ammount))) { 
+			$this->error = 1; 
+			return false; 
+		}
+		
+		// Crear una contraseña
+		$orderPassword = randomPassword();
+		$this->orderInfo["order_password"] = $orderPassword;
+		
+				
+		// Revisar datos del juego y hacer la reducción de stock correspondiente si estuvo en stock
+		if(is_numeric($product_id)) {
+
+			$query = mysqli_query($this->con, "SELECT * FROM `products_giftcards` WHERE `id` = '".$product_id."' AND `stock` >= 1");
+				
+			if(mysqli_num_rows($query) == 1) {
+				
+				$productData = mysqli_fetch_assoc($query);
+
+				// Reducir stock del producto (si es de stock)
+				$product_limited_unit = $productData["stock"];
+				mysqli_query($this->con, "UPDATE `products_giftcards` SET `stock` = `stock`-1 WHERE `id`=".$product_id);
+
+			} else { 
+				$this->error = 3; 
+				return false; 
+			}
+			
+		} else return false;
+
+
+		// Obtener ID pedido
+		$this->orderInfo["order_id"] = $this->obtener_id_nuevo_pedido();
+
+		
+		// Realizar consulta
+		$sql = "INSERT INTO `orders` (`order_number`, `order_send_method`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`, `order_payment_time`,
+		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
+		`product_arsprice`, `product_cur_steam_price`, `product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
+		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`, `buyer_steam_url`) 
+		VALUES (NULL, 0, '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', 1, '".$product_id."', ".$product_limited_unit.", 
+		".$order_paymethod.", '".$this->scp_str($discount_coupon)."', ".$coupon_discounted_ammount.", 0, '".$product_arsprice."', 0, '".$this->scp_str($product_name)."', 0, '', 0, 0, 
+		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."', '');";	
+		
+		
+		$query = mysqli_query($this->con, $sql);
+		if($query) {
+			
+			// Generar boleta de pago e insertarla en el pedido ya creado
+			if($order_paymethod == 1) {
+				
+				$link_boleta = $this->generar_boleta($product_arsprice, "ID-".$this->orderInfo["order_id"]."-0USD-".$product_arsprice."ARS", $client_email);
+				if(!$link_boleta) return false;
+				
+			} else $link_boleta = "";
+			
+			$this->orderInfo["order_purchaseticket"] = $link_boleta;
+			
+			if($this->guardar_link_boleta_en_pedido($this->orderInfo["order_id"], $link_boleta)) {
+				return true;
+			} else return false;
+			
+		} else {
+			$this->error = mysqli_error($this->con);
+			return false;	
+		}
+	}
 	
 	public function createGameOrder($order_paymethod, $product_name, $product_id_catalog, $product_sellingsite, $product_siteurl, $product_limitedoffer, $product_usdprice, 
-	$product_arsprice, $client_name, $client_email, $client_ip, $discount_coupon, $coupon_discounted_ammount) 
+	$product_arsprice, $client_name, $client_email, $client_steamurl, $client_ip, $discount_coupon, $coupon_discounted_ammount) 
 	{
-		global $CD_ID;
 		global $config;
 		
 		if(($order_paymethod != 1 && $order_paymethod != 2) || !is_numeric($product_usdprice) || !is_numeric($product_arsprice) || 
@@ -157,10 +263,13 @@ class Purchase
 		$current_steam_price = 0;
 		
 		// Revisar datos del juego y hacer la reducción de stock correspondiente si estuvo en stock
-		if($product_id_catalog != "" && is_numeric($product_id_catalog)) {
+		if(is_numeric($product_id_catalog)) {
+			
 			$product_fromcatalog = 1;
-			$query = mysqli_query($this->con, "SELECT * FROM products WHERE product_id = '".$product_id_catalog."' AND product_enabled = 1");
+			$query = mysqli_query($this->con, "SELECT * FROM `products` WHERE product_id = '".$product_id_catalog."' AND product_enabled = 1");
+
 			if(mysqli_num_rows($query) == 1) {
+				
 				$productData = mysqli_fetch_assoc($query);
 
 				if($productData["product_sellingsite"] == 1) {
@@ -169,13 +278,11 @@ class Purchase
 				}
 				
 				if($productData["product_has_limited_units"] == 1) {
+					
 					$productLimitedUnits = intval($productData["product_limited_units"]);
 					if($productLimitedUnits == 0) {
 						$this->error = 4;
 						return false;
-					}
-					if($productLimitedUnits == 1 && strpos($productData["product_tags"],",superoferta") !== false) {
-						mysqli_query($this->con, "UPDATE `products` SET `product_tags` = REPLACE(`product_tags`, ',superoferta', '') WHERE `product_id` = ".$product_id_catalog);
 					}
 					if(($productData["product_sellingsite"] == 3 || $productData["product_sellingsite"] == 4) && $productLimitedUnits == 1) {
 						$sql2 = "UPDATE `products` SET `product_limited_units` = 0, `product_enabled` = 0 WHERE `product_id` = '".$product_id_catalog."'";	
@@ -187,33 +294,40 @@ class Purchase
 						product_external_offer_endtime = '0000-00-00 00:00:00', product_finalprice = product_listprice WHERE product_id = '".$product_id_catalog."'";		
 						mysqli_query($this->con, $sql2);
 					} 
+					
 					$product_limited_unit = $productLimitedUnits;
+					
 				} else $product_limited_unit = 0;
 				
-			} else { $this->error = 3; return false; }
+				
+				// Establecer método de envío
+				if($productData["product_sellingsite"] == 1 && $productData["product_has_limited_units"] == 0) {
+					$send_method = 1; // Envío como steam gift a amigo de steam
+				} else $send_method = 0; // Envio por mail convencional
+
+			} else { 
+				$this->error = 3; 
+				return false; 
+			}
+			
 		} else {
 			$product_fromcatalog = 0;
 			$product_limited_unit = 0;
 			$current_steam_price = $product_usdprice;
 		}
 		
-		// Obtener ID
-		$query = mysqli_query($this->con, "SHOW TABLE STATUS LIKE 'orders'");
-		$res = mysqli_fetch_assoc($query);
-		$autoIncrement = $res['Auto_increment'];
-		$orderId = "J".$autoIncrement;
-		$this->orderInfo["order_id"] = $orderId;
-
+		// Obtener ID pedido
+		$this->orderInfo["order_id"] = $this->obtener_id_nuevo_pedido();
 		
 		// Realizar consulta
-		$sql = "INSERT INTO `orders` (`order_number`, `order_type`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`, `order_payment_time`,
+		$sql = "INSERT INTO `orders` (`order_number`, `order_send_method`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`, `order_payment_time`,
 		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
 		`product_arsprice`, `product_cur_steam_price`, `product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
-		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`) 
-		VALUES (NULL, '1', '".$orderId."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', ".$product_fromcatalog.", '".$product_id_catalog."', ".$product_limited_unit.", 
+		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`, `buyer_steam_url`) 
+		VALUES (NULL, ".$send_method.", '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', ".$product_fromcatalog.", '".$product_id_catalog."', ".$product_limited_unit.", 
 		".$order_paymethod.", '".$this->scp_str($discount_coupon)."', ".$coupon_discounted_ammount.", '".$product_usdprice."', '".$product_arsprice."', '".$current_steam_price."', 
 		'".$this->scp_str($product_name)."', ".$this->scp_str($product_sellingsite).", '".$this->scp_str($product_siteurl)."', ".$this->scp_str($product_limitedoffer).", 0, 
-		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."');";	
+		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."', '".$this->scp_str($client_steamurl)."');";	
 		
 		
 		$query = mysqli_query($this->con, $sql);
@@ -222,25 +336,16 @@ class Purchase
 			// Generar boleta de pago e insertarla en el pedido ya creado
 			if($order_paymethod == 1) {
 
-				$rand = array($CD_ID[3]); 
-				if(floatval($config["cd1_balance"]) < (42000 - 1000)) $rand[] = $CD_ID[1];	
-				if(floatval($config["cd2_balance"]) < (10500 - 1000)) $rand[] = $CD_ID[2];	
-				$cd_to_send = $rand[array_rand($rand)];
-
-				$paymentTicketLink = get_url("https://www.cuentadigital.com/api.php?id=".$cd_to_send."&precio=".$product_arsprice."&venc=5&codigo=ID-".$orderId."-".$product_usdprice."USD-".$product_arsprice."ARS&hacia=".$client_email."&concepto=Venta+de+productos+digitales");		
+				$link_boleta = $this->generar_boleta($product_arsprice, "ID-".$this->orderInfo["order_id"]."-".$product_usdprice."USD-".$product_arsprice."ARS", $client_email);
+				if(!$link_boleta) return false;
 				
-				
-				if(strpos($paymentTicketLink, "https://www.cuentadigital.com/verfactura.php?id=") === false) { $this->error=$paymentTicketLink; return false; }
-				
-			} else $paymentTicketLink = "";
-			$this->orderInfo["order_purchaseticket"] = $paymentTicketLink;
+			} else $link_boleta = "";
 			
-			if(mysqli_query($this->con, "UPDATE `orders` SET `order_purchaseticket`='".$paymentTicketLink."' WHERE `order_id`='".$this->orderInfo["order_id"]."'")) {
+			$this->orderInfo["order_purchaseticket"] = $link_boleta;
+			
+			if($this->guardar_link_boleta_en_pedido($this->orderInfo["order_id"], $link_boleta)) {
 				return true;
-			} else {
-				$this->error = mysqli_error($this->con);
-				return false;	
-			}
+			} else return false;
 			
 		} else {
 			$this->error = mysqli_error($this->con);
@@ -254,6 +359,40 @@ class Purchase
 	}
 	
 	
+	private function obtener_id_nuevo_pedido() {
+		
+		$query = mysqli_query($this->con, "SHOW TABLE STATUS LIKE 'orders'");
+		$res = mysqli_fetch_assoc($query);
+		$autoIncrement = $res['Auto_increment'];
+		return "J".$autoIncrement;
+		
+	}
+	
+	private function generar_boleta($monto, $codigo, $mail) {
+		
+		global $config;
+		
+		$rand = array($this->CD_ID[3]); 
+		if(floatval($config["cd1_balance"]) < (42000 - 1000)) $rand[] = $this->CD_ID[1];	
+		if(floatval($config["cd2_balance"]) < (10500 - 1000)) $rand[] = $this->CD_ID[2];	
+		$cd_to_send = $rand[array_rand($rand)];
+
+		$paymentTicketLink = get_url("https://www.cuentadigital.com/api.php?id=".$cd_to_send."&precio=".$monto."&venc=5&codigo=".$codigo."&hacia=".$mail."&concepto=Venta+de+productos+digitales");		
+		
+		if(strpos($paymentTicketLink, "https://www.cuentadigital.com/verfactura.php?id=") !== false) { 
+			return $paymentTicketLink;
+		} else return false;
+		
+	}
+	
+	private function guardar_link_boleta_en_pedido($pedido_id, $link_boleta) {
+	
+		if(mysqli_query($this->con, "UPDATE `orders` SET `order_purchaseticket`='".$link_boleta."' WHERE `order_id`='".$pedido_id."'")) {
+			return true;
+		} else return false;	
+	}
+	
+	
 }
 	
 	
@@ -263,7 +402,7 @@ function cancelOrder($orderid)
 	$res1 = mysqli_query($con, "SELECT * FROM orders WHERE order_id = '".mysqli_real_escape_string($con, $orderid)."'");
 	if(mysqli_num_rows($res1) == 1) {
 		$oData = mysqli_fetch_assoc($res1);
-		if($oData["order_type"] == 1 && $oData["product_fromcatalog"] == 1 && $oData["product_limited_unit"] > 0) {
+		if($oData["product_fromcatalog"] == 1 && $oData["product_limited_unit"] > 0) {
 			$res2 = mysqli_query($con, "SELECT * FROM products WHERE product_id = ".mysqli_real_escape_string($con, $oData["product_id_catalog"]));
 			if(mysqli_num_rows($res2) == 1) {
 				$pData = mysqli_fetch_array($res2);

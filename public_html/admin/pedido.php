@@ -251,23 +251,20 @@ if(isset($_GET["orderid"])) {
 							<td style="font-size:16px;"><strong>Precio USD:</strong> <?php if($orderData["product_usdprice"] > 0) echo $orderData["product_usdprice"]; ?></td>
                             <td style="font-size:16px;"><strong>Precio ARS:</strong> $<?php echo $orderData["product_arsprice"]; ?></td>
                             <td><strong>Sitio de venta:</strong> <a href="<?php echo $orderData["product_site_url"]; ?>"><img src="../global_design/img/icons/<?php 
-							if($orderData["order_type"] == 2) echo "paypal"; 
-							else if($orderData["product_sellingsite"] == 1) echo "steam"; 
+							if($orderData["product_sellingsite"] == 1) echo "steam"; 
 							else if($orderData["product_sellingsite"] == 2) echo "amazon";
 							else if($orderData["product_sellingsite"] == 3) echo "humblebundle";
 							else if($orderData["product_sellingsite"] == 4) echo "bundlestars";
 							else if($orderData["product_sellingsite"] == 5) echo "origin";
 							?>_22x22.png"></a></td>
                             <td><strong>Oferta ext. limitada:</strong> <?php 
-							if($orderData["order_type"] == 1) {
-								if($orderData["product_limited_discount"] == 1) echo "Sí";
-								else if($orderData["product_limited_discount"] == 0) echo "No";
-							} else echo "N/A"; ?></td>
+							if($orderData["product_limited_discount"] == 1) echo "Sí";
+							else if($orderData["product_limited_discount"] == 0) echo "No";
+							?></td>
                         </tr>
                         <tr>
                         	<td><strong>Pago informado:</strong> <?php 
-							if(($orderData["order_type"] == 1 && ($orderData["product_limited_discount"] == 1 || $orderData["order_paymentmethod"] == 2)) || 
-							($orderData["order_type"] == 2 && $orderData["order_paymentmethod"] == 2)) {
+							if($orderData["product_limited_discount"] == 1 || $orderData["order_paymentmethod"] == 2) {
 								if($orderData["order_informedpayment"] == 0) echo "No";
 								if($orderData["order_informedpayment"] == 1) echo "SÍ (<a href='../data/img/payment_receipts/".$orderData["order_informed_image"]."' target='_blank'>ver img</a>) <span class='glyphicon glyphicon-remove' data-toggle='tooltip' data-placement='top' title='Rechazar informe de pago' id='reject_inform'></span>";
 							} else echo "No necesario"; ?></td>
@@ -276,8 +273,7 @@ if(isset($_GET["orderid"])) {
 							else echo "N/A";
 							?></td>
                             <td><strong>Juego reservado:</strong> <?php 
-							if(($orderData["order_type"] == 1 && ($orderData["product_limited_discount"] == 1 || $orderData["order_paymentmethod"] == 2)) || 
-							($orderData["order_type"] == 2 && $orderData["order_paymentmethod"] == 2)) {
+							if($orderData["product_limited_discount"] == 1 || $orderData["order_paymentmethod"] == 2) {
 								if($orderData["order_reserved_game"] == 0) echo "No";
 								if($orderData["order_reserved_game"] == 1) echo "SÍ";
 							} else echo "No necesario"; ?></td>
@@ -286,6 +282,21 @@ if(isset($_GET["orderid"])) {
 								echo nl2br($orderData["order_sentkeys"]);
 							} else echo "N/A";
 							?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Forma de envío:</strong> <?php
+                            if($orderData["order_send_method"] == 0) echo "Tradicional";
+							else if($orderData["order_send_method"] == 1) echo "Steam Gift Friend";
+							?></td>
+                            <?php
+							if($orderData["order_send_method"] == 1) {
+								?>
+                                <td colspan="3"><button class="btn btn-success" id="copy_steamurl_btn" data-toggle="tooltip" data-placement="top" title="Copiar SteamURL"><i class="fa fa-clipboard"></i></button>
+                                &nbsp;&nbsp;SteamURL: <input type="text" class="form-control" id="client_steamurl" style="display:inline-block;width:450px;" value="<?php echo $orderData["buyer_steam_url"]; ?>" readonly  />
+                                </td>
+                                <?php	
+							}
+							?>
                         </tr>
                         <tr>
                         	<?php $split = explode(" ", $orderData["buyer_name"], 2); ?>

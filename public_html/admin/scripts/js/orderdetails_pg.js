@@ -237,6 +237,10 @@ $(document).ready(function(e) {
         copyTextToClipboard($("#client_email").text());
     });
 	
+	$("#copy_steamurl_btn").click(function(e) {
+        copyTextToClipboard($("#client_steamurl").val());
+    });	
+	
 });
 
 

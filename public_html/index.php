@@ -276,12 +276,12 @@ $steam_sales_featured_items = 9;
                     
                     <div class="cp-content">
 
-                        <div id="carousel-relevant" class="carousel slide" data-ride="carousel" data-interval="10000">
-							<div class="carousel-inner" role="listbox">
+                        <!--div id="carousel-relevant" class="carousel slide" data-ride="carousel" data-interval="10000">
+							<div class="carousel-inner" role="listbox"-->
 
                             <?php
 							$filas = 3;
-							$paginas = 2;
+							$paginas = 1;
 							$prod_por_pag = $filas*4; // 4 columnas
 							$max_productos = $prod_por_pag * $paginas;
 
@@ -293,8 +293,8 @@ $steam_sales_featured_items = 9;
                             $displayed = 0;
                             while($pData = mysqli_fetch_assoc($res)) 
                             {
-								if($displayed >= $max_productos) break
-								;
+								if($displayed >= $max_productos) break;
+								
 								$displayed++;
 								$displayedProducts[] = $pData["product_id"];
 								if(is_int(($displayed-1)/$prod_por_pag)) {
@@ -314,16 +314,16 @@ $steam_sales_featured_items = 9;
 								}
                             }
                             ?>
-							</div>
-                        </div>
+							<!--/div>
+                        </div-->
                         
                     </div>
-                    <div class="cp-bottom">
+                    <!--div class="cp-bottom">
                     	<span class="cp-carousel-pagination">0/0</span>
                     	<span class="cp-carousel-pag-controls">
                         	<a href="#carousel-relevant" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a><a href="#carousel-relevant" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
                         </span>
-                    </div>
+                    </div-->
                 </div>
 				
                 <div class="clearfix">
@@ -335,7 +335,7 @@ $steam_sales_featured_items = 9;
                             <div class="cp-top">
                             	<?php
 								if($steam_sales_event) echo "<div class='cp-title'>Ofertas de Steam aleatorias<a href='juegos/?amz=0&hb=0&bs=0&gm=0&pg=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
-								else echo "<div class='cp-title'>Ofertas de stock aleatorias<a href='juegos/?int_tmpo=0&int_undef=0&oft_ext=0&sin_oft=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
+								else echo "<div class='cp-title'>Ofertas de stock populares<a href='juegos/?int_tmpo=0&int_undef=0&oft_ext=0&sin_oft=0'><div class='cp-viewmore'>Ver todas</div></a></div>";
 								?>
                             </div>
 
@@ -345,7 +345,7 @@ $steam_sales_featured_items = 9;
                                 	<div class="carousel-inner" role="listbox">
 
 										<?php
-                                        $rows = 3;
+                                        $rows = 2;
                                         $max_pages = 2;
                                         $prodcts_per_pg = $rows*3; // 3 columnas
                                         $max_products = $prodcts_per_pg * $max_pages;
@@ -353,7 +353,7 @@ $steam_sales_featured_items = 9;
 										if($steam_sales_event) { // Si hay evento de ofertas se muestran aleatorias de Steam
 											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND (product_has_customprice = 1 OR product_external_limited_offer = 1) ORDER BY RAND() LIMIT ".($max_products + 20);
 										} else { // Si no hay evento, se muestran aleatorias de SteamBuy
-											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 ORDER BY RAND() LIMIT ".$max_products;
+											$sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 ORDER BY `product_rating` DESC LIMIT ".($max_products+10);
 										}
 						                
 										$query = mysqli_query($con, $sql);
@@ -364,10 +364,10 @@ $steam_sales_featured_items = 9;
 										while($pData = mysqli_fetch_assoc($query)) 
                                         {
 											$result++;
-											if($displayed < $max_products /*&& !in_array($pData["product_id"],$displayedProducts)*/) 
+											if($displayed < $max_products && !in_array($pData["product_id"],$displayedProducts)) 
 											{
 												$displayed++;
-												//$displayedProducts[] = $pData["product_id"];
+												$displayedProducts[] = $pData["product_id"];
 												if(is_int(($displayed-1)/$prodcts_per_pg)) {
 													echo "<div class='item".($displayed==1?" active":"")."'>";	
 												}
@@ -406,21 +406,21 @@ $steam_sales_featured_items = 9;
 						?>
                             <div class="catalog-panel" style="margin-top:25px;">
                                 <div class="cp-top">
-                                    <div class="cp-title">Ofertas de tiempo limitado aleatorias<a href='juegos/?int_stock=0&int_undef=0&sin_oft=0'><div class='cp-viewmore'>Ver todas</div></a></div>
+                                    <div class="cp-title">Ofertas de tiempo limitado populares<a href='juegos/?int_stock=0&int_undef=0&sin_oft=0'><div class='cp-viewmore'>Ver todas</div></a></div>
                                 </div>
                                 <div class="cp-content">
                                     <?php
-                                    $filas = 4;
+                                    $filas = 3;
                                     $cant_productos = $filas * 3; // 3 columnas
                                     
-                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_external_limited_offer` = 1 ORDER BY RAND() LIMIT ".$cant_productos;
+                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_external_limited_offer` = 1 ORDER BY `product_rating` DESC LIMIT ".($cant_productos+10);
                                     
                                     $query = mysqli_query($con, $sql);
                                     $i = 0;
                                     while($pData = mysqli_fetch_assoc($query)) 
 
                                     {
-                                        if($i <$cant_productos /*&& !in_array($pData["product_id"],$displayedProducts)*/) 
+                                        if($i <$cant_productos && !in_array($pData["product_id"],$displayedProducts)) 
                                         {
 											$i++;
                                             //$displayedProducts[] = $pData["product_id"];
@@ -431,7 +431,7 @@ $steam_sales_featured_items = 9;
                                 </div>
                             </div>
                         <?php
-						} else if($steam_sales_event) {
+						} /*else if($steam_sales_event) {
 							$tags = array("acción", "aventura", "rol", "estrategia"); // se van a mostrar pequeños catálogos aleatorios de juegos con estos tags
 							
 							foreach($tags as $tag) {
@@ -460,81 +460,82 @@ $steam_sales_featured_items = 9;
                                 </div>
 								<?php
 							}
-						}
+						}*/
 						?>
+                        
+    					
+
+                            <div class="catalog-panel" style="margin-top:25px;">
+                                <div class="cp-top">
+                                    <div class="cp-title">Ofertas de stock aleatorias<a href='juegos/?int_tmpo=0&int_undef=0&oft_ext=0&sin_oft=0'><div class='cp-viewmore'>Ver todas</div></a></div>
+                                </div>
+                                <div class="cp-content">
+                                    <?php
+                                    $filas = 4;
+                                    $cant_productos = $filas * 3; // 3 columnas
+                                    
+                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 ORDER BY RAND() LIMIT ".($cant_productos+15);
+                                    
+                                    $query = mysqli_query($con, $sql);
+                                    $i = 0;
+                                    while($pData = mysqli_fetch_assoc($query)) {
+                                        
+										if($i <$cant_productos && !in_array($pData["product_id"],$displayedProducts)) {
+											$i++;
+                                            //$displayedProducts[] = $pData["product_id"];
+                                            display_catalog_product($pData, "sm");									
+                                        }
+										
+                                    }
+                                    ?> 
+                                </div>
+                            </div>
+
+                        
                     </div>
                     
                     <div class="right-column">
-    					<?php
-						/*
-                        <!--div class="catalog-panel" style="margin-bottom:30px;">
-                            <div class="cp-top-short">
-                                <div class="cp-title">Gift cards populares<a href="#"><div class="cp-viewmore">Ver todas</div></a></div>
+    					
+                        <?php
+						$sql = "SELECT * FROM `products_giftcards` WHERE `stock` > 0 ORDER BY `relevance` DESC LIMIT 5";
+						$query = mysqli_query($con, $sql);
+						if(mysqli_num_rows($query) > 0) {
+							?>
+                            <div class="catalog-panel" style="margin-bottom:30px;">
+                                <div class="cp-top-short">
+                                    <div class="cp-title">Gift cards populares<a href="giftcards/"><div class="cp-viewmore">Ver todas</div></a></div>
+                                </div>
+                                <div class="cp-content" style="height:395px;border-bottom:1px solid #AAA;">
+                                    <?php
+									while($gcardData = mysqli_fetch_assoc($query)) {
+										?>
+                                        <a href="comprar/pago.php?type=2&p_id=<?php echo $gcardData["id"]; ?>" style="text-decoration:none !important;"><div class="cpl-product">
+                                            <div style="float:left;">
+                                                <img src="resources/css/img/giftcards/<?php
+                                                if($gcardData["type"] == 1) echo "steam";
+                                                ?>.png" class="cpl-gftcrd-img">
+                                                <div class="cpl-gftcrd-ammount"><span><?php echo $gcardData["usd_ammount"]; ?></span> USD</div>
+                                            </div>
+                                            <div class="cpl-gftcrd-name">
+                                                <div><?php echo $gcardData["name"]; ?></div>
+                                            </div>
+                                            <div class="cpl-gftcrd-price">$<?php echo quickCalcGame(1, $gcardData["selling_price_usd"]); ?> <span>ARS</span></div>
+                                        </div></a>
+                                        <?php
+									}
+									?>
+                                </div>
                             </div>
-                            <div class="cp-content" style="height:395px;border-bottom:1px solid #AAA;">
-                            
-                                <div class="cpl-product">
-                                    <div style="float:left;">
-                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                        <div class="cpl-gftcrd-ammount"><span>5</span> USD</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-name">
-                                        <div>Gift card Amazon 5 USD (US Only)</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-price">$157 <span>ARS</span></div>
-                                </div>
-                                
-                                <div class="cpl-product">
-                                    <div style="float:left;">
-                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                        <div class="cpl-gftcrd-ammount"><span>10</span> USD</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-name">
-                                        <div>Gift card Amazon 10 USD (US Only)</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-price">$200 <span>ARS</span></div>
-                                </div>
-                                <div class="cpl-product">
-                                    <div style="float:left;">
-                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                        <div class="cpl-gftcrd-ammount"><span>20</span> USD</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-name">
-                                        <div>Gift card Amazon 20 USD (US Only)</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-price">$400 <span>ARS</span></div>
-                                </div>
-                                <div class="cpl-product">
-                                    <div style="float:left;">
-                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                        <div class="cpl-gftcrd-ammount"><span>50</span> USD</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-name">
-                                        <div>Gift card Amazon 50 USD (US Only)</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-price">$1000 <span>ARS</span></div>
-                                </div>
-                                <div class="cpl-product" style="border-bottom:none;">
-                                    <div style="float:left;">
-                                        <img src="resources/css/img/amazon.png" class="cpl-gftcrd-img">
-                                        <div class="cpl-gftcrd-ammount"><span>100</span> USD</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-name">
-                                        <div>Gift card Amazon 100 USD (US Only)</div>
-                                    </div>
-                                    <div class="cpl-gftcrd-price">$2000 <span>ARS</span></div>
-                                </div>
-    
-    
-                            </div>
-                        </div-->
-                        */
+							<?php
+						}
 						?>
-                        <a style="text-decoration:none !important;" href="soporte/"><div class="support-box" style="margin-bottom:30px">
-                            <div class="support-box-question"><i class="fa fa-question-circle-o" aria-hidden="true"></i></div>
-                            Si tienes alguna consulta o duda, visita nuestra sección de soporte
-                        </div></a>
                         
+
+
+    					<a style="text-decoration:none !important;" href="javascript:void(0);" data-toggle="modal" data-target="#game_form_modal"><div class="game-form-box" style="margin-bottom:20px">
+                            ¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
+                        </div></a>
+
                         <div class="panel panel-default panel_normal">
                             <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
                             <div class="panel-body">
@@ -549,9 +550,10 @@ $steam_sales_featured_items = 9;
                                 </div>
                             </div>
                         </div>
-    
-                        <a style="text-decoration:none !important;" href="javascript:void(0);" data-toggle="modal" data-target="#game_form_modal"><div class="game-form-box" style="margin-bottom:20px">
-                            ¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
+                        
+                        <a style="text-decoration:none !important;" href="soporte/"><div class="support-box" style="margin-bottom:30px">
+                            <div class="support-box-question"><i class="fa fa-question-circle-o" aria-hidden="true"></i></div>
+                            Si tienes alguna consulta o duda, visita nuestra sección de soporte
                         </div></a>
                         
                         <div style="height:400px"><a class="twitter-timeline" height="400" href="https://twitter.com/SteamBuy"  data-widget-id="375996099044970496">Tweets por @SteamBuy</a>

@@ -16,6 +16,14 @@ $(document).ready(function(e) {
 			error_text += "- Ingresa un correo electrónico válido<br/>";
 		}
 		
+		if($("#buyer-steamurl").length) {
+			var patt1 = /^(https?:\/\/)?steamcommunity.com\/id\/[a-z0-9]{1,50}(\/.*)?$/gi;
+			var patt2 = /^(https?:\/\/)?steamcommunity.com\/profiles\/[0-9]{13,25}(\/.*)?$/gi;
+			if( !patt1.test($("#buyer-steamurl").val()) && !patt2.test($("#buyer-steamurl").val()) ) {
+				error_text += "- La SteamURL ingresada no es válida. Puedes ver tu url con <a href='http://steamidfinder.com/' target='_blank'>esta herramienta</a>.<br/>";	
+			}
+		}
+		
 		if($("#tos_checkbox").length) {
 			if(!$("#tos_checkbox").is(":checked")) {
 				error_text += "- Debés aceptar los términos y condiciones para continuar<br/>";	

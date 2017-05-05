@@ -1,0 +1,55 @@
+@charset "utf-8";
+
+
+.main_content {
+	padding: 80px 30px 25px;	
+}
+
+.tab-container .nav-pills {
+	float:left;
+	width:200px;	
+}
+
+.tab-container .tab-content {
+	float: right;
+	width: 550px;
+	margin-right: 80px;
+	padding: 30px 0;
+}
+
+.catalog-element {
+	padding:8px;
+}
+
+.catalog-element:hover {
+	background-color:#F0F0F0;	
+}
+
+.giftcard-img {
+	float:left;
+	width:32px;
+	height:32px;	
+}
+
+
+.giftcard-ammt {
+	float:left;
+	margin: 1px 0 0 35px;
+	font-size: 24px;
+	color:#333;
+}
+
+
+.giftcard-name {
+	float: left;
+	margin: 8px 0 0 51px;
+	color:#555;
+}
+
+
+.giftcard-price {
+	float:right;
+	font-size:17px;
+	margin: 6px 25px 0 0;	
+	color:#333;
+}

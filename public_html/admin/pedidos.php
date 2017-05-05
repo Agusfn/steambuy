@@ -259,8 +259,7 @@ if($count[0] > 0) {
 									<td><?php if($order["product_limited_unit"] > 0) echo $order["product_limited_unit"]; ?></td>
 									<td style="font-size:13px;"><span class="order_select"><?php echo $order["product_name"]; ?></span></td>
 									<td align="center"><a href="<?php echo $order["product_site_url"]; ?>" class="product_url"><img src="../global_design/img/icons/<?php
-									if($order["order_type"] == 2) echo "paypal";
-									else if($order["product_sellingsite"] == 1) echo "steam";
+									if($order["product_sellingsite"] == 1) echo "steam";
 									else if($order["product_sellingsite"] == 2) echo "amazon";
 									else if($order["product_sellingsite"] == 3) echo "humblebundle";
 									else if($order["product_sellingsite"] == 4) echo "bundlestars";
@@ -268,10 +267,10 @@ if($count[0] > 0) {
 									?>_22x22.png"/></a></td>
                                     <td><span class="steam_price"></span></td>
 									<td><span style='font-size:13px;'><?php if($order["product_usdprice"] != 0) echo $order["product_usdprice"]; ?></span></td>
-									<td align="center" style="font-size:15px;"><?php if($order["order_type"] == 1) {
-										if($order["product_limited_discount"] == 0) echo "No";
-										else if($order["product_limited_discount"] == 1) echo "<strong>SI</strong>";
-									} ?></td>
+									<td align="center" style="font-size:15px;"><?php 
+									if($order["product_limited_discount"] == 0) echo "No";
+									else if($order["product_limited_discount"] == 1) echo "<strong>SI</strong>";
+									?></td>
 									<td><?php 
 									if($order["order_discount_coupon"] != "") {
 										//Calc. porcent. dto.
@@ -285,13 +284,12 @@ if($count[0] > 0) {
 									?></td>
 									<td style="font-size:13px;"><span class="order_email"><?php echo $order["buyer_email"]; ?></span></td>
 									<td align="center" style="font-size:15px;"><?php 
-									if(($order["order_type"] == 1 && ($order["product_limited_discount"] == 1 || $order["order_paymentmethod"] == 2)) || 
-									($order["order_type"] == 2 && $order["order_paymentmethod"] == 2)) {
+									if($order["product_limited_discount"] == 1 || $order["order_paymentmethod"] == 2) {
 										if($order["order_informedpayment"] == 0) echo "No";
 										if($order["order_informedpayment"] == 1) echo "<a href='../data/img/payment_receipts/".$order["order_informed_image"]."' target='_blank'><strong>SI</strong></a>";
 									} ?></td>
 									<td align="center" style="font-size:15px;"><?php 
-									if($order["order_type"] == 1 && $order["product_limited_discount"] == 1) {
+									if($order["product_limited_discount"] == 1) {
 										if($order["order_reserved_game"] == 0) echo "No";
 										if($order["order_reserved_game"] == 1) echo "<strong>SI</strong>";
 									} ?></td>

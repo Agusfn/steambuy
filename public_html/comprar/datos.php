@@ -104,6 +104,8 @@ if($product_exists && $productFinalArsPrice) {
 		$product_name = $purchase->productData["name"];
 		
 		if($purchase->productData["type"] == 1) $img = "steam";
+		else if($purchase->productData["type"] == 2) $img = "playstation";
+		else if($purchase->productData["type"] == 3) $img = "xbox";
 		$product_img_elem = "<div class='pp-gftcrd-img'><img src='../resources/css/img/giftcards/".$img.".png' alt='".$product_name."'/></div>";
 			
 	}

@@ -32,25 +32,7 @@ $(document).ready(function(e) {
 						
 		if(error_text == "") {
 			$("#error_list").slideUp("fast");
-			$.ajax({
-				data: {email: buyer_email, product_id: $("#product-id").val()},
-				url:"resources/php/ajax-dup-order-check.php",
-				type:"post",
-				
-				beforeSend: function() {
-					$("#proceed-btn").prop("disabled", true);
-				},
-				success: function(response) {
-					if(response == 0) {
-						if(confirm("Parece que ya realizaste 2 o más pedidos por este juego a este e-mail recientemente, te recomendamos usar otro e-mail para realizar pedidos repetidos ya que Steam no permite enviar más de una misma copia a un mismo e-mail por un período de tiempo. ¿Deseas continuar?")) 
-						{
-							$("#purchase-form").submit();
-						} else {
-							$("#proceed-btn").prop("disabled", false);
-						}
-					} else $("#purchase-form").submit();
-				}
-			});
+			$("#purchase-form").submit();
 		} else {
 			$("#error_list p").html(error_text);
 			$("#error_list").slideDown("slow");

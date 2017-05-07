@@ -83,15 +83,15 @@ if(isAdminLoggedIn())
                 
 					<!-- Nav tabs -->
                     <ul class="nav nav-pills nav-stacked" role="tablist">
-                    	<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Steam Wallet cards</a></li>
-                        <!--li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Amazon gift cards</a></li>
-                        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">iTunes gift cards</a></li>
-                        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Spotify</a></li-->
+                    	<li role="presentation" class="active"><a href="#steamwallet" aria-controls="home" role="tab" data-toggle="tab">Steam Wallet cards</a></li>
+                        <li role="presentation"><a href="#playstation" aria-controls="profile" role="tab" data-toggle="tab">Playstation Store</a></li>
+                        <li role="presentation"><a href="#xbox" aria-controls="messages" role="tab" data-toggle="tab">Xbox</a></li>
+                        <!--li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Spotify</a></li-->
                     </ul>
                     
                       <!-- Tab panes -->
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="home">
+                        <div role="tabpanel" class="tab-pane active" id="steamwallet">
                         	
                             <?php
 							$sql = "SELECT * FROM `products_giftcards` WHERE `type`=1 AND `stock` > 0 ORDER BY `usd_ammount` ASC";
@@ -99,20 +99,55 @@ if(isAdminLoggedIn())
 							while($gcardData = mysqli_fetch_assoc($query)) {
 								?>	
                                 <a href="../comprar/pago.php?type=2&p_id=<?php echo $gcardData["id"]; ?>"><div class="catalog-element clearfix">
-                                   <img src="../resources/css/img/giftcards/<?php
-                                   if($gcardData["type"] == 1) echo "steam";
-								   ?>.png" class="giftcard-img">
+                                   <img src="../resources/css/img/giftcards/steam.png" class="giftcard-img">
                                    <div class="giftcard-ammt"><?php echo $gcardData["usd_ammount"] ?> <span style="font-size:14px">USD</span></div>
                                    <div class="giftcard-name"><?php echo $gcardData["name"] ?></div>
                                    <div class="giftcard-price">$<?php echo quickCalcGame(1, $gcardData["selling_price_usd"]); ?> <span style="font-size:14px">ARS</span></div>
                                 </div></a>
                                 <?php
 							}
+							if(mysqli_num_rows($query) == 0) {
+								echo "No se encontró stock de estas giftcards, disculpa las molestias.";	
+							}
 							?>    
                         </div>
-                        <!--div role="tabpanel" class="tab-pane" id="profile">..34534.</div>
-                        <div role="tabpanel" class="tab-pane" id="messages">.3453..</div>
-                        <div role="tabpanel" class="tab-pane" id="settings">.fdgf..</div-->
+                        <div role="tabpanel" class="tab-pane" id="playstation">
+                        <?php
+							$sql = "SELECT * FROM `products_giftcards` WHERE `type`=2 AND `stock` > 0 ORDER BY `usd_ammount` ASC";
+							$query = mysqli_query($con, $sql);
+							while($gcardData = mysqli_fetch_assoc($query)) {
+								?>	
+                                <a href="../comprar/pago.php?type=2&p_id=<?php echo $gcardData["id"]; ?>"><div class="catalog-element clearfix">
+                                   <img src="../resources/css/img/giftcards/playstation.png" class="giftcard-img">
+                                   <div class="giftcard-ammt"><?php echo $gcardData["usd_ammount"] ?> <span style="font-size:14px">USD</span></div>
+                                   <div class="giftcard-name"><?php echo $gcardData["name"] ?></div>
+                                   <div class="giftcard-price">$<?php echo quickCalcGame(1, $gcardData["selling_price_usd"]); ?> <span style="font-size:14px">ARS</span></div>
+                                </div></a>
+                                <?php
+							}
+							if(mysqli_num_rows($query) == 0) {
+								echo "No se encontró stock de estas giftcards, disculpa las molestias.";	
+							}
+							?> </div>
+                        <div role="tabpanel" class="tab-pane" id="xbox">
+                        <?php
+							$sql = "SELECT * FROM `products_giftcards` WHERE `type`=3 AND `stock` > 0 ORDER BY `usd_ammount` ASC";
+							$query = mysqli_query($con, $sql);
+							while($gcardData = mysqli_fetch_assoc($query)) {
+								?>	
+                                <a href="../comprar/pago.php?type=2&p_id=<?php echo $gcardData["id"]; ?>"><div class="catalog-element clearfix">
+                                   <img src="../resources/css/img/giftcards/xbox.png" class="giftcard-img">
+                                   <div class="giftcard-ammt"><?php echo $gcardData["usd_ammount"] ?> <span style="font-size:14px">USD</span></div>
+                                   <div class="giftcard-name"><?php echo $gcardData["name"] ?></div>
+                                   <div class="giftcard-price">$<?php echo quickCalcGame(1, $gcardData["selling_price_usd"]); ?> <span style="font-size:14px">ARS</span></div>
+                                </div></a>
+                                <?php
+							}
+							if(mysqli_num_rows($query) == 0) {
+								echo "No se encontró stock de estas giftcards, disculpa las molestias.";	
+							}
+							?> </div>
+                        <!--div role="tabpanel" class="tab-pane" id="settings">.fdgf..</div-->
                     </div>
                 
                 </div>

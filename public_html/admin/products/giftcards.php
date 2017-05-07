@@ -62,7 +62,7 @@ if(!isAdminLoggedIn()) {
                     </thead>
                 	<tbody>
 						<?php
-                        $sql = "SELECT * FROM `products_giftcards` ORDER BY `usd_ammount` ASC";
+                        $sql = "SELECT * FROM `products_giftcards` ORDER BY `type` ASC";
                         $query = mysqli_query($con, $sql);
                         
                         while($gcardData = mysqli_fetch_assoc($query)) {
@@ -70,6 +70,8 @@ if(!isAdminLoggedIn()) {
                             <tr>
                             <td><?php
                             if($gcardData["type"] == 1) echo "Steam Wallet";
+							else if($gcardData["type"] == 2) echo "Playstation Store";
+							else if($gcardData["type"] == 3) echo "Xbox";
 							?></td>
                             <td><?php echo $gcardData["usd_ammount"]; ?> USD</td>
                             <td><?php echo $gcardData["name"]; ?></td>

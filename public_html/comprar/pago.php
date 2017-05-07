@@ -92,6 +92,8 @@ if($product_exists && $productFinalArsPrice) {
 		$product_name = $purchase->productData["name"];
 		
 		if($purchase->productData["type"] == 1) $img = "steam";
+		else if($purchase->productData["type"] == 2) $img = "playstation";
+		else if($purchase->productData["type"] == 3) $img = "xbox";
 		$product_img_elem = "<div class='pp-gftcrd-img'><img src='../resources/css/img/giftcards/".$img.".png' alt='".$product_name."'/></div>";
 			
 	}
@@ -193,6 +195,7 @@ if($product_exists && $productFinalArsPrice) {
                                         <div class="input-group" style="margin-top:10px;">
                                             <input type="text" class="form-control" name="coupon_code" placeholder="Código de cupón">
                                             <span class="input-group-btn">
+                                            	<input type="hidden" name="product_type" value="<?php echo $product_type; ?>" />
                                                 <input type="hidden" name="product_id" value="<?php echo $product_id; ?>" />
                                                 <input class="btn btn-default" type="submit" value="Aplicar" />
                                             </span>

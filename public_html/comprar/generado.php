@@ -152,6 +152,7 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
 				"order_ars_price"=>$productFinalArsPrice,
 				"payment_method"=>$payment_method,
 				"product_external_discount"=>$productData["product_external_limited_offer"],
+				"stock"=>$productData["product_has_limited_units"],
 				"product_sellingsite"=>$productData["product_sellingsite"],
 				"product_site_url"=>$productData["product_site_url"],
 				"order_fromcatalog"=>1
@@ -324,7 +325,7 @@ if($session_auth && $product_exists && $productArsPrices != false && !$priceChan
 								}
 								
 								if($product_type == 1 && $productData["product_sellingsite"] == 1 && $productData["product_has_limited_units"] == 0) {
-									echo "<div class='alert alert-info' style='margin-top: 15px;padding-bottom: 15px;'>Este juego se envía como Steam gift, para adelantar el proceso de envío, envianos una solicitud de amistad de Steam con la cuenta que deseás recibir el juego a nuestra cuenta: <a href='http://steamcommunity.com/id/steambuyarg/' target='_blank'><span class='label label-primary'>http://steamcommunity.com/id/steambuyarg/</span></a></div>";	
+									echo "<div class='alert alert-info' style='margin-top: 15px;padding-bottom: 15px;'>Este juego se envía como Steam gift, para adelantar el proceso de envío, envíanos una solicitud de amistad de Steam a nuestra cuenta con la cuenta que quieres recibir el juego: <a href='http://steamcommunity.com/id/steambuyarg/' target='_blank'><span class='label label-primary'>http://steamcommunity.com/id/steambuyarg/</span></a></div>";	
 								}
 								
 								

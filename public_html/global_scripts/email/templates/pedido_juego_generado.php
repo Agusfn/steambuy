@@ -30,7 +30,10 @@ if($data["payment_method"] == 1) {
 	<strong>Monto:</strong> &#36;".$data["order_ars_price"]." (Pesos argentinos)<br/><br/>
 	Una vez realizado el pago, informa el mismo en la sección de <a href='http://steambuy.com.ar/informar/' target='_blank'>informar pago</a> enviando una
 	foto o imágen del comprobante de transferencia/depósito para que podamos identificarlo. Este se acredita de forma instantánea en horario hábil, y el juego será enviado 
-	durante las siguientes 12 horas hábiles luego de haberse acreditado el pago.<br/><br/>";
+	durante las siguientes 12 horas hábiles luego de haberse acreditado el pago.<br/>";
+}
+if($data["product_sellingsite"] == 1 && $data["stock"] == 0) {
+	echo "<strong>Para recibir el juego deberás agregarnos a nuestra <a href='http://steamcommunity.com/id/steambuyarg/'>cuenta de Steam</a> a la lista de amigos o aceptar la solicitud que enviaremos a la cuenta proporcionada.</strong><br/><br/>";	
 }
 
 if($data["product_external_discount"] == 1) {
@@ -51,7 +54,7 @@ if($data["product_external_discount"] == 1) {
 		
 		
 	
-		if($productData["product_sellingsite"] == 1) {
+		if($data["product_sellingsite"] == 1) {
 			echo "Este juego posee una oferta limitada de reventa de Steam. Es necesario que el pago se encuentre <strong>acreditado con tiempo antes de que la oferta finalice</strong>. De lo contrario deberás elegir un cambio de pedido o un reembolso. ";
 		} else {
 		?>

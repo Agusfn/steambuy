@@ -112,8 +112,12 @@ class Purchase
 	}
 	
 	public function checkCouponValidity($coupon_code) {
-
-		if($this->product_type != 1) return false; // por ahora solo funciona para juegos.
+		
+		// por ahora solo funciona para juegos.
+		if($this->product_type != 1) {
+			$this->couponCheckError = 2;
+			return false;
+		}
 		
 		if(!preg_match("/^[a-zA-Z0-9%$#@]*$/", $coupon_code)) {
 			$this->couponCheckError = 1;
@@ -214,10 +218,10 @@ class Purchase
 		
 		// Realizar consulta
 		$sql = "INSERT INTO `orders` (`order_number`, `order_send_method`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`, `order_payment_time`,
-		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
+		`order_purchaseticket`, `product_fromcatalog`, `product_type`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
 		`product_arsprice`, `product_cur_steam_price`, `product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
 		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`, `buyer_steam_url`) 
-		VALUES (NULL, 0, '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', 1, '".$product_id."', ".$product_limited_unit.", 
+		VALUES (NULL, 0, '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', 1, 2, '".$product_id."', ".$product_limited_unit.", 
 		".$order_paymethod.", '".$this->scp_str($discount_coupon)."', ".$coupon_discounted_ammount.", 0, '".$product_arsprice."', 0, '".$this->scp_str($product_name)."', 0, '', 0, 0, 
 		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."', '');";	
 		
@@ -321,10 +325,10 @@ class Purchase
 		
 		// Realizar consulta
 		$sql = "INSERT INTO `orders` (`order_number`, `order_send_method`, `order_id`, `order_password`, `order_date`, `order_status`, `order_status_change`, `order_confirmed_payment`, `order_payment_time`,
-		`order_purchaseticket`, `product_fromcatalog`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
+		`order_purchaseticket`, `product_fromcatalog`, `product_type`, `product_id_catalog`, `product_limited_unit`, `order_paymentmethod`, `order_discount_coupon`, `coupon_discount_amt`, `product_usdprice`, 
 		`product_arsprice`, `product_cur_steam_price`, `product_name`, `product_sellingsite`, `product_site_url`, `product_limited_discount`, `order_informedpayment`, `order_informed_date`, 
 		`order_informed_image`, `order_reserved_game`, `order_sentkeys`, `buyer_name`, `buyer_email`, `buyer_ip`, `buyer_steam_url`) 
-		VALUES (NULL, ".$send_method.", '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', ".$product_fromcatalog.", '".$product_id_catalog."', ".$product_limited_unit.", 
+		VALUES (NULL, ".$send_method.", '".$this->orderInfo["order_id"]."', '".$orderPassword."', NOW(), 1, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '', ".$product_fromcatalog.", 1, '".$product_id_catalog."', ".$product_limited_unit.", 
 		".$order_paymethod.", '".$this->scp_str($discount_coupon)."', ".$coupon_discounted_ammount.", '".$product_usdprice."', '".$product_arsprice."', '".$current_steam_price."', 
 		'".$this->scp_str($product_name)."', ".$this->scp_str($product_sellingsite).", '".$this->scp_str($product_siteurl)."', ".$this->scp_str($product_limitedoffer).", 0, 
 		'0000-00-00 00:00:00', '', 0, '', '".$this->scp_str($client_name)."', '".$this->scp_str($client_email)."', '".$this->scp_str($client_ip)."', '".$this->scp_str($client_steamurl)."');";	
@@ -399,35 +403,48 @@ class Purchase
 function cancelOrder($orderid) 
 {	
 	global $con;
+	
 	$res1 = mysqli_query($con, "SELECT * FROM orders WHERE order_id = '".mysqli_real_escape_string($con, $orderid)."'");
 	if(mysqli_num_rows($res1) == 1) {
 		$oData = mysqli_fetch_assoc($res1);
 		if($oData["product_fromcatalog"] == 1 && $oData["product_limited_unit"] > 0) {
-			$res2 = mysqli_query($con, "SELECT * FROM products WHERE product_id = ".mysqli_real_escape_string($con, $oData["product_id_catalog"]));
-			if(mysqli_num_rows($res2) == 1) {
-				$pData = mysqli_fetch_array($res2);
+			
+			
+			if($oData["product_type"] == 1) {
 				
-				if($pData["product_has_limited_units"] == 1) { // si el producto del pedido (reservado de stock) se encuentra en stock, suma +1 unidad
-					mysqli_query($con, "UPDATE products SET product_limited_units = product_limited_units + 1 WHERE product_id = ".$oData["product_id_catalog"]);
-				} else if($pData["product_has_limited_units"] == 0) { // si no se encuentra en stock, evalúa el precio y si es más bajo lo cambia
-					if($oData["product_usdprice"] != 0) {
-						if(!($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") && $oData["product_usdprice"] < $pData["product_finalprice"])
-						{
-							mysqli_query($con, "UPDATE products SET product_has_limited_units = 1, product_limited_units = product_limited_units + 1, product_has_customprice = 1, 
-							product_customprice_currency = 'usd', product_external_limited_offer = 0, product_external_offer_endtime='0000-00-00 00:00:00', product_finalprice = ".$oData["product_usdprice"]." WHERE product_id = ".$oData["product_id_catalog"]);
+				$res2 = mysqli_query($con, "SELECT * FROM products WHERE product_id = ".mysqli_real_escape_string($con, $oData["product_id_catalog"]));
+				if(mysqli_num_rows($res2) == 1) {
+					$pData = mysqli_fetch_array($res2);
+					
+					if($pData["product_has_limited_units"] == 1) { // si el producto del pedido (reservado de stock) se encuentra en stock, suma +1 unidad
+						mysqli_query($con, "UPDATE products SET product_limited_units = product_limited_units + 1 WHERE product_id = ".$oData["product_id_catalog"]);
+					} else if($pData["product_has_limited_units"] == 0) { // si no se encuentra en stock, evalúa el precio y si es más bajo lo cambia
+						if($oData["product_usdprice"] != 0) {
+							if(!($pData["product_has_customprice"] == 1 && $pData["product_customprice_currency"] == "ars") && $oData["product_usdprice"] < $pData["product_finalprice"])
+							{
+								mysqli_query($con, "UPDATE products SET product_has_limited_units = 1, product_limited_units = product_limited_units + 1, product_has_customprice = 1, 
+								product_customprice_currency = 'usd', product_external_limited_offer = 0, product_external_offer_endtime='0000-00-00 00:00:00', product_finalprice = ".$oData["product_usdprice"]." WHERE product_id = ".$oData["product_id_catalog"]);
+							} else {
+								mysqli_query($con, "UPDATE products SET product_limited_units = product_limited_units + 1 WHERE product_id = ".$oData["product_id_catalog"]);
+							}
 						} else {
-							mysqli_query($con, "UPDATE products SET product_limited_units = product_limited_units + 1 WHERE product_id = ".$oData["product_id_catalog"]);
+							if($oData["order_paymentmethod"] == 2) {
+								$newProductPrice = round(-1.05086 * (floatval($oData["product_arsprice"]) / -1.015 - 1.5125),1); // el precio en transf del pedido se vuelve a establecer para boleta
+							} else $newProductPrice = $oData["product_arsprice"];
+							mysqli_query($con, "UPDATE products SET product_has_limited_units = 1, product_limited_units = product_limited_units + 1, product_has_customprice = 1, 
+							product_customprice_currency = 'ars', product_external_limited_offer = 0, product_external_offer_endtime='0000-00-00 00:00:00', product_finalprice = ".$newProductPrice." WHERE product_id = ".$oData["product_id_catalog"]);
 						}
-					} else {
-						if($oData["order_paymentmethod"] == 2) {
-							$newProductPrice = round(-1.05086 * (floatval($oData["product_arsprice"]) / -1.015 - 1.5125),1); // el precio en transf del pedido se vuelve a establecer para boleta
-						} else $newProductPrice = $oData["product_arsprice"];
-						mysqli_query($con, "UPDATE products SET product_has_limited_units = 1, product_limited_units = product_limited_units + 1, product_has_customprice = 1, 
-						product_customprice_currency = 'ars', product_external_limited_offer = 0, product_external_offer_endtime='0000-00-00 00:00:00', product_finalprice = ".$newProductPrice." WHERE product_id = ".$oData["product_id_catalog"]);
-					}
+					}	
+					
 				}	
-				
+							
+			} else if($oData["product_type"] == 2) {
+				echo "AA";
+				mysqli_query($con, "UPDATE `products_giftcards` SET `stock` = `stock` + 1 WHERE `id` = ".mysqli_real_escape_string($con, $oData["product_id_catalog"]));
+
 			}
+			
+			
 		}
 		if($oData["order_paymentmethod"] == 1) deleteReceipt($oData["order_informed_image"]); 
 		$sql = "UPDATE orders SET `order_status` = '3', `order_status_change` = NOW() WHERE `order_id` = '".mysqli_real_escape_string($con, $orderid)."';";

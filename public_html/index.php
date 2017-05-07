@@ -330,7 +330,7 @@ $steam_sales_featured_items = 9;
                 
                     <div class="left-column">
 
-
+						<?php /*
                         <div class="catalog-panel">
                             <div class="cp-top">
                             	<?php
@@ -400,7 +400,7 @@ $steam_sales_featured_items = 9;
                         </div>
     					
                         <?php
-						
+						*/
 						
 						if(!$steam_sales_event) {
 						?>
@@ -474,7 +474,7 @@ $steam_sales_featured_items = 9;
                                     $filas = 4;
                                     $cant_productos = $filas * 3; // 3 columnas
                                     
-                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 ORDER BY RAND() LIMIT ".($cant_productos+15);
+                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 AND NOT `product_tags` LIKE '%liquidacion%' ORDER BY RAND() LIMIT ".($cant_productos+15);
                                     
                                     $query = mysqli_query($con, $sql);
                                     $i = 0;
@@ -491,7 +491,32 @@ $steam_sales_featured_items = 9;
                                 </div>
                             </div>
 
-                        
+                            <div class="catalog-panel" style="margin-top:25px;">
+                                <div class="cp-top">
+                                    <div class="cp-title">LIQUIDACIÓN<a href='juegos/?tag=liquidacion&order=1&int_tmpo=0&int_undef=0&oft_ext=0&sin_oft=0&gm=0&pg=0'><div class='cp-viewmore'>Ver todos</div></a></div>
+                                </div>
+                                <div class="cp-content">
+                                    <?php
+                                    $filas = 2;
+                                    $cant_productos = $filas * 3; // 3 columnas
+                                    
+                                    $sql = "SELECT ".$needed_product_data." FROM products WHERE ".$basic_product_filter." AND `product_has_customprice` = 1 AND `product_has_limited_units` = 1 AND `product_tags` LIKE '%liquidacion%' ORDER BY RAND() LIMIT ".($cant_productos);
+                                    
+                                    $query = mysqli_query($con, $sql);
+                                    $i = 0;
+                                    while($pData = mysqli_fetch_assoc($query)) {
+                                        
+										if($i <$cant_productos/* && !in_array($pData["product_id"],$displayedProducts)*/) {
+											$i++;
+                                            //$displayedProducts[] = $pData["product_id"];
+                                            display_catalog_product($pData, "sm");									
+                                        }
+										
+                                    }
+                                    ?> 
+                                </div>
+                            </div>
+                            
                     </div>
                     
                     <div class="right-column">
@@ -513,6 +538,8 @@ $steam_sales_featured_items = 9;
                                             <div style="float:left;">
                                                 <img src="resources/css/img/giftcards/<?php
                                                 if($gcardData["type"] == 1) echo "steam";
+												else if($gcardData["type"] == 2) echo "playstation";
+												else if($gcardData["type"] == 3) echo "xbox";
                                                 ?>.png" class="cpl-gftcrd-img">
                                                 <div class="cpl-gftcrd-ammount"><span><?php echo $gcardData["usd_ammount"]; ?></span> USD</div>
                                             </div>
@@ -527,15 +554,15 @@ $steam_sales_featured_items = 9;
                                 </div>
                             </div>
 							<?php
-						}
+						} 
 						?>
                         
 
-
-    					<a style="text-decoration:none !important;" href="javascript:void(0);" data-toggle="modal" data-target="#game_form_modal"><div class="game-form-box" style="margin-bottom:20px">
+						<?php
+    					/*<a style="text-decoration:none !important;" href="javascript:void(0);" data-toggle="modal" data-target="#game_form_modal"><div class="game-form-box" style="margin-bottom:20px">
                             ¿El juego que buscás no está en el catálogo? Hacé click aquí para comprarlo
-                        </div></a>
-
+                        </div></a>*/
+						?>
                         <div class="panel panel-default panel_normal">
                             <div class="panel-heading">Calculadora de precios<i class="fa fa-question question_info" style="float: right; margin: 3px 0px 0px;" data-toggle="tooltip" data-placement="top" title="Calcula para referencia el precio final en pesos de cualquier juego o pack de Steam o Amazon a partir de su precio en USD"></i></div>
                             <div class="panel-body">

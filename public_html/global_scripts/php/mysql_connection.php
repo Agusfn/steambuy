@@ -1,5 +1,12 @@
 <?php
 
+// Database credentials are read from environment variables.
+$mysql_server = getenv("DB_HOST");
+$mysql_user = getenv("DB_USER");
+$mysql_password = getenv("DB_PASSWORD");
+$mysql_database = getenv("DB_NAME");
+
+/*
 if($_SERVER["SERVER_ADDR"] == "::1" || $_SERVER["SERVER_ADDR"] == "127.0.0.1") // Si es localhost
 {
 	$mysql_server = "localhost";
@@ -12,6 +19,7 @@ if($_SERVER["SERVER_ADDR"] == "::1" || $_SERVER["SERVER_ADDR"] == "127.0.0.1") /
 	$mysql_password = "ld}u{@zl(x^4";
 	$mysql_database = "steambuy_db";
 }
+*/
 
 $connection_error = 0;
 $con = @mysqli_connect($mysql_server, $mysql_user, $mysql_password, $mysql_database);

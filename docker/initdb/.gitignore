@@ -1,0 +1,3 @@
+*.sql
+!01-schema.sql
+!02-seed.sql

@@ -8,3 +8,5 @@ public_html/global_scripts/php/giftid_assoc_list.txt
 public_html/global_scripts/php/cuentadigital_error_log.txt
 public_html/global_scripts/php/afipWs_fails.txt
 public_html/global_scripts/config.php
+.env
+docker/seed-assets/

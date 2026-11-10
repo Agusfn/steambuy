@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    # Demo-only defaults; no .env file required
+    environment:
+      DB_HOST: ${DB_HOST:-127.0.0.1}
+      DB_NAME: ${DB_NAME:-steambuy}
+      DB_USER: ${DB_USER:-steambuy}
+      DB_PASSWORD: ${DB_PASSWORD:-steambuy-demo}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root-demo}
+    volumes:
+      - dbdata:/var/lib/mysql
+      # Persist uploaded/generated images and receipts
+      - appdata:/var/www/public_html/data
+
+volumes:
+  dbdata:
+  appdata:

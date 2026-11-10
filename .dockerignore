@@ -1,0 +1,6 @@
+.git
+.env
+public_html/data
+public_html/dev
+public_html/global_scripts/AfipWs/resources/certificates
+*.md

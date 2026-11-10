@@ -1,5 +1,5 @@
 <?php 
-$hash = "f653845eefa45805362c784021d115bf27b0545c7a89774ea1d5f6d4d19f3e1aa1e48f8d3a6a8995";
+$hash = "674f177cae4ab4b4e7aad5d7ea6bb600b510c035048ea94a62024e1d42f024b2400d5f0ce122363a";
 
 function isAdminLoggedIn()
 {
